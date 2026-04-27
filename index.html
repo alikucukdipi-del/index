@@ -1700,11 +1700,12 @@ async function sheetsVerisiniCek() {
     console.error("Hata:", err);
   }
 }
-window.onload = sheetsVerisiniCek;
 }
-}
+</script>
+
 <script>
-async function sheetsVerisiniGetir() {
+async function fetchStockData() {
+async function fetchStockData() {
     // Taze veri için zaman damgalı link
     const tabloUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv&t=' + new Date().getTime();
     
