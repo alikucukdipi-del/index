@@ -1746,29 +1746,37 @@ function fetchStockData() {
 <script>
 // 1. Google Sheets'ten veriyi çekip kutulara yerleştiren ana fonksiyon
 // Önce veriyi satırlara ve sütunlara ayırıyoruz (Malzemeyi hazırlıyoruz)
-const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
+fetch(url)
+        .then(response => response.text())
+        .then(data => {
+            // Önce veriyi hazırlıyoruz (rows artık burada tanımlanıyor)
+            const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
+            
+            // Kullanıcının kutuya yazdığı harfleri alıyoruz
+            const tickerInput = document.getElementById('ticker-input');
+            const arananTicker = tickerInput ? tickerInput.value.toUpperCase().trim() : "";
 
-// ŞİMDİ arama yapabiliriz (Çünkü artık 'rows' tanımlı)
-const tickerInput = document.getElementById('ticker-input');
-const arananTicker = tickerInput ? tickerInput.value.toUpperCase().trim() : "";
+            // Tabloda bu Ticker'ı bul (B sütununa bakıyoruz)
+            const bulunanSatir = rows.find(satir => 
+                satir[1] && satir[1].replace(/"/g, "").trim().toUpperCase() === arananTicker
+            );
 
-console.log("Aranan Kelime:", arananTicker);
+            if (bulunanSatir) {
+                // Şirket Adı (A Sütunu)
+                document.getElementById('company').value = bulunanSatir[0].replace(/"/g, "").trim(); 
+                // Güncel Fiyat (C Sütunu)
+                document.getElementById('price').value = bulunanSatir[2].replace(/[^0-9.,]/g, "").trim();
+                
+                // Sektör (J Sütunu - Eğer sende J ise)
+                const sektorKutusu = document.getElementById('sector');
+                if (sektorKutusu) sektorKutusu.value = bulunanSatir[9].replace(/"/g, "").trim();
 
-// Tabloda Ticker'ı ara (B sütunu - index 1)
-const bulunanSatir = rows.find(satir => 
-    satir[1] && satir[1].replace(/"/g, "").trim().toUpperCase() === arananTicker
-);
-
-if (bulunanSatir) {
-    // Verileri yerleştir
-    document.getElementById('company').value = bulunanSatir[0].replace(/"/g, "").trim(); 
-    document.getElementById('price').value = bulunanSatir[2].replace(/[^0-9.,]/g, "").trim();
-    
-    // Sektör (J sütunu - index 9)
-    const sektorKutusu = document.getElementById('sector');
-    if (sektorKutusu) sektorKutusu.value = bulunanSatir[9].replace(/"/g, "").trim();
-
-    console.log("Veriler başarıyla çekildi! ✅");
+                console.log(arananTicker + " verileri başarıyla çekildi! ✅");
+            } else {
+                console.log("Maalesef bu hisse tabloda bulunamadı. 🔍");
+            }
+        })
+        .catch(error => console.error('Veri çekme hatası:', error));
 } else {
     console.log("Hisse bulunamadı. Lütfen Ticker'ı kontrol et.");
 }
