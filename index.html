@@ -1741,40 +1741,69 @@ window.addEventListener('load', sheetsVerisiniGetir);
 function fetchStockData() {
     const tickerInput = document.getElementById('ticker-input');
     const ticker = tickerInput.value.trim().toUpperCase();
+    const loading = document.getElementById('fetch-loading');
+    const errorBox = document.getElementById('fetch-error');
+    const autoDataDiv = document.getElementById('auto-data');
     
     if (!ticker) {
         alert("Lütfen bir Ticker girin (örn: MT)");
         return;
     }
 
-    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf9A6xYtq1z9D_vS9P7N7x-vD0N0-mXk-vM0-mXk-vM0-mXk-vM/pub?output=csv"; 
-    // NOT: Kendi Google Sheets CSV linkini buraya tırnak içine yapıştır!
+    // Görsel geri bildirimler
+    loading.classList.add('show');
+    errorBox.classList.remove('show');
+    autoDataDiv.style.display = 'none';
 
-    console.log(ticker + " aranıyor...");
+    // Google Sheets CSV linkin
+    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf9A6xYtq1z9D_vS9P7N7x-vD0N0-mXk-vM0-mXk-vM0-mXk-vM/pub?output=csv"; 
 
     fetch(url)
         .then(response => response.text())
         .then(data => {
-            // Tabloyu satırlara bölüyoruz
+            // Satırları ayır ve her satırı sütunlara (virgül veya noktalı virgül) böl
             const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
             
-            // Ticker'ı B sütununda (index 1) arıyoruz
+            // TÜM TABLODA ARA: B sütununda (index 1) Ticker'ı bul
             const bulunanSatir = rows.find(satir => 
                 satir[1] && satir[1].replace(/"/g, "").trim().toUpperCase() === ticker
             );
 
             if (bulunanSatir) {
-                // 1. Şirket Adı (A Sütunu)
+                // 1. Şirket Adı (A Sütunu - Index 0)
                 document.getElementById('company').value = bulunanSatir[0].replace(/"/g, "").trim(); 
                 
-                // 2. Güncel Fiyat (C Sütunu) - Sadece rakamları al
-                document.getElementById('price').value = bulunanSatir[2].replace(/[^0-9.,]/g, "").replace(",", ".");
+                // 2. Güncel Fiyat (C Sütunu - Index 2)
+                const hamFiyat = bulunanSatir[2].replace(/"/g, "").replace(/[^0-9.,]/g, "").replace(",", ".");
+                document.getElementById('price').value = parseFloat(hamFiyat) || 0;
                 
-                // 3. F/K Oranı (Senin tablonda I sütunu ise index 8 olur)
-                const peKutusu = document.getElementById('pe');
-                if (peKutusu && bulunanSatir[8]) {
-                    peKutusu.value = bulunanSatir[8].replace(/[^0-9.,]/g, "").replace(",", ".");
+                // 3. Sektör (J Sütunu - Index 9)
+                const sektorKutusu = document.getElementById('sector');
+                if (sektorKutusu && bulunanSatir[9]) {
+                    const gelenSektor = bulunanSatir[9].toLowerCase().replace(/"/g, "").trim();
+                    // Basit eşleştirme
+                    if (gelenSektor.includes("gıda")) sektorKutusu.value = "gida";
+                    else if (gelenSektor.includes("teknoloji")) sektorKutusu.value = "teknoloji";
+                    else if (gelenSektor.includes("finans")) sektorKutusu.value = "finans";
                 }
+
+                // Alt paneli güncelle (Görsel alan)
+                document.getElementById('ad-price').textContent = "€" + hamFiyat;
+                autoDataDiv.style.display = 'block';
+                
+                loading.classList.remove('show');
+                console.log(ticker + " verileri başarıyla tablodan çekildi! ✅");
+            } else {
+                throw new Error(ticker + " tablodaki 'B' sütununda bulunamadı.");
+            }
+        })
+        .catch(err => {
+            loading.classList.remove('show');
+            errorBox.textContent = "Hata: " + err.message;
+            errorBox.classList.add('show');
+            console.error("Veri çekme hatası:", err);
+        });
+}
 
                 // 4. Sektör (Senin tablonda J sütunu ise index 9 olur)
                 const sektorKutusu = document.getElementById('sector');
