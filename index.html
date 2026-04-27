@@ -1674,83 +1674,34 @@ async function sheetsVerisiniCek() {
 }
 
 // Sayfa yüklendiğinde otomatik çalıştır
-window.addEventListener('load', async function sheetsVerisiniCek() {
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
+async function sheetsVerisiniCek() {
+  const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
+  
+  try {
+    const response = await fetch(csvUrl, { cache: "no-store" });
+    const data = await response.text();
     
-    try {
-        const response = await fetch(csvUrl);
-        if (!response.ok) throw new Error('Ağ yanıtı düzgün değil');
-        
-        const data = await response.text();
-        // Satırları temizleyerek parçala
-        const rows = data.split(/\r?\n/).map(row => row.split(','));
-        
-        console.log("Tüm Tablo:", rows);
-
-        // ÖRNEK: DAX verisi için (Eğer DAX 2. satırdaysa rows[1] kullanılır)
-        // Buradaki [1] sayısını tablodaki sıraya göre değiştirebilirsin
-        const seciliVeri = rows[1]; 
-
-        if (seciliVeri) {
-            // Kutucukları doldururken veriyi temizle (Sembolleri ve boşlukları at)
-            if(document.getElementById('ticker')) {
-                document.getElementById('ticker').value = seciliVeri[0].trim();
-            }
-            if(document.getElementById('price')) {
-                // Fiyatın içindeki $, €, nokta veya ok işaretlerini temizle sadece rakamı al
-                let temizFiyat = seciliVeri[2].replace(/[^0-9.,]/g, '').trim();
-                document.getElementById('price').value = temizFiyat;
-            }
-            
-            // Eğer RSI ve MA200 sütunlarını biliyorsan altına ekleyebiliriz
-            // document.getElementById('rsi').value = seciliVeri[3]; 
-
-           async function sheetsVerisiniCek() {
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
+    // Satırları parçala (Hem virgül hem noktalı virgül uyumlu)
+    const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
     
-    console.log("Veri çekme işlemi başlatıldı...");
+    // DAX verisi 2. satırda (Index 1)
+    const dax = rows[1]; 
 
-    try {
-        const response = await fetch(csvUrl, { cache: "no-store" });
-        if (!response.ok) throw new Error('Sheets bağlantı hatası');
-        
-        const data = await response.text();
-        
-        // Veriyi hem satırlara ayır hem de virgül/noktalı virgül ayrımını otomatik yap
-        const rows = data.split(/\r?\n/).map(row => {
-            // Eğer veri virgülle ayrılmamışsa noktalı virgülü dene
-            return row.includes(',') ? row.split(',') : row.split(';');
-        });
-
-        console.log("Gelen Ham Veri:", rows);
-
-        // DAX tablonun 2. satırında (Index 1)
-        const daxSatiri = rows[1]; 
-
-        if (daxSatiri && daxSatiri.length > 0) {
-            // Ticker (A Sütunu - Index 0)
-            const tickerVal = daxSatiri[0].replace(/"/g, "").trim();
-            document.getElementById('ticker').value = tickerVal;
-            
-            // Fiyat (C Sütunu - Index 2)
-            // Tablodaki tırnakları ve gereksiz karakterleri temizler
-            let priceVal = daxSatiri[2].replace(/"/g, "").trim();
-            document.getElementById('price').value = priceVal;
-
-            console.log("Başarıyla yerleştirildi:", tickerVal, priceVal);
-        } else {
-            console.error("DAX satırı bulunamadı!");
-        }
-    } catch (err) {
-        console.error("Kritik Hata:", err);
+    if (dax && dax.length > 2) {
+      // Ticker (A Sütunu)
+      document.getElementById('ticker').value = dax[0].replace(/"/g, "").trim();
+      // Fiyat (C Sütunu)
+      document.getElementById('price').value = dax[2].replace(/"/g, "").trim();
+      
+      console.log("Veri çekildi:", dax[0], dax[2]);
     }
+  } catch (err) {
+    console.error("Hata:", err);
+  }
 }
 
-// Sayfa tamamen hazır olduğunda çalıştır
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', sheetsVerisiniCek);
-} else {
-    sheetsVerisiniCek();
+// SAYFA YÜKLENDİĞİNDE ÇALIŞTIR
+window.onload = sheetsVerisiniCek;
 }
 }
 </script>
