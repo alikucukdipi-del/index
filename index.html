@@ -1743,4 +1743,54 @@ function fetchStockData() {
     sheetsVerisiniGetir();
 }
 </script>
-</body></html>
+<script>
+// 1. Google Sheets'ten veriyi çekip kutulara yerleştiren ana fonksiyon
+async function sheetsVerisiniGetir() {
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv&t=' + new Date().getTime();
+    
+    try {
+        const response = await fetch(csvUrl, { cache: "no-store" });
+        const data = await response.text();
+        
+        // Veriyi satırlara ve sütunlara ayır
+        const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
+        const satir2 = rows[1]; // Sheets'teki 2. satır (Başlıktan sonraki ilk veri)
+
+        if (satir2 && satir2.length >= 3) {
+            const tickerInput = document.getElementById('ticker-input');
+            const priceInput = document.getElementById('price');
+            const companyInput = document.getElementById('company');
+
+            // Kutuları doldur (Tırnak işaretlerini temizler)
+            if (tickerInput) tickerInput.value = satir2[0].replace(/"/g, "").trim();
+            if (priceInput) priceInput.value = satir2[2].replace(/"/g, "").trim();
+            if (companyInput) companyInput.value = (satir2[0].replace(/"/g, "") + " - Otomatik Veri").trim();
+
+            console.log("Veri başarıyla çekildi:", satir2[0]);
+        }
+    } catch (err) {
+        console.error("Veri çekilirken hata oluştu:", err);
+    }
+}
+
+// 2. Sayfadaki "VERİ ÇEK" butonu boşa düşmesin diye tanımlıyoruz
+function fetchStockData() {
+    console.log("Butona basıldı, veriler yenileniyor...");
+    sheetsVerisiniGetir();
+}
+
+// 3. Sayfa açılır açılmaz veriyi otomatik çek
+window.onload = function() {
+    sheetsVerisiniGetir();
+};
+
+// Toggle butonları için yardımcı fonksiyon (senin kodunda eksik kalmış olabilir)
+function tog(btn, group, cls) {
+    const parent = document.getElementById(group);
+    parent.querySelectorAll('.tog').forEach(b => b.classList.remove('tg', 'tr', 'ty', 'tb'));
+    btn.classList.add(cls);
+}
+</script>
+
+</body>
+</html>
