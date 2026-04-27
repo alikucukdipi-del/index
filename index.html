@@ -1753,7 +1753,8 @@ async function sheetsVerisiniGetir() {
         const data = await response.text();
 // 1. Kullanıcının yazdığı Ticker'ı alalım (Örn: MT)
 const arananTicker = document.getElementById('ticker-input').value.toUpperCase().trim();
-
+console.log("Aranan Kelime:", arananTicker);
+console.log("Tablodaki İlk Satırın Ticker'ı:", rows[1][1]); // 2. satır, B sütunu
 // 2. Tabloda bu Ticker'ı arayalım (Ticker B sütununda yani index 1)
 const bulunanSatir = rows.find(satir => satir[1] && satir[1].replace(/"/g, "").trim().toUpperCase() === arananTicker);
 
