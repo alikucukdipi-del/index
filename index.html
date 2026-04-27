@@ -1661,7 +1661,7 @@ async function sheetsVerisiniCek() {
 
 // Sayfa yüklendiğinde veriyi çek
 async function sheetsVerisiniCek() {
-  const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
+  const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quyVIAF2LKl/pub?output=csv&cache_bust=' + Date.now();
   
   try {
     const response = await fetch(csvUrl, { cache: "no-store" });
