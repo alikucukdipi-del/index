@@ -1705,71 +1705,53 @@ window.addEventListener('load', async function sheetsVerisiniCek() {
             // Eğer RSI ve MA200 sütunlarını biliyorsan altına ekleyebiliriz
             // document.getElementById('rsi').value = seciliVeri[3]; 
 
-            alert(seciliVeri[0] + " verileri başarıyla yüklendi!");
-        }
-        
-    } catch (error) {
-        console.error("Hata detayı:", error);
-        alert("Veri çekilemedi! Lütfen Chrome kullanıyorsan internet bağlantını ve Sheets linkini kontrol et.");
-    }
-}
-
-// Sayfa açıldığında değil, bir butona basınca çalışması daha güvenlidir
-// Ama istersen otomatik kalsın:
-async function sheetsVerisiniCek() {
+           async function sheetsVerisiniCek() {
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
     
-    console.log("Bağlantı kuruluyor...");
+    console.log("Veri çekme işlemi başlatıldı...");
 
     try {
-        const response = await fetch(csvUrl);
-        if (!response.ok) throw new Error('Google Sheets dosyasına ulaşılamadı.');
+        const response = await fetch(csvUrl, { cache: "no-store" });
+        if (!response.ok) throw new Error('Sheets bağlantı hatası');
         
         const data = await response.text();
-        const rows = data.split(/\r?\n/).map(row => row.split(','));
         
-        // Tablona göre DAX 2. satırda (Index 1)
+        // Veriyi hem satırlara ayır hem de virgül/noktalı virgül ayrımını otomatik yap
+        const rows = data.split(/\r?\n/).map(row => {
+            // Eğer veri virgülle ayrılmamışsa noktalı virgülü dene
+            return row.includes(',') ? row.split(',') : row.split(';');
+        });
+
+        console.log("Gelen Ham Veri:", rows);
+
+        // DAX tablonun 2. satırında (Index 1)
         const daxSatiri = rows[1]; 
 
-        if (daxSatiri) {
-            // Ticker (A Sütunu)
-            document.getElementById('ticker').value = daxSatiri[0].replace(/"/g, "").trim();
+        if (daxSatiri && daxSatiri.length > 0) {
+            // Ticker (A Sütunu - Index 0)
+            const tickerVal = daxSatiri[0].replace(/"/g, "").trim();
+            document.getElementById('ticker').value = tickerVal;
             
             // Fiyat (C Sütunu - Index 2)
-            // Fiyattaki gereksiz karakterleri temizle
-            let temizFiyat = daxSatiri[2].replace(/"/g, "").replace(/[^\d,.]/g, "").trim();
-            document.getElementById('price').value = temizFiyat;
+            // Tablodaki tırnakları ve gereksiz karakterleri temizler
+            let priceVal = daxSatiri[2].replace(/"/g, "").trim();
+            document.getElementById('price').value = priceVal;
 
-            console.log("Başarılı! Veri:", daxSatiri[0], temizFiyat);
+            console.log("Başarıyla yerleştirildi:", tickerVal, priceVal);
+        } else {
+            console.error("DAX satırı bulunamadı!");
         }
     } catch (err) {
-        console.error("Hata Detayı:", err);
+        console.error("Kritik Hata:", err);
     }
 }
 
-// Sayfa yüklendiğinde başlat
-async function sheetsVerisiniCek() {
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
-    
-    try {
-        // İŞTE BURADA: Virgül koyup süslü parantez içinde ekliyoruz
-        const response = await fetch(csvUrl, { cache: "no-store" }); 
-        
-        const data = await response.text();
-        const rows = data.split(/\r?\n/).map(row => row.split(','));
-        
-        // Tablonda DAX 2. satırda (Index 1) olduğu için:
-        const daxSatiri = rows[1]; 
-
-        if (daxSatiri) {
-            document.getElementById('ticker').value = daxSatiri[0].replace(/"/g, "").trim();
-            // Fiyat C sütununda (Index 2)
-            let temizFiyat = daxSatiri[2].replace(/"/g, "").replace(/[^\d,.]/g, "").trim();
-            document.getElementById('price').value = temizFiyat;
-        }
-    } catch (err) {
-        console.error("Hata:", err);
-    }
+// Sayfa tamamen hazır olduğunda çalıştır
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', sheetsVerisiniCek);
+} else {
+    sheetsVerisiniCek();
+}
 }
 </script>
 
