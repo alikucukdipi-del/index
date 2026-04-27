@@ -1799,6 +1799,12 @@ async function fetchStockData() {
     } catch (error) {
         console.error("Hata:", error);
     }
+} else {
+            alert(ticker + " tablonuzda bulunamadı. Lütfen Sheets'i kontrol edin.");
+        }
+    } catch (error) {
+        console.error("Hata:", error);
+    }
 }
 </script>
 </body>
