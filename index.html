@@ -1673,35 +1673,39 @@ async function sheetsVerisiniCek() {
     }
 }
 
-// Sayfa yüklendiğinde otomatik çalıştır
+// Sayfa yüklendiğinde veriyi çek
+window.onload = sheetsVerisiniCek;
+
 async function sheetsVerisiniCek() {
   const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
   
+  console.log("Bağlanıyor...");
+
   try {
     const response = await fetch(csvUrl, { cache: "no-store" });
     const data = await response.text();
     
-    // Satırları parçala (Hem virgül hem noktalı virgül uyumlu)
+    // Satırları parçala (Virgül veya Noktalı Virgül uyumlu)
     const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
     
     // DAX verisi 2. satırda (Index 1)
     const dax = rows[1]; 
 
     if (dax && dax.length > 2) {
-      // Ticker (A Sütunu)
-      document.getElementById('ticker').value = dax[0].replace(/"/g, "").trim();
-      // Fiyat (C Sütunu)
-      document.getElementById('price').value = dax[2].replace(/"/g, "").trim();
+      // Ticker kutusunu doldur (ID: ticker)
+      const tickerInput = document.getElementById('ticker');
+      if(tickerInput) tickerInput.value = dax[0].replace(/"/g, "").trim();
+
+      // Fiyat kutusunu doldur (ID: price)
+      const priceInput = document.getElementById('price');
+      if(priceInput) priceInput.value = dax[2].replace(/"/g, "").trim();
       
-      console.log("Veri çekildi:", dax[0], dax[2]);
+      console.log("Veri başarıyla yerleştirildi:", dax[0], dax[2]);
     }
   } catch (err) {
-    console.error("Hata:", err);
+    console.error("Hata oluştu:", err);
   }
 }
-
-// SAYFA YÜKLENDİĞİNDE ÇALIŞTIR
-window.onload = sheetsVerisiniCek;
 }
 }
 </script>
