@@ -1748,7 +1748,29 @@ async function sheetsVerisiniCek() {
 }
 
 // Sayfa yüklendiğinde başlat
-window.addEventListener('DOMContentLoaded', sheetsVerisiniCek);
+async function sheetsVerisiniCek() {
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
+    
+    try {
+        // İŞTE BURADA: Virgül koyup süslü parantez içinde ekliyoruz
+        const response = await fetch(csvUrl, { cache: "no-store" }); 
+        
+        const data = await response.text();
+        const rows = data.split(/\r?\n/).map(row => row.split(','));
+        
+        // Tablonda DAX 2. satırda (Index 1) olduğu için:
+        const daxSatiri = rows[1]; 
+
+        if (daxSatiri) {
+            document.getElementById('ticker').value = daxSatiri[0].replace(/"/g, "").trim();
+            // Fiyat C sütununda (Index 2)
+            let temizFiyat = daxSatiri[2].replace(/"/g, "").replace(/[^\d,.]/g, "").trim();
+            document.getElementById('price').value = temizFiyat;
+        }
+    } catch (err) {
+        console.error("Hata:", err);
+    }
+}
 </script>
 
 
