@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<!-- saved from url=(0061)file:///C:/Users/Gebruiker/Downloads/humeyra-analiz-v3_2.html -->
+<html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Humeyra Pro Analiz</title>
+<link href="./Humeyra Pro Analiz V4_files/css2" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0d0d;
+  --surface: #141414;
+  --surface2: #1a1a1a;
+  --border: #2a2a2a;
+  --gold: #d4af37;
+  --gold2: #f0d060;
+  --green: #00c853;
+  --green-dim: #003d1a;
+  --red: #ff3d3d;
+  --red-dim: #3d0000;
+  --yellow: #ffb300;
+  --yellow-dim: #3d2b00;
+  --blue: #2979ff;
+  --blue-dim: #001a4d;
+  --text: #f0f0f0;
+  --text2: #888;
+  --text3: #555;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(212,175,55,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,175,55,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+.header-line {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.header-line::before,
+.header-line::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  max-width: 120px;
+}
+
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 8vw, 5rem);
+  letter-spacing: 4px;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+h1 span { color: var(--gold); }
+
+.header p {
+  font-size: 13px;
+  color: var(--text2);
+  max-width: 420px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+/* TICKER SEARCH */
+.ticker-search {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ticker-search::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.ticker-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.ticker-field {
+  flex: 1;
+}
+
+.section-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.section-sub {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+}
+
+input::placeholder { color: var(--text3); }
+
+select option { background: var(--surface2); }
+
+.field-hint {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+
+.btn-fetch {
+  padding: 12px 24px;
+  background: var(--gold);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-fetch:hover {
+  background: var(--gold2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(212,175,55,0.3);
+}
+
+.btn-fetch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Auto-fetched data display */
+.auto-data {
+  display: none;
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--surface2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.auto-data-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 600px) { .auto-data-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.auto-data-item { text-align: center; }
+.auto-data-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
+.auto-data-value { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--gold); }
+.auto-data-value.up { color: var(--green); }
+.auto-data-value.down { color: var(--red); }
+
+/* CARD */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold)44, transparent);
+}
+
+/* GRID */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .g2, .g3 { grid-template-columns: 1fr; } }
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+
+label {
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* TOGGLE */
+.toggle-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tog {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--text2);
+  font-weight: 500;
+}
+
+.tog:hover { border-color: var(--gold); color: var(--text); }
+.tog.tg { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+.tog.tr { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+.tog.ty { background: var(--yellow-dim); border-color: var(--yellow); color: var(--yellow); }
+.tog.tb { background: var(--blue-dim); border-color: var(--blue); color: var(--blue); }
+
+/* NEWS */
+.news-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 16px; }
+.news-row .field { flex: 1; }
+
+.news-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.news-item:hover { border-color: var(--border); }
+.news-item.pos { background: rgba(0,200,83,0.06); border-color: rgba(0,200,83,0.15); }
+.news-item.neg { background: rgba(255,61,61,0.06); border-color: rgba(255,61,61,0.15); }
+.news-item.neu { background: rgba(255,179,0,0.06); border-color: rgba(255,179,0,0.1); }
+
+.news-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.pos .news-dot { background: var(--green); }
+.neg .news-dot { background: var(--red); }
+.neu .news-dot { background: var(--yellow); }
+
+.news-title {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+  text-decoration: none;
+  display: block;
+}
+.news-title:hover { color: var(--gold); }
+.news-meta { font-size: 10px; color: var(--text3); margin-top: 3px; }
+
+.news-sentiment-bar {
+  display: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+/* ANALYZE BUTTON */
+.btn-analyze {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-analyze:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(212,175,55,0.4);
+}
+
+/* RESULT */
+.result {
+  display: none;
+  margin-top: 32px;
+  animation: fadeUp 0.5s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result.show { display: block; }
+
+/* Verdict banner */
+.verdict-banner {
+  border-radius: 16px;
+  padding: 36px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.verdict-banner.AL {
+  background: radial-gradient(ellipse at center, #003d1a 0%, #0d0d0d 70%);
+  border: 1px solid var(--green);
+  box-shadow: 0 0 40px rgba(0,200,83,0.15), inset 0 0 40px rgba(0,200,83,0.05);
+}
+
+.verdict-banner.ALMA {
+  background: radial-gradient(ellipse at center, #3d0000 0%, #0d0d0d 70%);
+  border: 1px solid var(--red);
+  box-shadow: 0 0 40px rgba(255,61,61,0.15), inset 0 0 40px rgba(255,61,61,0.05);
+}
+
+.verdict-banner.BEKLE {
+  background: radial-gradient(ellipse at center, #3d2b00 0%, #0d0d0d 70%);
+  border: 1px solid var(--yellow);
+  box-shadow: 0 0 40px rgba(255,179,0,0.15), inset 0 0 40px rgba(255,179,0,0.05);
+}
+
+.verdict-ticker {
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--text2);
+  margin-bottom: 12px;
+}
+
+.verdict-word {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(4rem, 12vw, 8rem);
+  letter-spacing: 8px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.AL .verdict-word { color: var(--green); text-shadow: 0 0 40px rgba(0,200,83,0.5); }
+.ALMA .verdict-word { color: var(--red); text-shadow: 0 0 40px rgba(255,61,61,0.5); }
+.BEKLE .verdict-word { color: var(--yellow); text-shadow: 0 0 40px rgba(255,179,0,0.5); }
+
+.verdict-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.score-ring {
+  width: 72px;
+  height: 72px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.score-ring svg { transform: rotate(-90deg); }
+.score-ring-num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: var(--text);
+}
+
+.verdict-summary {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.8;
+  max-width: 460px;
+  text-align: left;
+}
+
+/* Result cards */
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 580px) { .result-grid { grid-template-columns: 1fr; } }
+
+.result-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.result-card-title {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.result-card.good { border-color: rgba(0,200,83,0.2); }
+.result-card.good .result-card-title { color: var(--green); }
+.result-card.bad { border-color: rgba(255,61,61,0.2); }
+.result-card.bad .result-card-title { color: var(--red); }
+.result-card.info { border-color: rgba(41,121,255,0.2); }
+.result-card.info .result-card-title { color: var(--blue); }
+.result-card.warn { border-color: rgba(255,179,0,0.2); }
+.result-card.warn .result-card-title { color: var(--yellow); }
+
+.signal-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.5;
+  border-bottom: 1px solid var(--border);
+}
+
+.signal-item:last-child { border-bottom: none; }
+.signal-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+
+/* EXIT PLAN */
+.exit-plan {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.exit-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exit-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 580px) { .exit-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.exit-level {
+  text-align: center;
+  padding: 14px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.exit-level.stop { background: rgba(255,61,61,0.08); border-color: rgba(255,61,61,0.2); }
+.exit-level.entry { background: rgba(41,121,255,0.08); border-color: rgba(41,121,255,0.2); }
+.exit-level.t1 { background: rgba(255,179,0,0.08); border-color: rgba(255,179,0,0.2); }
+.exit-level.t2 { background: rgba(0,200,83,0.08); border-color: rgba(0,200,83,0.2); }
+.exit-level.t3 { background: rgba(212,175,55,0.1); border-color: rgba(212,175,55,0.3); }
+
+.exit-label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+.stop .exit-label { color: var(--red); }
+.entry .exit-label { color: var(--blue); }
+.t1 .exit-label { color: var(--yellow); }
+.t2 .exit-label { color: var(--green); }
+.t3 .exit-label { color: var(--gold); }
+
+.exit-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.exit-pct { font-size: 10px; color: var(--text3); }
+
+/* RISK/REWARD */
+.rr-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.rr-label { font-size: 11px; color: var(--text2); letter-spacing: 1px; flex-shrink: 0; }
+.rr-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.rr-visual {
+  flex: 1;
+  height: 8px;
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.rr-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--red), var(--yellow), var(--green));
+  transition: width 1s ease;
+}
+
+.rr-verdict { font-size: 12px; color: var(--text2); flex-shrink: 0; }
+
+/* FAKE PUMP DETECTOR */
+.pump-detector {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.pump-title {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--yellow);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.pump-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pump-chip {
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: 11px;
+  border: 1px solid;
+}
+
+.pump-chip.safe { background: rgba(0,200,83,0.1); border-color: rgba(0,200,83,0.3); color: var(--green); }
+.pump-chip.warn { background: rgba(255,179,0,0.1); border-color: rgba(255,179,0,0.3); color: var(--yellow); }
+.pump-chip.danger { background: rgba(255,61,61,0.1); border-color: rgba(255,61,61,0.3); color: var(--red); }
+
+/* Reset btn */
+.btn-reset {
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text2);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-reset:hover { border-color: var(--gold); color: var(--gold); }
+
+.disclaimer {
+  font-size: 11px;
+  color: var(--text3);
+  text-align: center;
+  margin-top: 16px;
+  line-height: 1.7;
+}
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-row {
+  display: none;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 10px;
+}
+
+.loading-row.show { display: flex; }
+
+.error-box {
+  display: none;
+  padding: 12px 16px;
+  background: rgba(255,61,61,0.08);
+  border: 1px solid rgba(255,61,61,0.2);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--red);
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+.error-box.show { display: block; }
+
+/* Score bar */
+.sbar-wrap { margin: 12px 0; }
+.sbar-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text3); margin-bottom: 6px; }
+.sbar-bg { height: 6px; background: var(--border); border-radius: 100px; overflow: hidden; }
+.sbar-fill { height: 100%; border-radius: 100px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-line">
+      <span class="eyebrow">Humeyra Pro Analiz v2.0</span>
+    </div>
+    <h1>HİSSE <span>ANALİZ</span></h1>
+    <p>AEX · NYSE · NASDAQ · DAX · CAC40 — Dünyanın her borsasında dişlerine bak. 🦷</p>
+  </div>
+
+  <!-- CLAUDE VERİ YAPISTIR -->
+  <div class="ticker-search" style="margin-bottom:20px">
+    <span class="section-label">🤖 Claude'dan Veri Al</span>
+    <div class="section-title">Veri Yapıştır</div>
+    <p class="section-sub">Claude'a "<strong>MICC verilerini getir</strong>" de — JSON formatında veri gönderir, buraya yapıştır, tüm alanlar otomatik dolar! 🪄</p>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <textarea id="paste-area" placeholder="Claude&#39;dan gelen JSON veriyi buraya yapıştır..." style="flex:1;height:80px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:monospace;font-size:11px;resize:none;line-height:1.5"></textarea>
+      <button onclick="pasteData()" style="padding:0 20px;background:var(--gold);color:#000;border:none;border-radius:10px;font-family:&#39;Bebas Neue&#39;,sans-serif;font-size:15px;letter-spacing:2px;cursor:pointer;white-space:nowrap;transition:all 0.2s" onmouseover="this.style.background=&#39;#f0d060&#39;" onmouseout="this.style.background=&#39;var(--gold)&#39;">DOLDUR ✨</button>
+    </div>
+    <div id="paste-success" style="display:none;padding:10px 14px;background:rgba(0,200,83,0.1);border:1px solid rgba(0,200,83,0.3);border-radius:8px;color:var(--green);font-size:12px;margin-top:10px">✅ Veriler yüklendi! Aşağıyı kontrol et ve analizi yap.</div>
+    <div id="paste-error" style="display:none;padding:10px 14px;background:rgba(255,61,61,0.1);border:1px solid rgba(255,61,61,0.3);border-radius:8px;color:var(--red);font-size:12px;margin-top:10px"></div>
+  </div>
+
+  <!-- TICKER ARAMA -->
+  <div class="ticker-search">
+    <span class="section-label">📡 Manuel Veri</span>
+    <div class="section-title">Ticker &amp; Borsa</div>
+    <p class="section-sub">Yukarıya yapıştırmak yerine manuel girmek istersen buraya yaz.</p>
+    <div class="ticker-row">
+      <div class="ticker-field">
+        <label>Ticker / Hisse Kodu</label>
+        <input type="text" id="ticker-input" placeholder="örn. MICC · AAPL · ASML · SAP">
+      </div>
+      <div style="min-width:130px">
+        <label>Borsa</label>
+        <select id="exchange-select">
+          <option value="AEX">🇳🇱 AEX</option>
+          <option value="NYSE">🇺🇸 NYSE</option>
+          <option value="NASDAQ">🇺🇸 NASDAQ</option>
+          <option value="DAX">🇩🇪 DAX</option>
+          <option value="CAC40">🇫🇷 CAC 40</option>
+          <option value="LSE">🇬🇧 LSE</option>
+        </select>
+      </div>
+      <button class="btn-fetch" id="fetch-btn" onclick="fetchStockData()">VERİ ÇEK</button>
+    </div>
+    <div class="loading-row" id="fetch-loading">
+      <span class="spinner"></span> Veriler çekiliyor...
+    </div>
+    <div class="error-box" id="fetch-error"></div>
+    <div class="auto-data" id="auto-data">
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-weight:600;">✅ Çekilen Veriler — Manuel alanlar otomatik dolduruldu</div>
+      <div class="auto-data-grid">
+        <div class="auto-data-item"><div class="auto-data-label">Güncel Fiyat</div><div class="auto-data-value" id="ad-price">—</div></div>
+        <div class="auto-data-item"><div class="auto-data-label">Değişim</div><div class="auto-data-value" id="ad-change">—</div></div>
+        <div class="auto-data-item"><div class="auto-data-label">52H En Yük.</div><div class="auto-data-label" id="ad-high">—</div></div>
+        <div class="auto-data-item"><div class="auto-data-label">Piy. Değeri</div><div class="auto-data-label" id="ad-mktcap">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEMEL BİLGİLER -->
+  <div class="card">
+    <span class="section-label">📋 Temel Bilgiler</span>
+    <div class="section-title">Şirket &amp; Fiyat</div>
+    <p class="section-sub">Şirket adı ve fiyat bilgilerini gir. Ticker'dan otomatik gelmediyse manuel yaz.</p>
+    <div class="g2" style="margin-bottom:16px">
+      <div class="field">
+        <label>Şirket Adı</label>
+        <input type="text" id="company" placeholder="örn. Magnum Ice Cream">
+      </div>
+      <div class="field">
+        <label>Sektör</label>
+        <select id="sector">
+          <option value="">Seç...</option>
+          <option value="gida">🍦 Gıda &amp; İçecek</option>
+          <option value="teknoloji">💻 Teknoloji</option>
+          <option value="finans">🏦 Finans &amp; Bankacılık</option>
+          <option value="enerji">⚡ Enerji</option>
+          <option value="saglik">💊 Sağlık &amp; İlaç</option>
+          <option value="tuketim">🛒 Tüketim Malları</option>
+          <option value="sanayi">🏭 Sanayi</option>
+          <option value="gayrimenkul">🏠 Gayrimenkul</option>
+          <option value="diger">📦 Diğer</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Güncel Fiyat (€/$)</label>
+        <input type="number" id="price" placeholder="örn. 12.35" step="0.01">
+        <div class="field-hint">Şu anki piyasa fiyatı</div>
+      </div>
+      <div class="field">
+        <label>Analist Hedef Fiyatı</label>
+        <input type="number" id="target-price" placeholder="örn. 15.90" step="0.01">
+        <div class="field-hint">Ortalama analist beklentisi</div>
+      </div>
+    </div>
+
+    <!-- GİRİŞ PLANI -->
+    <div style="padding:16px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);margin-top:8px">
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);font-weight:600;margin-bottom:12px;">🎯 Giriş Planı</div>
+      <div class="g3">
+        <div class="field">
+          <label>Girmek İstediğin Fiyat</label>
+          <input type="number" id="entry-price" placeholder="örn. 11.80" step="0.01">
+          <div class="field-hint">Şu anki fiyat değil — hedeflediğin giriş</div>
+        </div>
+        <div class="field">
+          <label>Yatırmak İstediğin Miktar (€)</label>
+          <input type="number" id="invest-amount" placeholder="örn. 1000" step="10">
+          <div class="field-hint">Kaç euro yatıracaksın?</div>
+        </div>
+        <div class="field">
+          <label>Kar Hedefi</label>
+          <select id="profit-target">
+            <option value="10">%10 Muhafazakar</option>
+            <option value="20" selected="">%20 Normal</option>
+            <option value="30">%30 İyimser</option>
+            <option value="50">%50 Agresif</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEKNİK GÖSTERGELER -->
+  <div class="card">
+    <span class="section-label">📈 Teknik Analiz</span>
+    <div class="section-title">Göstergeler</div>
+    <p class="section-sub">MA = Hareketli Ortalama. Fiyat MA200 üstündeyse uzun vade olumlu. RSI 70+ aşırı alım, 30- aşırı satım.</p>
+    <div class="g3" style="margin-bottom:18px">
+      <div class="field">
+        <label>MA200 — 200 Günlük Ort.</label>
+        <input type="number" id="ma200" placeholder="örn. 13.50" step="0.01">
+      </div>
+      <div class="field">
+        <label>MA20 — 20 Günlük Ort.</label>
+        <input type="number" id="ma20" placeholder="örn. 12.10" step="0.01">
+      </div>
+      <div class="field">
+        <label>RSI (0-100)</label>
+        <input type="number" id="rsi" placeholder="örn. 45" min="0" max="100">
+        <div class="field-hint">30- aşırı satım · 70+ aşırı alım</div>
+      </div>
+      <div class="field">
+        <label>Beta — Volatilite</label>
+        <input type="number" id="beta" placeholder="örn. 0.85" step="0.01">
+        <div class="field-hint">1=piyasa gibi · &gt;1.5 çok dalgalı</div>
+      </div>
+      <div class="field">
+        <label>Hacim Trendi</label>
+        <div class="toggle-wrap" id="volume-group">
+          <button class="tog" onclick="tog(this,&#39;volume-group&#39;,&#39;tg&#39;)" data-val="yukseliyor">📈 Artıyor</button>
+          <button class="tog" onclick="tog(this,&#39;volume-group&#39;,&#39;tr&#39;)" data-val="dusуyor">📉 Düşüyor</button>
+          <button class="tog" onclick="tog(this,&#39;volume-group&#39;,&#39;ty&#39;)" data-val="normal">➡️ Normal</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>MACD Sinyali</label>
+        <div class="toggle-wrap" id="macd-group">
+          <button class="tog" onclick="tog(this,&#39;macd-group&#39;,&#39;tg&#39;)" data-val="pozitif">🟢 Al</button>
+          <button class="tog" onclick="tog(this,&#39;macd-group&#39;,&#39;tr&#39;)" data-val="negatif">🔴 Sat</button>
+          <button class="tog" onclick="tog(this,&#39;macd-group&#39;,&#39;ty&#39;)" data-val="notr">⚪ Nötr</button>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Genel Trend</label>
+      <div class="toggle-wrap" id="trend-group">
+        <button class="tog" onclick="tog(this,&#39;trend-group&#39;,&#39;tg&#39;)" data-val="guclu-yukari">🚀 Güçlü Yukarı</button>
+        <button class="tog" onclick="tog(this,&#39;trend-group&#39;,&#39;tg&#39;)" data-val="yukari">⬆️ Yukarı</button>
+        <button class="tog" onclick="tog(this,&#39;trend-group&#39;,&#39;ty&#39;)" data-val="yatay">➡️ Yatay</button>
+        <button class="tog" onclick="tog(this,&#39;trend-group&#39;,&#39;tr&#39;)" data-val="asagi">⬇️ Aşağı</button>
+        <button class="tog" onclick="tog(this,&#39;trend-group&#39;,&#39;tr&#39;)" data-val="guclu-asagi">💥 Güçlü Aşağı</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FİNANSAL SAĞLIK -->
+  <div class="card">
+    <span class="section-label">🏛️ Finansal Sağlık</span>
+    <div class="section-title">Bilanço &amp; Kârlılık</div>
+    <p class="section-sub">Şirketin iç sağlığı. Kâr marjı, borç, nakit akışı — bunlar şirketin kemikleri.</p>
+    <div class="g2" style="margin-bottom:18px">
+      <div class="field">
+        <label>Kâr Marjı (%)</label>
+        <input type="number" id="margin" placeholder="örn. 15" step="0.1">
+        <div class="field-hint">Gıda sektörü için %10+ iyi</div>
+      </div>
+      <div class="field">
+        <label>F/K Oranı (P/E)</label>
+        <input type="number" id="pe" placeholder="örn. 18" step="0.1">
+        <div class="field-hint">10-20 ucuz · 20-35 normal · 35+ pahalı</div>
+      </div>
+    </div>
+    <div class="g2" style="margin-bottom:18px">
+      <div class="field">
+        <label>Borç Durumu</label>
+        <div class="toggle-wrap" id="debt-group">
+          <button class="tog" onclick="tog(this,&#39;debt-group&#39;,&#39;tg&#39;)" data-val="dusuk">✅ Düşük</button>
+          <button class="tog" onclick="tog(this,&#39;debt-group&#39;,&#39;ty&#39;)" data-val="orta">⚡ Orta</button>
+          <button class="tog" onclick="tog(this,&#39;debt-group&#39;,&#39;tr&#39;)" data-val="yuksek">⚠️ Yüksek</button>
+          <button class="tog" onclick="tog(this,&#39;debt-group&#39;,&#39;tr&#39;)" data-val="kritik">🚨 Kritik</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Nakit Akışı</label>
+        <div class="toggle-wrap" id="cashflow-group">
+          <button class="tog" onclick="tog(this,&#39;cashflow-group&#39;,&#39;tg&#39;)" data-val="guclu">💧 Güçlü</button>
+          <button class="tog" onclick="tog(this,&#39;cashflow-group&#39;,&#39;tg&#39;)" data-val="pozitif">✅ Pozitif</button>
+          <button class="tog" onclick="tog(this,&#39;cashflow-group&#39;,&#39;tr&#39;)" data-val="negatif">🚨 Negatif</button>
+          <button class="tog" onclick="tog(this,&#39;cashflow-group&#39;,&#39;ty&#39;)" data-val="belirsiz">❓ Bilmiyorum</button>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Temettü</label>
+      <div class="toggle-wrap" id="dividend-group">
+        <button class="tog" onclick="tog(this,&#39;dividend-group&#39;,&#39;tg&#39;)" data-val="artarak">📈 Artarak Ödüyor</button>
+        <button class="tog" onclick="tog(this,&#39;dividend-group&#39;,&#39;tg&#39;)" data-val="var">💰 Ödüyor</button>
+        <button class="tog" onclick="tog(this,&#39;dividend-group&#39;,&#39;ty&#39;)" data-val="yok">— Yok</button>
+        <button class="tog" onclick="tog(this,&#39;dividend-group&#39;,&#39;tr&#39;)" data-val="kesildi">✂️ Kesildi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAHTE YÜKSELİŞ DEDEKTÖRÜ -->
+  <div class="card">
+    <span class="section-label">🚨 GameStop Koruması</span>
+    <div class="section-title">Sahte Yükseliş Testi</div>
+    <p class="section-sub">Stop hunting ve pump &amp; dump tuzaklarına karşı koruma. GameStop, AMC, Luna — bunlar hep burada yakalanırdı.</p>
+    <div class="g2" style="margin-bottom:16px">
+      <div class="field">
+        <label>Son 1 Ayda Fiyat Değişimi (%)</label>
+        <input type="number" id="price-change-1m" placeholder="örn. +45 veya -12" step="1">
+        <div class="field-hint">Pozitif = yükseldi, Negatif = düştü</div>
+      </div>
+      <div class="field">
+        <label>Short Interest (halka açıksa)</label>
+        <select id="short-interest">
+          <option value="dusuk">Düşük (%5 altı) — Normal</option>
+          <option value="orta">Orta (%5-15) — Dikkatli</option>
+          <option value="yuksek">Yüksek (%15-30) — Uyarı</option>
+          <option value="cok-yuksek">Çok Yüksek (%30+) — GameStop riski</option>
+          <option value="bilmiyorum">Bilmiyorum</option>
+        </select>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:16px">
+      <label>Yükselişin Sebebi Ne?</label>
+      <div class="toggle-wrap" id="pump-reason-group">
+        <button class="tog" onclick="tog(this,&#39;pump-reason-group&#39;,&#39;tg&#39;)" data-val="gercek-kazanc">📊 Gerçek kazanç/gelir artışı</button>
+        <button class="tog" onclick="tog(this,&#39;pump-reason-group&#39;,&#39;tg&#39;)" data-val="haber">📰 Somut iyi haber</button>
+        <button class="tog" onclick="tog(this,&#39;pump-reason-group&#39;,&#39;ty&#39;)" data-val="analist">🎯 Analist tavsiyesi</button>
+        <button class="tog" onclick="tog(this,&#39;pump-reason-group&#39;,&#39;tr&#39;)" data-val="sosyal-medya">📱 Sosyal medya/Reddit</button>
+        <button class="tog" onclick="tog(this,&#39;pump-reason-group&#39;,&#39;tr&#39;)" data-val="sebepsiz">❓ Bilmiyorum / sebepsiz</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Son Büyük Haber Var mı?</label>
+      <div class="toggle-wrap" id="catalyst-group">
+        <button class="tog" onclick="tog(this,&#39;catalyst-group&#39;,&#39;tg&#39;)" data-val="kazan-raporu">📈 İyi kazanç raporu</button>
+        <button class="tog" onclick="tog(this,&#39;catalyst-group&#39;,&#39;tg&#39;)" data-val="satinalma">🤝 Satın alma / birleşme</button>
+        <button class="tog" onclick="tog(this,&#39;catalyst-group&#39;,&#39;ty&#39;)" data-val="yok">— Önemli haber yok</button>
+        <button class="tog" onclick="tog(this,&#39;catalyst-group&#39;,&#39;tr&#39;)" data-val="kotu-haber">📉 Kötü haber var</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HABERLER -->
+  <div class="card">
+    <span class="section-label">📰 Haberler</span>
+    <div class="section-title">Haber Akışı</div>
+    <p class="section-sub">Şirket adı veya ticker gir, haberler otomatik çekilsin. İnternet olmadan manuel seç.</p>
+    <div class="news-row">
+      <div class="field" style="flex:1">
+        <label>Haber Araması</label>
+        <input type="text" id="news-query" placeholder="örn. Magnum Ice Cream veya AAPL">
+      </div>
+      <button class="btn-fetch" onclick="fetchNews()" style="height:44px">GETIR</button>
+    </div>
+    <div class="loading-row" id="news-loading"><span class="spinner"></span> Haberler yükleniyor...</div>
+    <div class="error-box" id="news-error"></div>
+    <div id="news-list" style="margin-top:12px"></div>
+    <div class="news-sentiment-bar" id="news-sentiment"></div>
+    <div class="field" style="margin-top:16px">
+      <label>Haber Değerlendirmesi</label>
+      <div class="toggle-wrap" id="news-group">
+        <button class="tog" onclick="tog(this,&#39;news-group&#39;,&#39;tg&#39;)" data-val="cok-iyi">🟢 Çok İyi</button>
+        <button class="tog" onclick="tog(this,&#39;news-group&#39;,&#39;tg&#39;)" data-val="iyi">📗 İyi</button>
+        <button class="tog" onclick="tog(this,&#39;news-group&#39;,&#39;ty&#39;)" data-val="karisik">📙 Karışık</button>
+        <button class="tog" onclick="tog(this,&#39;news-group&#39;,&#39;tr&#39;)" data-val="kotu">📕 Kötü</button>
+        <button class="tog" onclick="tog(this,&#39;news-group&#39;,&#39;ty&#39;)" data-val="yok">🔇 Haber Yok</button>
+      </div>
+    </div>
+    <div class="field" style="margin-top:14px">
+      <label>Büyüme Beklentisi</label>
+      <div class="toggle-wrap" id="growth-group">
+        <button class="tog" onclick="tog(this,&#39;growth-group&#39;,&#39;tg&#39;)" data-val="guclu">🚀 Güçlü büyüme</button>
+        <button class="tog" onclick="tog(this,&#39;growth-group&#39;,&#39;tg&#39;)" data-val="var">📈 Büyüme var</button>
+        <button class="tog" onclick="tog(this,&#39;growth-group&#39;,&#39;ty&#39;)" data-val="belirsiz">❓ Belirsiz</button>
+        <button class="tog" onclick="tog(this,&#39;growth-group&#39;,&#39;tr&#39;)" data-val="yok">📉 Yok</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-analyze" onclick="analyze()">🔍 ANALİZİ YAP — DİŞLERİNE BAK</button>
+
+  <!-- SONUÇ -->
+  <div class="result" id="result">
+
+    <!-- Verdict -->
+    <div class="verdict-banner" id="verdict-banner">
+      <div class="verdict-ticker" id="verdict-ticker"></div>
+      <div class="verdict-word" id="verdict-word"></div>
+      <div class="verdict-score-row">
+        <div class="score-ring">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="30" fill="none" stroke="#2a2a2a" stroke-width="6"></circle>
+            <circle id="score-circle" cx="36" cy="36" r="30" fill="none" stroke-width="6" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" style="transition:stroke-dashoffset 1.2s ease"></circle>
+          </svg>
+          <div class="score-ring-num" id="score-num">0</div>
+        </div>
+        <div class="verdict-summary" id="verdict-summary"></div>
+      </div>
+    </div>
+
+    <!-- Skor barı -->
+    <div class="result-card" style="margin-bottom:16px">
+      <div class="sbar-wrap">
+        <div class="sbar-labels"><span>Sağlık Skoru</span><span id="sbar-pct">0/100</span></div>
+        <div class="sbar-bg"><div class="sbar-fill" id="sbar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- Sinyaller -->
+    <div class="result-grid">
+      <div class="result-card good">
+        <div class="result-card-title">✅ Olumlu Sinyaller</div>
+        <div id="positives"></div>
+      </div>
+      <div class="result-card bad">
+        <div class="result-card-title">⚠️ Olumsuz Sinyaller</div>
+        <div id="negatives"></div>
+      </div>
+    </div>
+
+    <!-- Sahte yükseliş -->
+    <div class="pump-detector">
+      <div class="pump-title">🚨 Sahte Yükseliş Testi — GameStop Koruması</div>
+      <div class="pump-items" id="pump-chips"></div>
+    </div>
+
+    <!-- Risk/Reward -->
+    <div class="rr-bar">
+      <div>
+        <div class="rr-label">RİSK / ÖDÜL ORANI</div>
+        <div class="rr-value" id="rr-value">—</div>
+      </div>
+      <div class="rr-visual"><div class="rr-fill" id="rr-fill" style="width:0%"></div></div>
+      <div class="rr-verdict" id="rr-verdict"></div>
+    </div>
+
+    <!-- Çıkış Planı -->
+    <div class="exit-plan">
+      <div class="exit-title">📤 Çıkış Planı</div>
+      <div class="exit-grid">
+        <div class="exit-level stop">
+          <div class="exit-label">Stop Loss</div>
+          <div class="exit-price" id="ep-stop">—</div>
+          <div class="exit-pct" id="ep-stop-pct">Zararı kes</div>
+        </div>
+        <div class="exit-level entry">
+          <div class="exit-label">Giriş</div>
+          <div class="exit-price" id="ep-entry">—</div>
+          <div class="exit-pct" id="ep-shares">— hisse</div>
+        </div>
+        <div class="exit-level t1">
+          <div class="exit-label">Hedef 1</div>
+          <div class="exit-price" id="ep-t1">—</div>
+          <div class="exit-pct" id="ep-t1-pct">%? kar</div>
+        </div>
+        <div class="exit-level t2">
+          <div class="exit-label">Hedef 2</div>
+          <div class="exit-price" id="ep-t2">—</div>
+          <div class="exit-pct" id="ep-t2-pct">%? kar</div>
+        </div>
+        <div class="exit-level t3">
+          <div class="exit-label">Hedef 3</div>
+          <div class="exit-price" id="ep-t3">—</div>
+          <div class="exit-pct" id="ep-t3-pct">%? kar</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding:10px 14px;background:rgba(41,121,255,0.08);border-radius:8px;font-size:11px;color:#888;line-height:1.7" id="exit-advice"></div>
+    </div>
+
+    <!-- Tavsiyeler -->
+    <div class="result-card info" style="margin-bottom:16px">
+      <div class="result-card-title">💡 Humeyra'ya Özel Tavsiye</div>
+      <div id="advice-items"></div>
+    </div>
+
+    <button class="btn-reset" onclick="resetAll()">↩️ Yeni Analiz Yap</button>
+    <div class="disclaimer">⚠️ Bu araç eğitim amaçlıdır. Yatırım tavsiyesi değildir.<br>Her zaman kendi araştırmanı yap — dişlerine kendin bak! 🦷</div>
+  </div>
+
+</div>
+
+<script>
+const sel = {};
+
+  // ─── PASTE DATA FUNCTION ───
+  function pasteData() {
+    const raw = document.getElementById('paste-area').value.trim();
+    const successEl = document.getElementById('paste-success');
+    const errorEl = document.getElementById('paste-error');
+    successEl.style.display = 'none';
+    errorEl.style.display = 'none';
+
+    if(!raw) {
+      errorEl.textContent = '⚠️ Önce veri yapıştır!';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    let d;
+    try {
+      const clean = raw.replace(/```json|```/g, '').trim();
+      d = JSON.parse(clean);
+    } catch(e) {
+      errorEl.textContent = '⚠️ Format hatası: ' + e.message;
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    fillData(d);
+    successEl.style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('company').scrollIntoView({behavior:'smooth', block:'center'});
+    }, 300);
+  }
+
+  function fillData(d) {
+    // Metin & sayı alanları
+    const fields = {
+      'ticker': 'ticker-input',
+      'company': 'company',
+      'price': 'price',
+      'target_price': 'target-price',
+      'entry_price': 'entry-price',
+      'invest_amount': 'invest-amount',
+      'ma200': 'ma200',
+      'ma20': 'ma20',
+      'rsi': 'rsi',
+      'beta': 'beta',
+      'margin': 'margin',
+      'pe': 'pe',
+      'price_change_1m': 'price-change-1m'
+    };
+
+    Object.entries(fields).forEach(([key, id]) => {
+      if(d[key] !== undefined) {
+        const el = document.getElementById(id);
+        if(el) el.value = d[key];
+      }
+    });
+
+    // Select alanları
+    ['sector', 'short_interest', 'profit_target'].forEach(key => {
+      const idMap = { sector: 'sector', short_interest: 'short-interest', profit_target: 'profit-target' };
+      if(d[key]) {
+        const el = document.getElementById(idMap[key]);
+        if(el) el.value = d[key];
+      }
+    });
+
+    // Toggle butonları
+    const toggles = [
+      ['macd', 'macd-group'],
+      ['trend', 'trend-group'],
+      ['volume', 'volume-group'],
+      ['debt', 'debt-group'],
+      ['cashflow', 'cashflow-group'],
+      ['dividend', 'dividend-group'],
+      ['news', 'news-group'],
+      ['growth', 'growth-group'],
+      ['pump_reason', 'pump-reason-group'],
+      ['catalyst', 'catalyst-group'],
+    ];
+
+    toggles.forEach(([key, groupId]) => {
+      if(!d[key]) return;
+      const group = document.getElementById(groupId);
+      if(!group) return;
+      group.querySelectorAll('.tog').forEach(b => b.classList.remove('tg','tr','ty','tb'));
+      const btn = group.querySelector('[data-val="' + d[key] + '"]');
+      if(btn) {
+        btn.classList.add(d[key + '_class'] || 'ty');
+        sel[groupId] = d[key];
+      }
+    });
+  }
+
+  // Sayfa açılınca localStorage'dan veri yükle
+  window.addEventListener('load', () => {
+    try {
+      const saved = localStorage.getItem('humeyra_paste_data');
+      if(saved) {
+        const d = JSON.parse(saved);
+        fillData(d);
+        localStorage.removeItem('humeyra_paste_data');
+        document.getElementById('paste-success').style.display = 'block';
+      }
+    } catch(e) {}
+  });
+
+function tog(btn, group, cls) {
+  document.querySelectorAll(`#${group} .tog`).forEach(b => b.classList.remove('tg','tr','ty','tb'));
+  btn.classList.add(cls);
+  sel[group] = btn.dataset.val;
+}
+
+function g(id) { return sel[id] || null; }
+function gNum(id) { return parseFloat(document.getElementById(id).value) || 0; }
+function gStr(id) { return document.getElementById(id).value.trim(); }
+
+// ─── STOCK DATA FETCH ───
+async function fetchStockData() {
+  const ticker = gStr('ticker-input').toUpperCase();
+  if (!ticker) { alert('Ticker gir!'); return; }
+  const btn = document.getElementById('fetch-btn');
+  const loading = document.getElementById('fetch-loading');
+  const errorDiv = document.getElementById('fetch-error');
+  const autoData = document.getElementById('auto-data');
+
+  btn.disabled = true;
+  loading.classList.add('show');
+  errorDiv.classList.remove('show');
+  autoData.style.display = 'none';
+
+  try {
+    // Yahoo Finance via allorigins proxy
+    const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`)}`;
+    const res = await fetch(url);
+    const raw = await res.json();
+    const data = JSON.parse(raw.contents);
+    const meta = data.chart.result[0].meta;
+
+    const price = meta.regularMarketPrice || meta.chartPreviousClose;
+    const prev = meta.chartPreviousClose;
+    const change = price - prev;
+    const changePct = ((change / prev) * 100).toFixed(2);
+    const high52 = meta.fiftyTwoWeekHigh;
+    const mktCap = meta.marketCap;
+
+    // Fill fields
+    document.getElementById('price').value = price.toFixed(2);
+    document.getElementById('news-query').value = ticker;
+
+    // Display
+    document.getElementById('ad-price').textContent = `€${price.toFixed(2)}`;
+    const chEl = document.getElementById('ad-change');
+    chEl.textContent = `${change >= 0 ? '+' : ''}${changePct}%`;
+    chEl.className = `auto-data-value ${change >= 0 ? 'up' : 'down'}`;
+    document.getElementById('ad-high').textContent = high52 ? `€${high52.toFixed(2)}` : '—';
+    document.getElementById('ad-mktcap').textContent = mktCap ? (mktCap > 1e9 ? `€${(mktCap/1e9).toFixed(1)}B` : `€${(mktCap/1e6).toFixed(0)}M`) : '—';
+
+    autoData.style.display = 'block';
+  } catch(e) {
+    errorDiv.innerHTML = `⚠️ Veri çekilemedi. Manuel gir veya şu linkten bak:<br>
+      <a href="https://finance.yahoo.com/quote/${ticker}" target="_blank" style="color:var(--gold)">Yahoo Finance → ${ticker}</a>`;
+    errorDiv.classList.add('show');
+  } finally {
+    btn.disabled = false;
+    loading.classList.remove('show');
+  }
+}
+
+// ─── NEWS FETCH ───
+const posWords = ['profit','growth','record','strong','beat','upgrade','buy','positive','revenue','surge','rise','gain','expand','launch','deal','win','success','boost','soar','rally','outperform','dividend','exceed','record','milestone'];
+const negWords = ['loss','decline','fall','drop','miss','downgrade','sell','negative','layoff','cut','shrink','warn','risk','debt','fraud','lawsuit','recall','fine','weak','disappoint','underperform','restructur','crisis','probe','plunge','crash'];
+
+function sentiment(text) {
+  const l = text.toLowerCase();
+  let p = 0, n = 0;
+  posWords.forEach(w => { if(l.includes(w)) p++; });
+  negWords.forEach(w => { if(l.includes(w)) n++; });
+  if(p > n+1) return 'pos';
+  if(n > p+1) return 'neg';
+  return 'neu';
+}
+
+async function fetchNews() {
+  const q = document.getElementById('news-query').value.trim();
+  if(!q) { alert('Arama terimi gir!'); return; }
+  const loading = document.getElementById('news-loading');
+  const errorDiv = document.getElementById('news-error');
+  const list = document.getElementById('news-list');
+  const sentBar = document.getElementById('news-sentiment');
+
+  loading.classList.add('show');
+  errorDiv.classList.remove('show');
+  list.innerHTML = '';
+  sentBar.style.display = 'none';
+
+  let articles = [];
+
+  try {
+    const rssUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent('https://news.google.com/rss/search?q=' + q + '+stock+finance&hl=en-US&gl=US&ceid=US:en')}&api_key=public&count=8`;
+    const res = await fetch(rssUrl);
+    const data = await res.json();
+    if(data.items && data.items.length > 0) {
+      articles = data.items.slice(0, 7).map(i => ({
+        title: i.title.replace(/<[^>]*>/g, ''),
+        url: i.link,
+        source: i.author || 'Google News',
+        date: new Date(i.pubDate).toLocaleDateString('tr-TR')
+      }));
+    }
+  } catch(e) {}
+
+  loading.classList.remove('show');
+
+  if(articles.length === 0) {
+    errorDiv.innerHTML = `⚠️ Haber çekilemedi. <a href="https://www.google.com/search?q=${encodeURIComponent(q+' stock news')}&tbm=nws" target="_blank" style="color:var(--gold)">Google Haberler'de aç →</a>`;
+    errorDiv.classList.add('show');
+    return;
+  }
+
+  let pos = 0, neg = 0, neu = 0;
+  articles.forEach(a => {
+    const s = sentiment(a.title);
+    if(s==='pos') pos++; else if(s==='neg') neg++; else neu++;
+    const icon = s==='pos' ? '📗' : s==='neg' ? '📕' : '📙';
+    list.innerHTML += `<div class="news-item ${s}">
+      <div class="news-dot"></div>
+      <div>
+        <a class="news-title" href="${a.url}" target="_blank">${a.title}</a>
+        <div class="news-meta">${icon} ${a.source} · ${a.date}</div>
+      </div>
+    </div>`;
+  });
+
+  let overallVal, overallText, overallColor, overallBg;
+  if(pos > neg+1) { overallVal='iyi'; overallText=`📗 Genel olarak OLUMLU — ${pos} pozitif, ${neg} negatif haber`; overallColor='var(--green)'; overallBg='rgba(0,200,83,0.08)'; }
+  else if(neg > pos+1) { overallVal='kotu'; overallText=`📕 Genel olarak OLUMSUZ — ${neg} negatif, ${pos} pozitif haber`; overallColor='var(--red)'; overallBg='rgba(255,61,61,0.08)'; }
+  else { overallVal='karisik'; overallText=`📙 KARISIK — ${pos} pozitif, ${neg} negatif, ${neu} nötr haber`; overallColor='var(--yellow)'; overallBg='rgba(255,179,0,0.08)'; }
+
+  sentBar.style.display = 'block';
+  sentBar.style.background = overallBg;
+  sentBar.style.color = overallColor;
+  sentBar.style.border = `1px solid ${overallColor}44`;
+  sentBar.textContent = overallText;
+
+  // Auto-select toggle
+  document.querySelectorAll('#news-group .tog').forEach(b => b.classList.remove('tg','tr','ty'));
+  document.querySelectorAll('#news-group .tog').forEach(b => {
+    if(b.dataset.val === overallVal) {
+      b.classList.add(overallVal==='iyi'?'tg':overallVal==='kotu'?'tr':'ty');
+      sel['news-group'] = overallVal;
+    }
+  });
+}
+
+// ─── ANALYZE ───
+function analyze() {
+  const price = gNum('price');
+  const targetP = gNum('target-price');
+  const entryP = gNum('entry-price') || price;
+  const investAmt = gNum('invest-amount');
+  const profitPct = gNum('profit-target') || 20;
+  const ma200 = gNum('ma200');
+  const ma20 = gNum('ma20');
+  const rsi = gNum('rsi');
+  const beta = gNum('beta');
+  const margin = gNum('margin');
+  const pe = gNum('pe');
+  const change1m = gNum('price-change-1m');
+  const company = gStr('company') || 'Şirket';
+  const ticker = gStr('ticker-input') || '—';
+
+  let score = 50;
+  const positives = [];
+  const negatives = [];
+  const advice = [];
+
+  // ── Teknik ──
+  if(price > 0 && ma200 > 0) {
+    if(price > ma200 * 1.05) { score += 9; positives.push('Fiyat MA200\'ün %5 üzerinde — güçlü uzun vade trendi'); }
+    else if(price > ma200) { score += 5; positives.push('Fiyat MA200 üzerinde — uzun vade olumlu'); }
+    else if(price > ma200 * 0.95) { score -= 4; negatives.push('Fiyat MA200\'e yakın ama altında — dikkatli'); }
+    else { score -= 9; negatives.push('Fiyat MA200\'ün altında — uzun vade baskısı var'); }
+  }
+
+  if(price > 0 && ma20 > 0) {
+    if(price > ma20) { score += 5; positives.push('Fiyat MA20 üzerinde — kısa vade momentum pozitif'); }
+    else { score -= 5; negatives.push('Fiyat MA20 altında — kısa vade zayıf'); }
+  }
+
+  if(rsi > 0) {
+    if(rsi > 75) { score -= 8; negatives.push(`RSI ${rsi} — aşırı alım bölgesi, düzeltme riski!`); }
+    else if(rsi > 65) { score -= 3; negatives.push(`RSI ${rsi} — alım bölgesine yaklaşıyor, dikkat`); }
+    else if(rsi < 30) { score += 8; positives.push(`RSI ${rsi} — aşırı satım, toparlanma fırsatı olabilir`); }
+    else if(rsi < 45) { score += 4; positives.push(`RSI ${rsi} — sağlıklı bölge, baskı yok`); }
+    else { score += 2; positives.push(`RSI ${rsi} — normal seviye`); }
+  }
+
+  if(beta > 0) {
+    if(beta < 0.7) positives.push(`Beta ${beta} — çok düşük volatilite, savunmacı hisse`);
+    else if(beta < 1.2) positives.push(`Beta ${beta} — sağlıklı volatilite seviyesi`);
+    else if(beta < 1.8) { score -= 3; negatives.push(`Beta ${beta} — piyasadan daha dalgalı, risk yönet`); }
+    else { score -= 7; negatives.push(`Beta ${beta} — çok yüksek volatilite! Stop mesafeni geniş tut`); }
+  }
+
+  if(price > 0 && targetP > 0) {
+    const up = ((targetP - price) / price) * 100;
+    if(up > 30) { score += 10; positives.push(`Analist hedefine %${up.toFixed(0)} yükseliş potansiyeli`); }
+    else if(up > 15) { score += 6; positives.push(`Analist hedefine %${up.toFixed(0)} yükseliş bekleniyor`); }
+    else if(up > 0) { score += 2; positives.push(`Analist hedefine %${up.toFixed(0)} yükseliş var`); }
+    else { score -= 8; negatives.push(`Mevcut fiyat analist hedefinin üzerinde — pahalı görünüyor!`); }
+  }
+
+  const macd = g('macd-group');
+  if(macd==='pozitif') { score += 7; positives.push('MACD pozitif — alım momentumu'); }
+  else if(macd==='negatif') { score -= 7; negatives.push('MACD negatif — satış baskısı'); }
+
+  const trend = g('trend-group');
+  if(trend==='guclu-yukari') { score += 10; positives.push('Güçlü yukarı trend'); }
+  else if(trend==='yukari') { score += 6; positives.push('Yukarı trend devam ediyor'); }
+  else if(trend==='yatay') { advice.push('Trend yatay — kırılma bekle, erken girme'); }
+  else if(trend==='asagi') { score -= 6; negatives.push('Aşağı trend var — iyi zamanlama gerekiyor'); }
+  else if(trend==='guclu-asagi') { score -= 12; negatives.push('Güçlü aşağı trend! Düşen bıçağı tutma.'); }
+
+  const vol = g('volume-group');
+  if(vol==='yukseliyor') { score += 4; positives.push('Hacim artıyor — güçlü katılım'); }
+  else if(vol==='dusуyor') { score -= 3; negatives.push('Hacim düşüyor — hareket zayıflıyor'); }
+
+  // ── Finansal ──
+  if(margin > 0) {
+    if(margin >= 25) { score += 10; positives.push(`Kâr marjı %${margin} — olağanüstü kârlılık!`); }
+    else if(margin >= 15) { score += 7; positives.push(`Kâr marjı %${margin} — çok iyi`); }
+    else if(margin >= 8) { score += 3; positives.push(`Kâr marjı %${margin} — kabul edilebilir`); }
+    else { score -= 5; negatives.push(`Kâr marjı %${margin} — düşük, verimlilik sorunu`); }
+  }
+
+  if(pe > 0) {
+    if(pe < 10) { score += 8; positives.push(`F/K ${pe} — çok ucuz, gözden kaçmış olabilir`); }
+    else if(pe < 20) { score += 5; positives.push(`F/K ${pe} — makul fiyatlanmış`); }
+    else if(pe < 35) { score -= 2; negatives.push(`F/K ${pe} — biraz pahalı, büyüme beklentisi yüksek tutulmuş`); }
+    else { score -= 7; negatives.push(`F/K ${pe} — çok pahalı! Beklentiler çok yüksek.`); }
+  }
+
+  const debt = g('debt-group');
+  if(debt==='dusuk') { score += 8; positives.push('Borç düşük — finansal esneklik var'); }
+  else if(debt==='orta') { score += 2; advice.push('Orta borç — büyüme için kullanılıyorsa sorun değil'); }
+  else if(debt==='yuksek') { score -= 8; negatives.push('Yüksek borç — faiz yükü şirketi zorlayabilir'); }
+  else if(debt==='kritik') { score -= 15; negatives.push('KRİTİK BORÇ SEVİYESİ! Şirket sıkışmış olabilir!'); }
+
+  const cf = g('cashflow-group');
+  if(cf==='guclu') { score += 10; positives.push('Güçlü nakit akışı — şirket gerçekten para kazanıyor'); }
+  else if(cf==='pozitif') { score += 6; positives.push('Nakit akışı pozitif — sağlıklı'); }
+  else if(cf==='negatif') { score -= 12; negatives.push('Nakit akışı negatif — kâr görünse de para çıkıyor!'); }
+
+  const div = g('dividend-group');
+  if(div==='artarak') { score += 8; positives.push('Temettü artarak ödeniyor — güçlü şirket işareti'); }
+  else if(div==='var') { score += 4; positives.push('Temettü ödüyor — düzenli gelir'); }
+  else if(div==='kesildi') { score -= 8; negatives.push('Temettü kesildi — şirket nakit sıkıntısında!'); }
+
+  // ── Haberler ──
+  const news = g('news-group');
+  if(news==='cok-iyi') { score += 9; positives.push('Haberler çok olumlu'); }
+  else if(news==='iyi') { score += 5; positives.push('Haberler olumlu'); }
+  else if(news==='kotu') { score -= 7; negatives.push('Haberler olumsuz'); }
+  else if(news==='karisik') { advice.push('Karışık haberler — biraz daha bekle'); }
+
+  const growth = g('growth-group');
+  if(growth==='guclu') { score += 9; positives.push('Güçlü büyüme beklentisi var'); }
+  else if(growth==='var') { score += 5; positives.push('Büyüme bekleniyor'); }
+  else if(growth==='yok') { score -= 8; negatives.push('Büyüme beklentisi yok'); }
+
+  // ── Pump dedektörü ──
+  const pumpChips = [];
+  let pumpRisk = 0;
+
+  if(rsi > 70) { pumpChips.push({t:'⚠️ RSI 70+ — Aşırı Alım', c:'warn'}); pumpRisk++; }
+  else { pumpChips.push({t:'✅ RSI Normal', c:'safe'}); }
+
+  if(change1m > 50) { pumpChips.push({t:`🚨 1 Ayda +%${change1m} — Çok Sert Yükseliş!`, c:'danger'}); pumpRisk += 2; }
+  else if(change1m > 25) { pumpChips.push({t:`⚠️ 1 Ayda +%${change1m} — Dikkatli`, c:'warn'}); pumpRisk++; }
+  else if(change1m > 0) { pumpChips.push({t:`✅ 1 Ayda +%${change1m} — Makul`, c:'safe'}); }
+  else if(change1m < -20) { pumpChips.push({t:`✅ 1 Ayda -%${Math.abs(change1m)} — Düşmüş, Fırsat Olabilir`, c:'safe'}); }
+
+  const si = g('short-interest') || 'bilmiyorum';
+  if(si==='cok-yuksek') { pumpChips.push({t:'🚨 Short Interest %30+ — GameStop Riski!', c:'danger'}); pumpRisk += 2; }
+  else if(si==='yuksek') { pumpChips.push({t:'⚠️ Short Interest Yüksek', c:'warn'}); pumpRisk++; }
+  else if(si==='dusuk') { pumpChips.push({t:'✅ Short Interest Düşük', c:'safe'}); }
+
+  const pr = g('pump-reason-group');
+  if(pr==='sosyal-medya') { pumpChips.push({t:'🚨 Sosyal Medya Pompalıyor — Tehlike!', c:'danger'}); pumpRisk += 2; score -= 10; }
+  else if(pr==='sebepsiz') { pumpChips.push({t:'⚠️ Sebepsiz Yükseliş — Şüpheli', c:'warn'}); pumpRisk++; score -= 5; }
+  else if(pr==='gercek-kazanc') { pumpChips.push({t:'✅ Gerçek Kazanç Artışı — Sağlıklı', c:'safe'}); }
+  else if(pr==='haber') { pumpChips.push({t:'✅ Somut Habere Dayalı Yükseliş', c:'safe'}); }
+
+  if(pumpRisk >= 4) { negatives.push('🚨 SAHTE YÜKSELİŞ RİSKİ YÜKSEK — GameStop/Luna tuzağı olabilir!'); score -= 8; }
+  else if(pumpRisk >= 2) { advice.push('⚠️ Yükselişin gerçekçiliğini sorgula — acele etme'); }
+
+  // ── Skor sınırla ──
+  score = Math.max(8, Math.min(93, Math.round(score)));
+
+  // ── Karar ──
+  let verdict, bClass, summary;
+  if(score >= 68) {
+    verdict = 'AL';
+    bClass = 'AL';
+    summary = `${company} genel olarak sağlıklı görünüyor. Temel ve teknik göstergeler olumlu. Girişi planla, stop loss koy, sabırla bekle.`;
+  } else if(score >= 45) {
+    verdict = 'BEKLE';
+    bClass = 'BEKLE';
+    summary = `${company} için karma sinyaller var. Acele etme — bir sonraki finansal raporu veya teknik kırılımı bekle. İzle, not al.`;
+  } else {
+    verdict = 'ALMA';
+    bClass = 'ALMA';
+    summary = `${company} şu an için riskli. Olumsuz sinyaller ağır basıyor. Düşen bıçağı tutma — önce stabilize olmasını bekle.`;
+  }
+
+  // ── Exit Plan ──
+  const ep = entryP > 0 ? entryP : price;
+  const stopPrice = (ep * 0.88).toFixed(2);
+  // Stop hunter'lara karşı round number'ları geç
+  const stopRounded = Math.floor(ep * 0.88 * 100) / 100;
+  const t1 = (ep * (1 + profitPct/100 * 0.4)).toFixed(2);
+  const t2 = (ep * (1 + profitPct/100 * 0.75)).toFixed(2);
+  const t3 = (ep * (1 + profitPct/100)).toFixed(2);
+  const t1pct = (profitPct * 0.4).toFixed(0);
+  const t2pct = (profitPct * 0.75).toFixed(0);
+
+  const shares = investAmt > 0 && ep > 0 ? Math.floor(investAmt / ep) : null;
+
+  // Risk/Reward
+  const risk = ep - stopRounded;
+  const reward = parseFloat(t3) - ep;
+  const rrRatio = risk > 0 ? (reward / risk).toFixed(1) : null;
+  const rrWidth = rrRatio ? Math.min(100, (parseFloat(rrRatio) / 5) * 100) : 0;
+  let rrVerdict = '';
+  if(rrRatio) {
+    if(parseFloat(rrRatio) >= 3) rrVerdict = '🟢 Mükemmel';
+    else if(parseFloat(rrRatio) >= 2) rrVerdict = '🟡 İyi';
+    else rrVerdict = '🔴 Zayıf — stop'u genişlet ya da hedefi yükselt';
+  }
+
+  // ── RENDER ──
+  const banner = document.getElementById('verdict-banner');
+  banner.className = `verdict-banner ${bClass}`;
+  document.getElementById('verdict-ticker').textContent = `${company.toUpperCase()} ${ticker !== '—' ? '· ' + ticker : ''}`;
+  document.getElementById('verdict-word').textContent = verdict;
+  document.getElementById('verdict-summary').textContent = summary;
+  document.getElementById('score-num').textContent = score;
+
+  const circle = document.getElementById('score-circle');
+  const circumference = 188.5;
+  circle.style.stroke = score >= 68 ? 'var(--green)' : score >= 45 ? 'var(--yellow)' : 'var(--red)';
+  setTimeout(() => { circle.style.strokeDashoffset = circumference - (circumference * score / 100); }, 200);
+
+  const sbar = document.getElementById('sbar');
+  sbar.style.background = score >= 68 ? 'var(--green)' : score >= 45 ? 'var(--yellow)' : 'var(--red)';
+  setTimeout(() => { sbar.style.width = score + '%'; }, 200);
+  document.getElementById('sbar-pct').textContent = `${score}/100`;
+
+  // Sinyaller
+  const posEl = document.getElementById('positives');
+  posEl.innerHTML = positives.length ? positives.map(p => `<div class="signal-item"><div class="signal-dot" style="background:var(--green)"></div><span>${p}</span></div>`).join('') : '<div class="signal-item"><span style="color:var(--text3)">Yeterli olumlu sinyal bulunamadı</span></div>';
+
+  const negEl = document.getElementById('negatives');
+  negEl.innerHTML = negatives.length ? negatives.map(n => `<div class="signal-item"><div class="signal-dot" style="background:var(--red)"></div><span>${n}</span></div>`).join('') : '<div class="signal-item"><span style="color:var(--text3)">Belirgin olumsuz sinyal yok</span></div>';
+
+  // Pump chips
+  document.getElementById('pump-chips').innerHTML = pumpChips.map(c => `<div class="pump-chip ${c.c}">${c.t}</div>`).join('');
+
+  // R/R
+  document.getElementById('rr-value').textContent = rrRatio ? `1 : ${rrRatio}` : '—';
+  document.getElementById('rr-fill').style.width = rrWidth + '%';
+  document.getElementById('rr-verdict').textContent = rrVerdict;
+
+  // Exit plan
+  document.getElementById('ep-stop').textContent = `€${stopRounded}`;
+  document.getElementById('ep-stop-pct').textContent = `-%12 · Stop Hunter Korumalı`;
+  document.getElementById('ep-entry').textContent = `€${ep.toFixed(2)}`;
+  document.getElementById('ep-shares').textContent = shares ? `${shares} hisse · €${(shares * ep).toFixed(0)} yatırım` : 'Giriş';
+  document.getElementById('ep-t1').textContent = `€${t1}`;
+  document.getElementById('ep-t1-pct').textContent = `%${t1pct} kar · 1/3 sat`;
+  document.getElementById('ep-t2').textContent = `€${t2}`;
+  document.getElementById('ep-t2-pct').textContent = `%${t2pct} kar · 1/3 sat`;
+  document.getElementById('ep-t3').textContent = `€${t3}`;
+  document.getElementById('ep-t3-pct').textContent = `%${profitPct} kar · son 1/3`;
+
+  // Stop tavsiyesi
+  document.getElementById('exit-advice').innerHTML = `
+    💡 <strong>Stop Hunter Koruması:</strong> Stop'u tam €${Math.floor(ep * 0.88)}.00 yerine €${stopRounded} olarak koy — yuvarlak sayılar avlanır.<br>
+    📊 <strong>Kademeli Çıkış:</strong> T1'de %33 sat, T2'de %33 sat, T3'de son %33'ü sat. Tüm parayı aynı anda çıkarma.<br>
+    🛡️ <strong>Pozisyon Büyüklüğü:</strong> ${investAmt > 0 ? `€${investAmt} yatırımın için toplam portföyünün max %5-10'u olduğundan emin ol.` : 'Tek pozisyon için toplam portföyünün max %5-10\'unu kullan.'}
+  `;
+
+  // Advice
+  if(advice.length === 0) advice.push('Analiz tamamlandı — kendi araştırmanla doğrula');
+  advice.push('Stop loss koymayı unutma — her işlemde!');
+  if(score >= 68) advice.push('Giriş fiyatını sabırla bekle, şu anki fiyattan atlamak zorunda değilsin');
+  document.getElementById('advice-items').innerHTML = advice.map(a => `<div class="signal-item"><div class="signal-dot" style="background:var(--blue)"></div><span>${a}</span></div>`).join('');
+
+  // Show result
+  const result = document.getElementById('result');
+  result.classList.add('show');
+  setTimeout(() => result.scrollIntoView({behavior:'smooth', block:'start'}), 100);
+}
+
+function resetAll() {
+  document.getElementById('result').classList.remove('show');
+  Object.keys(sel).forEach(k => delete sel[k]);
+  document.querySelectorAll('.tog').forEach(b => b.classList.remove('tg','tr','ty','tb'));
+  document.getElementById('score-circle').style.strokeDashoffset = '188.5';
+  document.getElementById('sbar').style.width = '0%';
+  document.getElementById('news-list').innerHTML = '';
+  document.getElementById('news-sentiment').style.display = 'none';
+  document.getElementById('auto-data').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+async function sheetsVerisiniCek() {
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
+    
+    try {
+        const response = await fetch(csvUrl);
+        const data = await response.text();
+        // Satırları ve sütunları parçala
+        const rows = data.split('\n').map(row => row.split(','));
+        
+        console.log("Tablo Verileri:", rows);
+
+        // ANALİZ ETMEK İSTEDİĞİN SATIRI SEÇ (Örn: 2. satır için 1 yazılır)
+        // Eğer tabloda DAX 2. satırdaysa:
+        const daxSatiri = rows[1]; 
+
+        // Kutucukları Otomatik Doldur (ID'leri HTML'deki karşılıklarıyla eşliyoruz)
+        if(document.getElementById('ticker')) document.getElementById('ticker').value = daxSatiri[0]; // İsim
+        if(document.getElementById('price'))  document.getElementById('price').value  = daxSatiri[2].replace('$', '').trim(); // Fiyat (Dolar işaretini temizler)
+        
+        // Eğer tablonda RSI ve MA200 sütunları varsa onları da buraya ekleyebilirsin:
+        // document.getElementById('rsi').value = daxSatiri[10]; // Örn: K sütunu
+        // document.getElementById('ma200').value = daxSatiri[7]; // Örn: H sütunu
+
+        alert("Veriler Sheets'ten başarıyla çekildi ve kutucuklara yerleştirildi!");
+        
+    } catch (error) {
+        console.error("Hata:", error);
+        alert("Bağlantı hatası! Lütfen internetini ve Sheets linkini kontrol et.");
+    }
+}
+
+// Sayfa yüklendiğinde otomatik çalıştır
+window.addEventListener('load', async function sheetsVerisiniCek() {
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
+    
+    try {
+        const response = await fetch(csvUrl);
+        if (!response.ok) throw new Error('Ağ yanıtı düzgün değil');
+        
+        const data = await response.text();
+        // Satırları temizleyerek parçala
+        const rows = data.split(/\r?\n/).map(row => row.split(','));
+        
+        console.log("Tüm Tablo:", rows);
+
+        // ÖRNEK: DAX verisi için (Eğer DAX 2. satırdaysa rows[1] kullanılır)
+        // Buradaki [1] sayısını tablodaki sıraya göre değiştirebilirsin
+        const seciliVeri = rows[1]; 
+
+        if (seciliVeri) {
+            // Kutucukları doldururken veriyi temizle (Sembolleri ve boşlukları at)
+            if(document.getElementById('ticker')) {
+                document.getElementById('ticker').value = seciliVeri[0].trim();
+            }
+            if(document.getElementById('price')) {
+                // Fiyatın içindeki $, €, nokta veya ok işaretlerini temizle sadece rakamı al
+                let temizFiyat = seciliVeri[2].replace(/[^0-9.,]/g, '').trim();
+                document.getElementById('price').value = temizFiyat;
+            }
+            
+            // Eğer RSI ve MA200 sütunlarını biliyorsan altına ekleyebiliriz
+            // document.getElementById('rsi').value = seciliVeri[3]; 
+
+            alert(seciliVeri[0] + " verileri başarıyla yüklendi!");
+        }
+        
+    } catch (error) {
+        console.error("Hata detayı:", error);
+        alert("Veri çekilemedi! Lütfen Chrome kullanıyorsan internet bağlantını ve Sheets linkini kontrol et.");
+    }
+}
+
+// Sayfa açıldığında değil, bir butona basınca çalışması daha güvenlidir
+// Ama istersen otomatik kalsın:
+window.addEventListener('load', sheetsVerisiniCek););};
+</script>
+
+
+</body></html>
