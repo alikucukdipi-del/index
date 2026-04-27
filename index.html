@@ -1754,8 +1754,7 @@ async function sheetsVerisiniGetir() {
         
         // Veriyi satırlara ve sütunlara ayır
         const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
-        const satir2 = rows[1]; // Sheets'teki 2. satır (Başlıktan sonraki ilk veri)
-
+        const satir2 = rows[5]; // 6. satırı (MICC) hedefliyoruz
         if (satir2 && satir2.length >= 3) {
             const tickerInput = document.getElementById('ticker-input');
             const priceInput = document.getElementById('price');
