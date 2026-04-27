@@ -1716,7 +1716,7 @@ async function sheetsVerisiniGetir() {
         const satirlar = metin.split(/\r?\n/).map(s => s.split(/[,;]/));
         
         // Tablodaki 2. satırı al (Başlıklardan sonraki ilk veri satırı)
-        const anaVeri = satirlar[1]; 
+        const anaVeri = satirlar[5]; 
 
         if (anaVeri && anaVeri.length >= 3) {
             // HTML'deki kutuları ID'lerine göre doldur
