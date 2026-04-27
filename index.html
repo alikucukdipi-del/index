@@ -1703,70 +1703,33 @@ async function sheetsVerisiniCek() {
 window.onload = sheetsVerisiniCek;
 }
 }
-</script>
-
 <script>
+// Bu fonksiyon veriyi çeker ve kutulara yazar
 async function sheetsVerisiniCek() {
-    // Senin Google Sheets CSV linkin
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
     
-    console.log("Sistem: Veri çekme başlatıldı...");
-
     try {
         const response = await fetch(csvUrl, { cache: "no-store" });
         const data = await response.text();
-        
-        // Satırları parçala
         const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
-        
-        // DAX verisi 2. satırda (Index 1)
         const dax = rows[1]; 
 
         if (dax && dax.length > 2) {
-            const gelenSembol = dax[0].replace(/"/g, "").trim();
-            const gelenFiyat = dax[2].replace(/"/g, "").trim();
-
-            // SENİN HTML'İNDEKİ KUTUCUKLARI BULALIM
-            const sembolKutusu = document.getElementById('ticker-input');
+            // Tam olarak senin HTML'indeki ID'leri kullanıyoruz
+            const tickerKutusu = document.getElementById('ticker-input');
             const fiyatKutusu = document.getElementById('price');
 
-            // Kutuları doldur
-            if (sembolKutusu) sembolKutusu.value = gelenSembol;
-            if (fiyatKutusu) fiyatKutusu.value = gelenFiyat;
+            if (tickerKutusu) tickerKutusu.value = dax[0].replace(/"/g, "").trim();
+            if (fiyatKutusu) fiyatKutusu.value = dax[2].replace(/"/g, "").trim();
 
-            console.log("Başarılı: " + gelenSembol + " fiyatı " + gelenFiyat + " olarak girildi.");
+            console.log("Veri kutulara başarıyla yazıldı:", dax[0], dax[2]);
         }
     } catch (err) {
-        console.error("Hata: Veri çekilemedi ->", err);
+        console.error("Hata oluştu:", err);
     }
 }
 
-// Sayfa yüklenir yüklenmez çalıştır
-window.addEventListener('load', sheetsVerisiniCek);
-</script>
-  <script>
-window.onload = function() {
-  sheetsVerisiniCek();
-};
-
-async function sheetsVerisiniCek() {
-  const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
-  
-  try {
-    const response = await fetch(csvUrl, { cache: "no-store" });
-    const data = await response.text();
-    const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
-    const dax = rows[1]; 
-
-    if (dax) {
-      // Senin HTML'indeki ID'lere göre nokta atışı:
-      document.getElementById('ticker-input').value = dax[0].replace(/"/g, "").trim();
-      document.getElementById('price').value = dax[2].replace(/"/g, "").trim();
-      console.log("Veri çekildi: ", dax[0], dax[2]);
-    }
-  } catch (err) {
-    console.error("Hata:", err);
-  }
-}
+// MARŞA BASMA KOMUTU: Sayfa açılır açılmaz çalıştır
+window.onload = sheetsVerisiniCek;
 </script>
 </body></html>
