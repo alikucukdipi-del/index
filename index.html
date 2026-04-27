@@ -1763,7 +1763,7 @@ async function sheetsVerisiniGetir() {
 
             // Kutuları doldur (Tırnak işaretlerini temizler)
             if (tickerInput) tickerInput.value = satir2[0].replace(/"/g, "").trim();
-            if (priceInput) priceInput.value = satir2[2].replace(/"/g, "").trim();
+            if (priceInput) priceInput.value = satir2[2].replace(/[^0-9.]/g, "");
             if (companyInput) companyInput.value = (satir2[0].replace(/"/g, "") + " - Otomatik Veri").trim();
 
             console.log("Veri başarıyla çekildi:", satir2[0]);
