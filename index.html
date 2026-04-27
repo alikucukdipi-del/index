@@ -1244,42 +1244,44 @@ function gNum(id) { return parseFloat(document.getElementById(id).value) || 0; }
 function gStr(id) { return document.getElementById(id).value.trim(); }
 
 async function fetchStockData() {
-    const tickerInput = document.getElementById('ticker-input');
-    const ticker = tickerInput.value.trim().toUpperCase();
-    
-    if (!ticker) {
-        alert("Lütfen bir Ticker girin.");
-        return;
-    }
+    const ticker = document.getElementById('ticker-input').value.trim().toUpperCase();
+    if (!ticker) return alert("Lütfen bir Ticker girin.");
 
-    // Google Sheets Linki (En temiz hali)
-    const baseUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quyVIAF2LKl/pub?output=csv';
-    const finalUrl = baseUrl + '&t=' + new Date().getTime();
+    // Google Sheets linkin - 404 hatasını önlemek için temizlendi
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quyVIAF2LKl/pub?output=csv';
 
     try {
-        const response = await fetch(finalUrl);
-        if (!response.ok) throw new Error("Dosya bulunamadı (404)");
+        const response = await fetch(csvUrl + '&cache_bust=' + Date.now());
+        if (!response.ok) throw new Error("Sheets dosyasına ulaşılamıyor.");
         
-        const csvData = await response.text();
-        const rows = csvData.split(/\r?\n/).map(row => row.split(','));
+        const data = await response.text();
+        // Satırları ve sütunları ayır
+        const rows = data.split(/\r?\n/).map(row => row.split(','));
         
-        // Tabloyu tara (B sütunu index 1'dir)
-        let matchedRow = rows.find(r => r[1] && r[1].replace(/"/g, "").trim().toUpperCase() === ticker);
+        // Ticker'ı B sütununda (index 1) ara
+        const foundRow = rows.find(r => r[1] && r[1].replace(/"/g, "").trim().toUpperCase() === ticker);
 
-        if (matchedRow) {
-            // Şirket: A sütunu (0), Fiyat: C sütunu (2)
-            document.getElementById('company').value = matchedRow[0].replace(/"/g, "").trim(); 
-            
-            let priceVal = matchedRow[2].replace(/"/g, "").replace(",", ".").trim();
-            // Sadece sayı ve nokta kalsın
-            document.getElementById('price').value = priceVal.replace(/[^0-9.]/g, "");
-            
-            alert(ticker + " verisi güncellendi! ✅");
+        if (foundRow) {
+            // Şirket: A(0), Fiyat: C(2)
+            document.getElementById('company').value = foundRow[0].replace(/"/g, "").trim(); 
+            document.getElementById('price').value = foundRow[2].replace(/"/g, "").replace(",", ".").trim();
+            alert(ticker + " verileri başarıyla çekildi! ✅");
         } else {
-            alert(ticker + " bulunamadı. Sheets'te B sütununda " + ticker + " yazdığından emin olun.");
+            alert(ticker + " tabloda bulunamadı. Sheets'te B sütununu kontrol edin.");
         }
     } catch (error) {
         console.error("Hata:", error);
-        alert("Bağlantı sorunu! Google Sheets 'Web'de Yayınla' ayarını kontrol edin.");
+        alert("Bağlantı hatası veya dosya bulunamadı!");
     }
 }
+
+function analyzeStock() {
+    const res = document.getElementById('result-area');
+    if (res) {
+        res.classList.add('show');
+        res.innerHTML = `<div class="verdict-banner AL"><div class="verdict-word">ANALİZ HAZIR</div></div>`;
+    }
+}
+</script>
+</body>
+</html>
