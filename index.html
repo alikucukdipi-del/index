@@ -1751,7 +1751,25 @@ async function sheetsVerisiniGetir() {
     try {
         const response = await fetch(csvUrl, { cache: "no-store" });
         const data = await response.text();
-        
+// 1. Kullanıcının yazdığı Ticker'ı alalım (Örn: MT)
+const arananTicker = document.getElementById('ticker-input').value.toUpperCase().trim();
+
+// 2. Tabloda bu Ticker'ı arayalım (Ticker B sütununda yani index 1)
+const bulunanSatir = rows.find(satir => satir[1] && satir[1].replace(/"/g, "").trim().toUpperCase() === arananTicker);
+
+if (bulunanSatir) {
+    // 3. Verileri kutulara yerleştirelim
+    document.getElementById('company').value = bulunanSatir[0].replace(/"/g, "").trim(); // Şirket (A)
+    document.getElementById('price').value = bulunanSatir[2].replace(/[^0-9.,]/g, "").trim(); // Fiyat (C)
+    
+    // Sektör bilgisini de çekelim (Tablonda J sütunu yani index 9)
+    const sektorKutusu = document.getElementById('sector'); 
+    if (sektorKutusu) sektorKutusu.value = bulunanSatir[9].replace(/"/g, "").trim();
+
+    console.log(arananTicker + " için veriler güncellendi! ✅");
+} else {
+    console.log("Hisse bulunamadı, lütfen Ticker'ı kontrol et. 🔍");
+}        
         // Veriyi satırlara ve sütunlara ayır
         const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
         const satir2 = rows[5]; // 6. satırı (MICC) hedefliyoruz
