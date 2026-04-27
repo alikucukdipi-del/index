@@ -1252,33 +1252,42 @@ async function fetchStockData() {
         return;
     }
 
+    // Senin Google Sheets Linkin
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quyVIAF2LKl/pub?output=csv&cache_bust=' + Date.now();
 
     try {
         const response = await fetch(csvUrl);
         const data = await response.text();
+        
+        // Satırları ayır ve her satırı virgüllere böl
         const rows = data.split(/\r?\n/).map(row => row.split(','));
         
         // Tabloda Ticker'ı bul (B sütunu = index 1)
-        const foundRow = rows.find(r => r[1] && r[1].replace(/"/g, "").trim().toUpperCase() === ticker);
+        const foundRow = rows.find(r => {
+            return r[1] && r[1].replace(/"/g, "").trim().toUpperCase() === ticker;
+        });
 
         if (foundRow) {
-            // Şirket Adı (A sütunu), Fiyat (C sütunu)
+            // Şirket Adı (A sütunu = index 0)
             document.getElementById('company').value = foundRow[0].replace(/"/g, "").trim(); 
-            document.getElementById('price').value = foundRow[2].replace(/"/g, "").replace(",", ".").trim();
-            alert(ticker + " verileri Sheets'ten başarıyla çekildi! ✅");
+            
+            // Fiyat (C sütunu = index 2)
+            let rawPrice = foundRow[2].replace(/"/g, "").replace(",", ".").trim();
+            document.getElementById('price').value = rawPrice;
+            
+            alert(ticker + " verileri başarıyla yüklendi! ✅");
         } else {
-            alert(ticker + " tabloda bulunamadı. Lütfen Sheets'i kontrol edin.");
+            alert(ticker + " tabloda bulunamadı. Lütfen Sheets'te B sütununu kontrol edin.");
         }
     } catch (error) {
         console.error("Hata:", error);
-        alert("Bağlantı hatası!");
+        alert("Bağlantı hatası! İnternetinizi veya Sheets linkini kontrol edin.");
     }
 }
 
 function analyzeStock() {
     const resultArea = document.getElementById('result-area');
-    if(resultArea) {
+    if (resultArea) {
         resultArea.classList.add('show');
         resultArea.innerHTML = `<div class="verdict-banner AL"><div class="verdict-word">ANALİZ HAZIR</div></div>`;
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
