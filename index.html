@@ -1716,7 +1716,39 @@ window.addEventListener('load', async function sheetsVerisiniCek() {
 
 // Sayfa açıldığında değil, bir butona basınca çalışması daha güvenlidir
 // Ama istersen otomatik kalsın:
-window.addEventListener('load', sheetsVerisiniCek););};
+async function sheetsVerisiniCek() {
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
+    
+    console.log("Bağlantı kuruluyor...");
+
+    try {
+        const response = await fetch(csvUrl);
+        if (!response.ok) throw new Error('Google Sheets dosyasına ulaşılamadı.');
+        
+        const data = await response.text();
+        const rows = data.split(/\r?\n/).map(row => row.split(','));
+        
+        // Tablona göre DAX 2. satırda (Index 1)
+        const daxSatiri = rows[1]; 
+
+        if (daxSatiri) {
+            // Ticker (A Sütunu)
+            document.getElementById('ticker').value = daxSatiri[0].replace(/"/g, "").trim();
+            
+            // Fiyat (C Sütunu - Index 2)
+            // Fiyattaki gereksiz karakterleri temizle
+            let temizFiyat = daxSatiri[2].replace(/"/g, "").replace(/[^\d,.]/g, "").trim();
+            document.getElementById('price').value = temizFiyat;
+
+            console.log("Başarılı! Veri:", daxSatiri[0], temizFiyat);
+        }
+    } catch (err) {
+        console.error("Hata Detayı:", err);
+    }
+}
+
+// Sayfa yüklendiğinde başlat
+window.addEventListener('DOMContentLoaded', sheetsVerisiniCek);
 </script>
 
 
