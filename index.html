@@ -1674,38 +1674,33 @@ async function sheetsVerisiniCek() {
 }
 
 // Sayfa yüklendiğinde veriyi çek
-window.onload = sheetsVerisiniCek;
-
 async function sheetsVerisiniCek() {
   const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
   
-  console.log("Bağlanıyor...");
-
   try {
     const response = await fetch(csvUrl, { cache: "no-store" });
     const data = await response.text();
-    
-    // Satırları parçala (Virgül veya Noktalı Virgül uyumlu)
     const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
-    
-    // DAX verisi 2. satırda (Index 1)
     const dax = rows[1]; 
 
     if (dax && dax.length > 2) {
-      // Ticker kutusunu doldur (ID: ticker)
-      const tickerInput = document.getElementById('ticker');
-      if(tickerInput) tickerInput.value = dax[0].replace(/"/g, "").trim();
+      // 1. SEMBOL KUTUSU (Senin verdiğin id: ticker-input)
+      const tickerBox = document.getElementById('ticker-input');
+      if (tickerBox) tickerBox.value = dax[0].replace(/"/g, "").trim();
 
-      // Fiyat kutusunu doldur (ID: price)
-      const priceInput = document.getElementById('price');
-      if(priceInput) priceInput.value = dax[2].replace(/"/g, "").trim();
+      // 2. FİYAT KUTUSU 
+      // Eğer fiyat gelmezse, HTML'deki id'sine bak. 
+      // Muhtemelen o da "price-input" veya sadece "price"dır.
+      const priceBox = document.getElementById('price-input') || document.getElementById('price');
+      if (priceBox) priceBox.value = dax[2].replace(/"/g, "").trim();
       
-      console.log("Veri başarıyla yerleştirildi:", dax[0], dax[2]);
+      console.log("Veri kutulara yazıldı:", dax[0], dax[2]);
     }
   } catch (err) {
-    console.error("Hata oluştu:", err);
+    console.error("Hata:", err);
   }
 }
+window.onload = sheetsVerisiniCek;
 }
 }
 </script>
