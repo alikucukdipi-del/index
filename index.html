@@ -1739,41 +1739,60 @@ window.addEventListener('load', sheetsVerisiniGetir);
 
 // Eksik olan fonksiyonu da buraya ekleyelim ki hata vermesin
 function fetchStockData() {
-    console.log("Manuel veri çekme tıklandı, Sheets verisi zaten yukarda çekiliyor.");
-    sheetsVerisiniGetir();
-}
-</script>
-<script>
-// 1. Google Sheets'ten veriyi çekip kutulara yerleştiren ana fonksiyon
-// Önce veriyi satırlara ve sütunlara ayırıyoruz (Malzemeyi hazırlıyoruz)
-fetch(url)
+    const tickerInput = document.getElementById('ticker-input');
+    const ticker = tickerInput.value.trim().toUpperCase();
+    
+    if (!ticker) {
+        alert("Lütfen bir Ticker girin (örn: MT)");
+        return;
+    }
+
+    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf9A6xYtq1z9D_vS9P7N7x-vD0N0-mXk-vM0-mXk-vM0-mXk-vM/pub?output=csv"; 
+    // NOT: Kendi Google Sheets CSV linkini buraya tırnak içine yapıştır!
+
+    console.log(ticker + " aranıyor...");
+
+    fetch(url)
         .then(response => response.text())
         .then(data => {
-            // Önce veriyi hazırlıyoruz (rows artık burada tanımlanıyor)
+            // Tabloyu satırlara bölüyoruz
             const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
             
-            // Kullanıcının kutuya yazdığı harfleri alıyoruz
-            const tickerInput = document.getElementById('ticker-input');
-            const arananTicker = tickerInput ? tickerInput.value.toUpperCase().trim() : "";
-
-            // Tabloda bu Ticker'ı bul (B sütununa bakıyoruz)
+            // Ticker'ı B sütununda (index 1) arıyoruz
             const bulunanSatir = rows.find(satir => 
-                satir[1] && satir[1].replace(/"/g, "").trim().toUpperCase() === arananTicker
+                satir[1] && satir[1].replace(/"/g, "").trim().toUpperCase() === ticker
             );
 
             if (bulunanSatir) {
-                // Şirket Adı (A Sütunu)
+                // 1. Şirket Adı (A Sütunu)
                 document.getElementById('company').value = bulunanSatir[0].replace(/"/g, "").trim(); 
-                // Güncel Fiyat (C Sütunu)
-                document.getElementById('price').value = bulunanSatir[2].replace(/[^0-9.,]/g, "").trim();
                 
-                // Sektör (J Sütunu - Eğer sende J ise)
-                const sektorKutusu = document.getElementById('sector');
-                if (sektorKutusu) sektorKutusu.value = bulunanSatir[9].replace(/"/g, "").trim();
+                // 2. Güncel Fiyat (C Sütunu) - Sadece rakamları al
+                document.getElementById('price').value = bulunanSatir[2].replace(/[^0-9.,]/g, "").replace(",", ".");
+                
+                // 3. F/K Oranı (Senin tablonda I sütunu ise index 8 olur)
+                const peKutusu = document.getElementById('pe');
+                if (peKutusu && bulunanSatir[8]) {
+                    peKutusu.value = bulunanSatir[8].replace(/[^0-9.,]/g, "").replace(",", ".");
+                }
 
-                console.log(arananTicker + " verileri başarıyla çekildi! ✅");
+                // 4. Sektör (Senin tablonda J sütunu ise index 9 olur)
+                const sektorKutusu = document.getElementById('sector');
+                if (sektorKutusu && bulunanSatir[9]) {
+                    const gelenSektor = bulunanSatir[9].toLowerCase().replace(/"/g, "").trim();
+                    // Sheets'teki "Gıda" kelimesini HTML'deki "gida" value'su ile eşleştirir
+                    if (gelenSektor.includes("gıda")) sektorKutusu.value = "gida";
+                    else if (gelenSektor.includes("teknoloji")) sektorKutusu.value = "teknoloji";
+                    // ... diğer sektörleri de buraya ekleyebilirsin
+                }
+
+                console.log("Eşleşme Tamam: " + ticker);
             } else {
-                console.log("Maalesef bu hisse tabloda bulunamadı. 🔍");
+                alert(ticker + " tablonuzda bulunamadı! Lütfen Google Sheets'i kontrol edin.");
+            }
+        })
+        .catch(err => console.error("Veri çekilemedi:", err));
+}
             }
         })
         .catch(error => console.error('Veri çekme hatası:', error));
