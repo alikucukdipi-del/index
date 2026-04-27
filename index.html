@@ -1705,5 +1705,43 @@ window.onload = sheetsVerisiniCek;
 }
 </script>
 
+<script>
+async function sheetsVerisiniCek() {
+    // Senin Google Sheets CSV linkin
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
+    
+    console.log("Sistem: Veri çekme başlatıldı...");
 
+    try {
+        const response = await fetch(csvUrl, { cache: "no-store" });
+        const data = await response.text();
+        
+        // Satırları parçala
+        const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
+        
+        // DAX verisi 2. satırda (Index 1)
+        const dax = rows[1]; 
+
+        if (dax && dax.length > 2) {
+            const gelenSembol = dax[0].replace(/"/g, "").trim();
+            const gelenFiyat = dax[2].replace(/"/g, "").trim();
+
+            // SENİN HTML'İNDEKİ KUTUCUKLARI BULALIM
+            const sembolKutusu = document.getElementById('ticker-input');
+            const fiyatKutusu = document.getElementById('price');
+
+            // Kutuları doldur
+            if (sembolKutusu) sembolKutusu.value = gelenSembol;
+            if (fiyatKutusu) fiyatKutusu.value = gelenFiyat;
+
+            console.log("Başarılı: " + gelenSembol + " fiyatı " + gelenFiyat + " olarak girildi.");
+        }
+    } catch (err) {
+        console.error("Hata: Veri çekilemedi ->", err);
+    }
+}
+
+// Sayfa yüklenir yüklenmez çalıştır
+window.addEventListener('load', sheetsVerisiniCek);
+</script>
 </body></html>
