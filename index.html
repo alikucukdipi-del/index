@@ -1643,7 +1643,7 @@ function resetAll() {
   window.scrollTo({top:0, behavior:'smooth'});
 }
 async function sheetsVerisiniCek() {
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
+ const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv&t=' + new Date().getTime();   
     
     try {
         const response = await fetch(csvUrl);
