@@ -1737,138 +1737,55 @@ async function sheetsVerisiniGetir() {
 // Sayfa yüklenince çalıştır
 window.addEventListener('load', sheetsVerisiniGetir);
 
-// Eksik olan fonksiyonu da buraya ekleyelim ki hata vermesin
-function fetchStockData() {
+// Google Sheets'ten veriyi çekip kutulara yerleştiren ana fonksiyon
+async function fetchStockData() {
     const tickerInput = document.getElementById('ticker-input');
     const ticker = tickerInput.value.trim().toUpperCase();
-    const loading = document.getElementById('fetch-loading');
-    const errorBox = document.getElementById('fetch-error');
-    const autoDataDiv = document.getElementById('auto-data');
     
     if (!ticker) {
-        alert("Lütfen bir Ticker girin (örn: MT)");
+        alert("Lütfen bir Ticker girin (örn: MICC)");
         return;
     }
 
-    // Görsel geri bildirimler
-    loading.classList.add('show');
-    errorBox.classList.remove('show');
-    autoDataDiv.style.display = 'none';
+    // Google Sheets CSV Linkin
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quyVIAF2LKl/pub?output=csv';
 
-    // Google Sheets CSV linkin
-    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf9A6xYtq1z9D_vS9P7N7x-vD0N0-mXk-vM0-mXk-vM0-mXk-vM/pub?output=csv"; 
-
-    fetch(url)
-        .then(response => response.text())
-        .then(data => {
-            // Satırları ayır ve her satırı sütunlara (virgül veya noktalı virgül) böl
-            const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
-            
-            // TÜM TABLODA ARA: B sütununda (index 1) Ticker'ı bul
-            const bulunanSatir = rows.find(satir => 
-                satir[1] && satir[1].replace(/"/g, "").trim().toUpperCase() === ticker
-            );
-
-            if (bulunanSatir) {
-                // 1. Şirket Adı (A Sütunu - Index 0)
-                document.getElementById('company').value = bulunanSatir[0].replace(/"/g, "").trim(); 
-                
-                // 2. Güncel Fiyat (C Sütunu - Index 2)
-                const hamFiyat = bulunanSatir[2].replace(/"/g, "").replace(/[^0-9.,]/g, "").replace(",", ".");
-                document.getElementById('price').value = parseFloat(hamFiyat) || 0;
-                
-                // 3. Sektör (J Sütunu - Index 9)
-                const sektorKutusu = document.getElementById('sector');
-                if (sektorKutusu && bulunanSatir[9]) {
-                    const gelenSektor = bulunanSatir[9].toLowerCase().replace(/"/g, "").trim();
-                    // Basit eşleştirme
-                    if (gelenSektor.includes("gıda")) sektorKutusu.value = "gida";
-                    else if (gelenSektor.includes("teknoloji")) sektorKutusu.value = "teknoloji";
-                    else if (gelenSektor.includes("finans")) sektorKutusu.value = "finans";
-                }
-
-                // Alt paneli güncelle (Görsel alan)
-                document.getElementById('ad-price').textContent = "€" + hamFiyat;
-                autoDataDiv.style.display = 'block';
-                
-                loading.classList.remove('show');
-                console.log(ticker + " verileri başarıyla tablodan çekildi! ✅");
-            } else {
-                throw new Error(ticker + " tablodaki 'B' sütununda bulunamadı.");
-            }
-        })
-        .catch(err => {
-            loading.classList.remove('show');
-            errorBox.textContent = "Hata: " + err.message;
-            errorBox.classList.add('show');
-            console.error("Veri çekme hatası:", err);
-        });
-}
-
-                // 4. Sektör (Senin tablonda J sütunu ise index 9 olur)
-                const sektorKutusu = document.getElementById('sector');
-                if (sektorKutusu && bulunanSatir[9]) {
-                    const gelenSektor = bulunanSatir[9].toLowerCase().replace(/"/g, "").trim();
-                    // Sheets'teki "Gıda" kelimesini HTML'deki "gida" value'su ile eşleştirir
-                    if (gelenSektor.includes("gıda")) sektorKutusu.value = "gida";
-                    else if (gelenSektor.includes("teknoloji")) sektorKutusu.value = "teknoloji";
-                    // ... diğer sektörleri de buraya ekleyebilirsin
-                }
-
-                console.log("Eşleşme Tamam: " + ticker);
-            } else {
-                alert(ticker + " tablonuzda bulunamadı! Lütfen Google Sheets'i kontrol edin.");
-            }
-        })
-        .catch(err => console.error("Veri çekilemedi:", err));
-}
-            }
-        })
-        .catch(error => console.error('Veri çekme hatası:', error));
-} else {
-    console.log("Hisse bulunamadı. Lütfen Ticker'ı kontrol et.");
-}
-} else {
-    console.log("Hisse bulunamadı, lütfen Ticker'ı kontrol et. 🔍");
-}        
+    try {
+        const response = await fetch(csvUrl, { cache: "no-store" });
+        const data = await response.text();
+        
         // Veriyi satırlara ve sütunlara ayır
         const rows = data.split(/\r?\n/).map(row => row.split(/[,;]/));
-        const satir2 = rows[5]; // 6. satırı (MICC) hedefliyoruz
-        if (satir2 && satir2.length >= 3) {
-            const tickerInput = document.getElementById('ticker-input');
-            const priceInput = document.getElementById('price');
-            const companyInput = document.getElementById('company');
+        
+        // B sütununda (index 1) Ticker ara
+        const bulunanSatir = rows.find(satir => 
+            satir[1] && satir[1].replace(/"/g, "").trim().toUpperCase() === ticker
+        );
 
-            // Kutuları doldur (Tırnak işaretlerini temizler)
-            if (tickerInput) tickerInput.value = satir2[0].replace(/"/g, "").trim();
-            if (priceInput) priceInput.value = satir2[2].replace(/[^0-9.]/g, "");
-            if (companyInput) companyInput.value = (satir2[0].replace(/"/g, "") + " - Otomatik Veri").trim();
-
-            console.log("Veri başarıyla çekildi:", satir2[0]);
+        if (bulunanSatir) {
+            // Şirket Adı (A Sütunu)
+            document.getElementById('company').value = bulunanSatir[0].replace(/"/g, "").trim(); 
+            // Güncel Fiyat (C Sütunu)
+            document.getElementById('price').value = bulunanSatir[2].replace(/[^0-9.,]/g, "").replace(",", ".");
+            
+            console.log(ticker + " verileri başarıyla yüklendi! ✅");
+        } else {
+            alert(ticker + " listede bulunamadı.");
         }
-    } catch (err) {
-        console.error("Veri çekilirken hata oluştu:", err);
+    } catch (error) {
+        console.error("Veri çekilirken hata oluştu:", error);
+        alert("Veri çekilemedi, bağlantıyı kontrol edin.");
     }
 }
 
-// 2. Sayfadaki "VERİ ÇEK" butonu boşa düşmesin diye tanımlıyoruz
-function fetchStockData() {
-    console.log("Butona basıldı, veriler yenileniyor...");
-    sheetsVerisiniGetir();
-}
-
-// 3. Sayfa açılır açılmaz veriyi otomatik çek
-window.onload = function() {
-    sheetsVerisiniGetir();
-};
-
-// Toggle butonları için yardımcı fonksiyon (senin kodunda eksik kalmış olabilir)
-function tog(btn, group, cls) {
-    const parent = document.getElementById(group);
-    parent.querySelectorAll('.tog').forEach(b => b.classList.remove('tg', 'tr', 'ty', 'tb'));
-    btn.classList.add(cls);
+// Sayfa yüklendiğinde otomatik çalışması gereken bir şey varsa buraya ekleyebilirsin
+window.addEventListener('load', () => {
+    console.log("Sistem hazır. 🚀");
+});
+  } catch (error) {
+        console.error("Veri çekilirken hata oluştu:", error);
+    }
 }
 </script>
-
 </body>
 </html>
