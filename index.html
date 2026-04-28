@@ -451,7 +451,7 @@ hedefMax: sayi(cols[COL.hedefMax]),
       };
       if (h.ticker && h.fiyat > 0) hisseler.push(h);
     }
-    if (hisseler.length > 0) gridOlustur();
+    if (hisseler.length > 0) { gridOlustur(); heatmapOlustur(); }
     else document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Veri bulunamadı</div>';
   } catch(e) {
     document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Bağlantı hatası: ' + e.message + '</div>';
