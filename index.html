@@ -527,6 +527,29 @@ haberBtn.style.display = 'inline-flex';
   ].map(d=>`<div class="veri-item"><div class="veri-label">${d.l}</div><div class="veri-val" style="color:${d.c}">${d.v}</div></div>`).join('');
 
   sektorKarsilastir(h);
+  // Analist aralığı progress bar
+const barEl = document.getElementById('analyst-bar');
+if(h.hedefMin > 0 && h.hedefMax > 0) {
+  const min = h.hedefMin, max = h.hedefMax, fiyat = h.fiyat;
+  const pct = Math.min(100, Math.max(0, ((fiyat - min) / (max - min)) * 100));
+  const durum = fiyat < min ? '🚨 Analist koridorunun ALTINDA — Aşırı Fırsat!' : fiyat > max ? '⚠️ Analist koridorunun ÜSTÜNDE — Dikkat!' : '✅ Analist koridoru içinde';
+  const durumRenk = fiyat < min ? 'var(--green)' : fiyat > max ? 'var(--red)' : 'var(--gold)';
+  barEl.style.display = 'block';
+  barEl.innerHTML = `
+    <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px">📊 Analist Güven Aralığı</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <span style="font-size:11px;color:var(--red);font-weight:600">€${min}</span>
+      <div style="flex:1;position:relative;height:8px;background:linear-gradient(90deg,var(--red-dim),var(--yellow-dim),var(--green-dim));border-radius:100px;border:1px solid var(--border)">
+        <div style="position:absolute;top:50%;left:${pct}%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:white;border:2px solid var(--gold);box-shadow:0 0 8px rgba(201,168,76,0.6)"></div>
+      </div>
+      <span style="font-size:11px;color:var(--green);font-weight:600">€${max}</span>
+    </div>
+    <div style="font-size:12px;font-weight:600;color:${durumRenk}">${durum}</div>
+    <div style="font-size:11px;color:var(--text2);margin-top:4px">Şu an: <strong style="color:var(--gold)">€${fiyat.toFixed(2)}</strong> · Ortalama Hedef: <strong style="color:var(--text)">€${h.hedef.toFixed(2)}</strong></div>
+  `;
+} else {
+  barEl.style.display = 'none';
+}
   document.getElementById('fetch-status').innerHTML = '✅ <strong>' + h.ticker + '</strong> — RSI dahil tüm veriler yüklendi!';
   setTimeout(() => document.querySelector('.card').scrollIntoView({behavior:'smooth',block:'start'}), 200);
 }
