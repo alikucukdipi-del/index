@@ -502,6 +502,9 @@ function veriCek() {
   document.getElementById('target').value = h.hedef > 0 ? h.hedef.toFixed(2) : '';
   document.getElementById('beta').value = h.beta > 0 ? h.beta.toFixed(2) : '';
   document.getElementById('rsi').value = h.rsi > 0 ? h.rsi.toFixed(0) : '';
+  const haberBtn = document.getElementById('btn-haber');
+haberBtn.href = haberLink(h.ticker, h.sirket);
+haberBtn.style.display = 'inline-flex';
   const sv = SEKTOR_MAP[h.sektor] || '';
   if (sv) document.getElementById('sector').value = sv;
 
