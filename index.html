@@ -403,6 +403,23 @@ const COL = { sirket:0, ticker:1, fiyat:2, fk:3, yuksek:4, dusuk:5, degisim:6, m
 const VERI_BASLANGIC_SATIRI = 5;
 const SEKTOR_MAP = { 'Gıda':'gida','Çelik':'sanayi','Finans':'finans','Havacılık':'havacilik','Bankacılık':'finans' };
 const S = {};
+  function rsiSinif(rsi) {
+  if (rsi <= 0) return '';
+  if (rsi < 35) return 'rsi-firsat';
+  if (rsi > 70) return 'rsi-risk';
+  if (rsi >= 65) return 'rsi-dikkat';
+  return '';
+}
+function rsiBadge(rsi) {
+  if (rsi <= 0) return '';
+  if (rsi < 35) return `<div class="hisse-rsi-badge rsi-badge-firsat">RSI ${rsi.toFixed(0)} 🟢</div>`;
+  if (rsi > 70) return `<div class="hisse-rsi-badge rsi-badge-risk">RSI ${rsi.toFixed(0)} 🔴</div>`;
+  if (rsi >= 65) return `<div class="hisse-rsi-badge rsi-badge-dikkat">RSI ${rsi.toFixed(0)} 🟡</div>`;
+  return `<div class="hisse-rsi-badge rsi-badge-normal">RSI ${rsi.toFixed(0)}</div>`;
+}
+function haberLink(ticker, sirket) {
+  return `https://www.google.com/search?q=${encodeURIComponent(sirket + ' stock ' + ticker)}&tbm=nws`;
+}
 let hisseler = [], seciliHisse = null;
 
 async function sheetsYukle() {
@@ -451,7 +468,7 @@ function gridOlustur() {
     const deg = h.degisim !== 0 ? (h.degisim > 0 ? '+' : '') + h.degisim.toFixed(2) + '%' : '—';
     const rsiRenk = h.rsi > 70 ? '#ff3d3d' : h.rsi < 30 ? '#00c853' : '#ffb300';
     const btn = document.createElement('div');
-    btn.className = 'hisse-btn'; btn.dataset.idx = idx;
+    btn.className = 'hisse-btn ' + rsiSinif(h.rsi); btn.dataset.idx = idx;
     btn.innerHTML = `
       <div class="hisse-ticker">${h.ticker}</div>
       <div class="hisse-name">${h.sirket.length>16?h.sirket.substring(0,16)+'…':h.sirket}</div>
