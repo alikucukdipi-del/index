@@ -438,6 +438,8 @@ async function sheetsYukle() {
         ma200: sayi(cols[COL.ma200]), sektor: temizle(cols[COL.sektor]),
         hedef: sayi(cols[COL.hedef]), beta: sayi(cols[COL.beta]),
         rsi: sayi(cols[COL.rsi]),
+        hedefMin: sayi(cols[COL.hedefMin]),
+hedefMax: sayi(cols[COL.hedefMax]),
       };
       if (h.ticker && h.fiyat > 0) hisseler.push(h);
     }
@@ -513,7 +515,8 @@ haberBtn.style.display = 'inline-flex';
   serit.style.display = 'flex';
   serit.innerHTML = [
     {l:'Fiyat',v:'€'+h.fiyat.toFixed(2),c:'var(--gold)'},
-    {l:'Hedef',v:h.hedef>0?'€'+h.hedef.toFixed(2):'N/A',c:'var(--green)'},
+    {l:'Hedef',v:h.hedef>0?'€'+h.hedef.toFixed(2):'N/A',c:'var(--green)'},{l:'Min Hedef', v:h.hedefMin>0?'€'+h.hedefMin.toFixed(2):'N/A', c:'var(--text2)'},
+{l:'Maks Hedef', v:h.hedefMax>0?'€'+h.hedefMax.toFixed(2):'N/A', c:'var(--green)'},
     {l:'Potansiyel',v:upside?'+%'+upside:'N/A',c:upside&&parseFloat(upside)>0?'var(--green)':'var(--red)'},
     {l:'RSI',v:h.rsi>0?h.rsi.toFixed(0):'N/A',c:rsiRenk},
     {l:'F/K',v:h.fk>0?h.fk.toFixed(1):'N/A',c:'var(--blue)'},
