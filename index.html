@@ -353,6 +353,12 @@ select option { background: #181818; }
   </div>
 </div>
 
+<div class="card" style="border-color:rgba(201,168,76,0.3)">
+  <span class="sec-label">🗺️ Portföy Isı Haritası</span>
+  <div class="sec-title">Tüm Hisseler — Bir Bakışta</div>
+  <p class="sec-sub">Renk = RSI + Analist Koridoru</p>
+  <div id="heatmap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:8px"></div>
+</div>
 <button class="abtn" onclick="analiz()">🔍 ANALİZİ YAP — DİŞLERİNE BAK</button>
 
 <div class="result" id="result">
@@ -691,6 +697,7 @@ function sifirla() {
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+heatmapOlustur();
 sheetsYukle();
 </script>
 </body>
