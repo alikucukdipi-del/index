@@ -480,9 +480,10 @@ async function sheetsYukle() {
     if (hisseler.length > 0) gridOlustur();
     else document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Veri bulunamadı</div>';
   } catch(e) {
-    document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Bağlantı hatası: ' + e.message + '</div>';
+    if (hisseler.length === 0) {
+      document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Bağlantı hatası: ' + e.message + '</div>';
+    }
   }
-}
 
 function csvParcala(satir) {
   const r = []; let a = '', t = false;
