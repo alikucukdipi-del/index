@@ -616,11 +616,9 @@ function heatmapOlustur() {
     const dikkat = h.rsi > 70 || (h.hedefMax > 0 && h.fiyat > h.hedefMax);
     const firsat = h.rsi > 0 && h.rsi < 35;
 
-    // Kazanç tarihi hesabı
+    // Kazanç tarihi
     const kazancDate = tarihParcala(h.kazancTarihi);
-    let gunFark = null;
-    let raporYaklasiyor = false;
-    let raporGecti = false;
+    let gunFark = null, raporYaklasiyor = false, raporGecti = false;
     if (kazancDate) {
       kazancDate.setHours(0,0,0,0);
       gunFark = Math.ceil((kazancDate - bugun) / (1000*60*60*24));
@@ -628,6 +626,33 @@ function heatmapOlustur() {
       raporGecti = gunFark < 0;
     }
 
+    // 🔍 SAHte KIRILIM DEDEKTÖrü
+    let dedektorSeviye = 0; // 0=temiz, 1=orta, 2=yüksek
+    let dedektorMesaj = '';
+
+    // Yüksek risk: Suni yükseliş
+    if (h.beta > 1.5 && h.rsi > 65 && h.hedefMax > 0 && h.fiyat > h.hedefMax) {
+      dedektorSeviye = 2;
+      dedektorMesaj = '🚨 Suni yükseliş riski! Beta yüksek + RSI şişmiş + analist hedefi aşıldı';
+    } else if (h.degisim > 25 && h.rsi > 70) {
+      dedektorSeviye = 2;
+      dedektorMesaj = '🚨 Hız çok yüksek! 1 ayda %' + h.degisim.toFixed(0) + ' + RSI ' + h.rsi.toFixed(0) + ' — FOMO tuzağı olabilir';
+    }
+    // Orta risk: Likidite avı
+    else if (h.fiyat > 0 && h.hedefMin > 0 && h.fiyat < h.hedefMin && h.beta > 1.2) {
+      dedektorSeviye = 1;
+      dedektorMesaj = '⚡ Likidite avı riski! Fiyat dip hedefin altında + Beta yüksek — stop hunting olabilir, tepkiyi bekle';
+    } else if (h.rsi > 0 && h.rsi < 30 && h.degisim < -15) {
+      dedektorSeviye = 1;
+      dedektorMesaj = '⚡ Sert düşüş! RSI ' + h.rsi.toFixed(0) + ' + 1 ayda %' + h.degisim.toFixed(0) + ' — dip tuzağı olabilir, acele etme';
+    }
+    // Temiz hareket
+    else if (h.beta > 0 && h.beta < 1 && h.rsi > 35 && h.rsi < 65 && h.hedefMin > 0 && h.fiyat >= h.hedefMin && h.hedefMax > 0 && h.fiyat <= h.hedefMax) {
+      dedektorSeviye = -1; // temiz
+      dedektorMesaj = '✅ Hareket organik — Beta düşük, RSI normal, analist koridoru içinde';
+    }
+
+    // Renk mantığı
     let borderColor, bgGradient, labelColor, statusLabel, statusIcon;
     if (alimBolgesi) {
       borderColor = 'rgba(0,200,83,0.8)'; bgGradient = 'linear-gradient(145deg,#0a2415,#111)';
@@ -641,6 +666,17 @@ function heatmapOlustur() {
     } else {
       borderColor = 'rgba(255,179,0,0.3)'; bgGradient = 'linear-gradient(145deg,#1a1500,#111)';
       labelColor = 'var(--yellow)'; statusIcon = '⚡'; statusLabel = 'İzle';
+    }
+
+    // Dedektör rengi border'a yansıt
+    let dedektorBorder = '';
+    let dedektorGlow = '';
+    if (dedektorSeviye === 2) {
+      dedektorBorder = 'border-color: rgba(255,61,61,0.9) !important;';
+      dedektorGlow = 'box-shadow: 0 0 20px rgba(255,61,61,0.3);';
+    } else if (dedektorSeviye === 1) {
+      dedektorBorder = 'border-color: rgba(255,140,0,0.9) !important;';
+      dedektorGlow = 'box-shadow: 0 0 16px rgba(255,140,0,0.25); animation: pulse-likidite 2s ease-in-out infinite;';
     }
 
     const alimEtiket = alimBolgesi ? `
@@ -658,7 +694,8 @@ function heatmapOlustur() {
     div.style.cssText = `background:${bgGradient};border:2px solid ${borderColor};border-radius:14px;
       padding:16px 12px;cursor:pointer;transition:all .2s;text-align:center;position:relative;
       ${alimBolgesi ? 'box-shadow:0 0 24px rgba(0,200,83,0.25);' : ''}
-      ${raporYaklasiyor ? 'animation:pulse-rapor 1.5s ease-in-out infinite;' : ''}`;
+      ${raporYaklasiyor ? 'animation:pulse-rapor 1.5s ease-in-out infinite;' : ''}
+      ${dedektorGlow}`;
 
     const raporBilgi = raporYaklasiyor
       ? `<div style="margin-top:6px;font-size:10px;color:var(--yellow);font-weight:700">💓 Rapor: ${h.kazancTarihi} — ${gunFark===0?'BUGÜN!':gunFark===1?'YARIN!':gunFark+' gün sonra'}</div>`
@@ -667,6 +704,14 @@ function heatmapOlustur() {
       : h.kazancTarihi
       ? `<div style="margin-top:6px;font-size:10px;color:var(--text3)">📅 ${h.kazancTarihi}</div>`
       : '';
+
+    const dedektorHtml = dedektorMesaj ? `
+      <div style="margin-top:8px;padding:5px 8px;border-radius:8px;font-size:9px;line-height:1.5;text-align:left;
+        background:${dedektorSeviye===2?'rgba(255,61,61,0.08)':dedektorSeviye===1?'rgba(255,140,0,0.08)':'rgba(0,200,83,0.08)'};
+        border:1px solid ${dedektorSeviye===2?'rgba(255,61,61,0.2)':dedektorSeviye===1?'rgba(255,140,0,0.2)':'rgba(0,200,83,0.2)'};
+        color:${dedektorSeviye===2?'var(--red)':dedektorSeviye===1?'#ff8c00':'var(--green)'}">
+        ${dedektorMesaj}
+      </div>` : '';
 
     div.innerHTML = `
       ${alimEtiket}
@@ -681,6 +726,7 @@ function heatmapOlustur() {
         <span style="font-size:9px;color:${labelColor};font-weight:700;letter-spacing:1px">${statusIcon} ${statusLabel}</span>
       </div>
       ${raporBilgi}
+      ${dedektorHtml}
       ${h.not ? `<div style="margin-top:8px;font-size:10px;color:var(--text2);line-height:1.5;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;text-align:left">📝 ${h.not}</div>` : ''}`;
 
     div.onmouseover = () => { div.style.transform = 'translateY(-2px)'; div.style.borderColor = labelColor; };
