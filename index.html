@@ -150,12 +150,16 @@ select option { background: #181818; }
   0%, 100% { opacity: 1; }
   50% { opacity: 0.75; }
 }
+@keyframes pulse-rapor {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,179,0,0.4); }
+  50% { transform: scale(1.03); box-shadow: 0 0 20px 6px rgba(255,179,0,0.15); }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 <div class="hdr">
-  <div class="hdr-eyebrow">Humeyra Pro Analiz · v8.0</div>
+  <div class="hdr-eyebrow">Humeyra Pro Analiz · v8.2</div>
   <h1>HİSSE <em>ANALİZ</em></h1>
   <p>AEX · NYSE · NASDAQ · DAX · CAC40<br>RSI Renk Kodları · Isı Haritası · Analist Koridoru 🦷</p>
 </div>
@@ -173,6 +177,7 @@ select option { background: #181818; }
   <div class="veri-serit" id="veri-serit"></div>
   <div id="analyst-bar" style="display:none;margin-top:12px;padding:14px 18px;background:var(--card2);border:1px solid rgba(201,168,76,0.2);border-radius:10px"></div>
 </div>
+
 <div class="card" style="border-color:rgba(201,168,76,0.3)">
   <span class="sec-label">🗺️ Portföy Isı Haritası</span>
   <div class="sec-title">Tüm Hisseler — Bir Bakışta</div>
@@ -363,12 +368,6 @@ select option { background: #181818; }
   </div>
 </div>
 
-
-  <div class="sec-title">Tüm Hisseler — Bir Bakışta</div>
-  <p class="sec-sub">Renk = RSI + Analist Koridoru · Tıkla = Hisse Seç</p>
-  <div id="heatmap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:8px"></div>
-</div>
-
 <button class="abtn" onclick="analiz()">🔍 ANALİZİ YAP — DİŞLERİNE BAK</button>
 
 <div class="result" id="result">
@@ -416,7 +415,7 @@ select option { background: #181818; }
 
 <script>
 const SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
-const COL = { sirket:0, ticker:1, fiyat:2, fk:3, yuksek:4, dusuk:5, degisim:6, ma20:7, ma200:8, sektor:10, hedef:15, beta:16, rsi:17, hedefMin:18, hedefMax:19, not:20 };
+const COL = { sirket:0, ticker:1, fiyat:2, fk:3, yuksek:4, dusuk:5, degisim:6, ma20:7, ma200:8, sektor:10, hedef:15, beta:16, rsi:17, hedefMin:18, hedefMax:19, not:20, kazancTarihi:23 };
 const VERI_BASLANGIC_SATIRI = 5;
 const SEKTOR_MAP = { 'Gıda':'gida','Çelik':'sanayi','Finans':'finans','Havacılık':'havacilik','Bankacılık':'finans' };
 const S = {};
@@ -430,6 +429,12 @@ function rsiSinif(rsi) {
 }
 function haberLink(ticker, sirket) {
   return `https://www.google.com/search?q=${encodeURIComponent(sirket + ' stock ' + ticker)}&tbm=nws`;
+}
+function tarihParcala(tarihStr) {
+  if (!tarihStr) return null;
+  const parts = tarihStr.split('/');
+  if (parts.length !== 3) return null;
+  return new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0]));
 }
 let hisseler = [], seciliHisse = null;
 
@@ -453,6 +458,7 @@ async function sheetsYukle() {
         hedefMin: sayi(cols[COL.hedefMin]),
         hedefMax: sayi(cols[COL.hedefMax]),
         not: temizle(cols[COL.not]),
+        kazancTarihi: temizle(cols[COL.kazancTarihi]),
       };
       if (h.ticker && h.fiyat > 0) hisseler.push(h);
     }
@@ -600,12 +606,28 @@ function heatmapOlustur() {
   const el = document.getElementById('heatmap');
   if (!el || hisseler.length === 0) return;
   el.innerHTML = '';
+  const bugun = new Date();
+  bugun.setHours(0,0,0,0);
+
   hisseler.forEach((h, idx) => {
     const upside = h.hedef > 0 && h.fiyat > 0 ? ((h.hedef - h.fiyat) / h.fiyat * 100) : null;
     const upsideMin = h.hedefMin > 0 && h.fiyat > 0 ? ((h.hedefMin - h.fiyat) / h.fiyat * 100) : null;
     const alimBolgesi = h.rsi > 0 && h.rsi < 35 && upsideMin !== null && upsideMin > 0;
     const dikkat = h.rsi > 70 || (h.hedefMax > 0 && h.fiyat > h.hedefMax);
     const firsat = h.rsi > 0 && h.rsi < 35;
+
+    // Kazanç tarihi hesabı
+    const kazancDate = tarihParcala(h.kazancTarihi);
+    let gunFark = null;
+    let raporYaklasiyor = false;
+    let raporGecti = false;
+    if (kazancDate) {
+      kazancDate.setHours(0,0,0,0);
+      gunFark = Math.ceil((kazancDate - bugun) / (1000*60*60*24));
+      raporYaklasiyor = gunFark >= 0 && gunFark <= 5;
+      raporGecti = gunFark < 0;
+    }
+
     let borderColor, bgGradient, labelColor, statusLabel, statusIcon;
     if (alimBolgesi) {
       borderColor = 'rgba(0,200,83,0.8)'; bgGradient = 'linear-gradient(145deg,#0a2415,#111)';
@@ -620,18 +642,36 @@ function heatmapOlustur() {
       borderColor = 'rgba(255,179,0,0.3)'; bgGradient = 'linear-gradient(145deg,#1a1500,#111)';
       labelColor = 'var(--yellow)'; statusIcon = '⚡'; statusLabel = 'İzle';
     }
+
     const alimEtiket = alimBolgesi ? `
       <div style="position:absolute;top:-1px;right:-1px;background:var(--green);color:#000;
         font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 7px;
         border-radius:0 12px 0 8px;text-transform:uppercase;
         animation:pulse-green 2s ease-in-out infinite;">🎯 ALIM</div>` : '';
+
+    const raporEtiket = raporYaklasiyor ? `
+      <div style="position:absolute;top:-1px;left:-1px;background:var(--yellow);color:#000;
+        font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 7px;
+        border-radius:12px 0 8px 0;text-transform:uppercase;">💓 RAPOR</div>` : '';
+
     const div = document.createElement('div');
     div.style.cssText = `background:${bgGradient};border:2px solid ${borderColor};border-radius:14px;
       padding:16px 12px;cursor:pointer;transition:all .2s;text-align:center;position:relative;
-      ${alimBolgesi ? 'box-shadow:0 0 24px rgba(0,200,83,0.25);' : ''}`;
+      ${alimBolgesi ? 'box-shadow:0 0 24px rgba(0,200,83,0.25);' : ''}
+      ${raporYaklasiyor ? 'animation:pulse-rapor 1.5s ease-in-out infinite;' : ''}`;
+
+    const raporBilgi = raporYaklasiyor
+      ? `<div style="margin-top:6px;font-size:10px;color:var(--yellow);font-weight:700">💓 Rapor: ${h.kazancTarihi} — ${gunFark===0?'BUGÜN!':gunFark===1?'YARIN!':gunFark+' gün sonra'}</div>`
+      : raporGecti
+      ? `<div style="margin-top:6px;font-size:10px;color:var(--red);font-weight:600">⚠️ Tarihi Güncelle! (${h.kazancTarihi})</div>`
+      : h.kazancTarihi
+      ? `<div style="margin-top:6px;font-size:10px;color:var(--text3)">📅 ${h.kazancTarihi}</div>`
+      : '';
+
     div.innerHTML = `
       ${alimEtiket}
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:${labelColor};margin-bottom:4px">${h.ticker}</div>
+      ${raporEtiket}
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:${labelColor};margin-bottom:4px;margin-top:${raporYaklasiyor?'8px':'0'}">${h.ticker}</div>
       <div style="font-size:10px;color:var(--text2);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.sirket.length>14?h.sirket.substring(0,14)+'…':h.sirket}</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);margin-bottom:2px">€${h.fiyat.toFixed(2)}</div>
       ${h.rsi > 0 ? `<div style="font-size:10px;color:${labelColor};font-weight:700;margin-bottom:6px">RSI ${h.rsi.toFixed(0)}</div>` : ''}
@@ -640,7 +680,9 @@ function heatmapOlustur() {
         border:1px solid ${borderColor};display:inline-block">
         <span style="font-size:9px;color:${labelColor};font-weight:700;letter-spacing:1px">${statusIcon} ${statusLabel}</span>
       </div>
+      ${raporBilgi}
       ${h.not ? `<div style="margin-top:8px;font-size:10px;color:var(--text2);line-height:1.5;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;text-align:left">📝 ${h.not}</div>` : ''}`;
+
     div.onmouseover = () => { div.style.transform = 'translateY(-2px)'; div.style.borderColor = labelColor; };
     div.onmouseout = () => { div.style.transform = ''; div.style.borderColor = borderColor; };
     div.onclick = () => hisseGriddenSec(h.ticker);
