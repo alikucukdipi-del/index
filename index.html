@@ -455,6 +455,7 @@ async function sheetsYukle() {
         hedef: sayi(cols[COL.hedef]), beta: sayi(cols[COL.beta]),
         rsi: sayi(cols[COL.rsi]), hedefMin: sayi(cols[COL.hedefMin]),
         hedefMax: sayi(cols[COL.hedefMax]),
+        not: temizle(cols[COL.not]),
       };
       if (h.ticker && h.fiyat > 0) hisseler.push(h);
     }
