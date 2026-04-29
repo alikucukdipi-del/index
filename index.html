@@ -493,11 +493,7 @@ function gridOlustur() {
   document.getElementById('fetch-status').textContent = hisseler.length + ' hisse yüklendi — birini seç';
 }
 
-function heatmapOlustur() {
-  const el = document.getElementById('heatmap');
-  if (!el || hisseler.length === 0) return;
-  el.innerHTML = '';
-  hisseler.forEach((h, idx) => {
+hisseler.forEach((h, idx) => {
     const upside = h.hedef > 0 && h.fiyat > 0 ? ((h.hedef - h.fiyat) / h.fiyat * 100) : null;
     const upsideMin = h.hedefMin > 0 && h.fiyat > 0 ? ((h.hedefMin - h.fiyat) / h.fiyat * 100) : null;
 
@@ -541,10 +537,39 @@ function heatmapOlustur() {
       <div style="margin-top:8px;padding:3px 8px;border-radius:100px;background:rgba(255,255,255,0.04);
         border:1px solid ${borderColor};display:inline-block">
         <span style="font-size:9px;color:${labelColor};font-weight:700;letter-spacing:1px">${statusIcon} ${statusLabel}</span>
-      </div>`
       </div>
       ${h.not ? `<div style="margin-top:8px;font-size:10px;color:var(--text2);line-height:1.5;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;text-align:left">📝 ${h.not}</div>` : ''}`;
 
+    div.onmouseover = () => { div.style.transform = 'translateY(-2px)'; div.style.borderColor = labelColor; };
+    div.onmouseout = () => { div.style.transform = ''; div.style.borderColor = borderColor; };
+    div.onclick = () => hisseGriddenSec(h.ticker);
+    el.appendChild(div);
+  });
+}
+
+    const alimEtiket = alimBolgesi ? `
+      <div style="position:absolute;top:-1px;right:-1px;background:var(--green);color:#000;
+        font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 7px;
+        border-radius:0 12px 0 8px;text-transform:uppercase;
+        animation:pulse-green 2s ease-in-out infinite;">🎯 ALIM</div>` : '';
+
+    const div = document.createElement('div');
+    div.style.cssText = `background:${bgGradient};border:2px solid ${borderColor};border-radius:14px;
+      padding:16px 12px;cursor:pointer;transition:all .2s;text-align:center;position:relative;
+      ${alimBolgesi ? 'box-shadow:0 0 24px rgba(0,200,83,0.25);' : ''}`;
+
+    div.innerHTML = `
+      ${alimEtiket}
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:${labelColor};margin-bottom:4px">${h.ticker}</div>
+      <div style="font-size:10px;color:var(--text2);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.sirket.length>14?h.sirket.substring(0,14)+'…':h.sirket}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);margin-bottom:2px">€${h.fiyat.toFixed(2)}</div>
+      ${h.rsi > 0 ? `<div style="font-size:10px;color:${labelColor};font-weight:700;margin-bottom:6px">RSI ${h.rsi.toFixed(0)}</div>` : ''}
+      ${upside !== null ? `<div style="font-size:10px;color:${upside>0?'var(--green)':'var(--red)'};font-weight:600">+%${upside.toFixed(1)} potansiyel</div>` : ''}
+      <div style="margin-top:8px;padding:3px 8px;border-radius:100px;background:rgba(255,255,255,0.04);
+        border:1px solid ${borderColor};display:inline-block">
+        <span style="font-size:9px;color:${labelColor};font-weight:700;letter-spacing:1px">${statusIcon} ${statusLabel}</span>
+      </div>
+      ${h.not ? `<div style="margin-top:8px;font-size:10px;color:var(--text2);line-height:1.5;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;text-align:left">📝 ${h.not}</div>` : ''}`;
     div.onmouseover = () => { div.style.transform = 'translateY(-2px)'; div.style.borderColor = labelColor; };
     div.onmouseout = () => { div.style.transform = ''; div.style.borderColor = borderColor; };
     div.onclick = () => hisseGriddenSec(h.ticker);
