@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Humeyra Pro Analiz v8.0</title>
+<title>Humeyra — Borsa Analiz</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -11,7 +11,7 @@
   --gold: #c9a84c; --gold2: #e8cc7a; --green: #00c853; --green-dim: rgba(0,200,83,0.08);
   --red: #ff3d3d; --red-dim: rgba(255,61,61,0.08); --yellow: #ffb300;
   --yellow-dim: rgba(255,179,0,0.08); --blue: #2979ff; --blue-dim: rgba(41,121,255,0.08);
-  --text: #f0f0f0; --text2: #666; --text3: #444;
+  --text: #f0f0f0; --text2: #666; --text3: #333;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); min-height: 100vh; }
@@ -29,35 +29,22 @@ h1 em { color: var(--gold); font-style: normal; }
 .sec-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; margin-bottom: 4px; }
 .sec-sub { font-size: 12px; color: var(--text2); margin-bottom: 18px; line-height: 1.6; }
 .hisse-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px; }
-.hisse-btn { padding: 12px 10px; border-radius: 10px; cursor: pointer; transition: all .25s; text-align: center; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); background: var(--card2); }
-.hisse-btn:hover { transform: translateY(-2px); border-color: var(--gold); }
-.hisse-btn.active { border-color: var(--gold); }
-.rsi-firsat { border-color: rgba(0,200,83,0.5) !important; background: linear-gradient(145deg, #0d1f14, #111) !important; box-shadow: 0 0 16px rgba(0,200,83,0.12); }
-.rsi-firsat .hisse-ticker { color: var(--green) !important; }
-.rsi-risk { border-color: rgba(255,61,61,0.5) !important; background: linear-gradient(145deg, #1f0d0d, #111) !important; box-shadow: 0 0 16px rgba(255,61,61,0.12); }
-.rsi-risk .hisse-ticker { color: var(--red) !important; }
-.rsi-dikkat { border-color: rgba(255,179,0,0.4) !important; background: linear-gradient(145deg, #1a1500, #111) !important; }
-.rsi-dikkat .hisse-ticker { color: var(--yellow) !important; }
+.hisse-btn { padding: 12px 10px; background: var(--card2); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: all .2s; text-align: center; font-family: 'DM Sans', sans-serif; }
+.hisse-btn:hover { border-color: var(--gold); transform: translateY(-1px); }
+.hisse-btn.active { background: rgba(201,168,76,0.1); border-color: var(--gold); }
 .hisse-ticker { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--gold); }
 .hisse-name { font-size: 11px; color: var(--text2); margin-top: 2px; }
 .hisse-price { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 4px; }
 .hisse-change { font-size: 11px; margin-top: 2px; font-weight: 500; }
 .hisse-change.up { color: var(--green); }
 .hisse-change.down { color: var(--red); }
-.hisse-rsi-badge { display: inline-block; margin-top: 5px; padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 700; }
-.rsi-badge-firsat { background: rgba(0,200,83,0.15); color: var(--green); border: 1px solid rgba(0,200,83,0.3); }
-.rsi-badge-risk { background: rgba(255,61,61,0.15); color: var(--red); border: 1px solid rgba(255,61,61,0.3); }
-.rsi-badge-dikkat { background: rgba(255,179,0,0.15); color: var(--yellow); border: 1px solid rgba(255,179,0,0.3); }
-.rsi-badge-normal { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid var(--border); }
 .fetch-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .btn-fetch { padding: 11px 24px; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; border: none; border-radius: 9px; font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; cursor: pointer; transition: all .2s; white-space: nowrap; }
 .btn-fetch:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(201,168,76,0.3); }
-.btn-haber { padding: 11px 18px; background: transparent; border: 1px solid rgba(41,121,255,0.4); border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: var(--blue); cursor: pointer; transition: all .2s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-.btn-haber:hover { background: var(--blue-dim); border-color: var(--blue); }
 #fetch-status { font-size: 12px; color: var(--text2); }
 .veri-serit { display: none; background: var(--card2); border: 1px solid rgba(201,168,76,0.2); border-radius: 10px; padding: 14px 18px; margin-top: 14px; flex-wrap: wrap; gap: 16px; }
 .veri-item { text-align: center; }
-.veri-label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--text3); margin-bottom: 3px; }
+.veri-label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--text2); margin-bottom: 3px; }
 .veri-val { font-family: 'Bebas Neue', sans-serif; font-size: 18px; }
 .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 16px; position: relative; overflow: hidden; }
 .card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent); }
@@ -67,7 +54,7 @@ h1 em { color: var(--gold); font-style: normal; }
 .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 4px; }
 label { font-size: 11px; color: var(--text2); font-weight: 500; }
 .hint { font-size: 10px; color: var(--text3); margin-top: 2px; }
-input[type=text], input[type=number], select { width: 100%; padding: 11px 14px; background: var(--card2); border: 1px solid var(--border); border-radius: 9px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; transition: border-color .2s; -webkit-appearance: none; }
+input[type=text], input[type=number], select { width: 100%; padding: 11px 14px; background: var(--card2); border: 1px solid var(--border); border-radius: 9px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; transition: border-color .2s, box-shadow .2s; -webkit-appearance: none; }
 input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
 input::placeholder { color: var(--text3); }
 select option { background: #181818; }
@@ -146,6 +133,19 @@ select option { background: #181818; }
 .rbtn { width: 100%; padding: 13px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--text2); font-family: 'DM Sans',sans-serif; font-size: 13px; cursor: pointer; transition: all .2s; margin-top: 8px; }
 .rbtn:hover { border-color: var(--gold); color: var(--gold); }
 .disc { font-size: 11px; color: var(--text3); text-align: center; margin-top: 14px; line-height: 1.7; }
+.rsi-firsat { border-color: rgba(0,200,83,0.5) !important; background: linear-gradient(145deg, #0d1f14, #111) !important; box-shadow: 0 0 16px rgba(0,200,83,0.12); }
+.rsi-firsat .hisse-ticker { color: #00c853 !important; }
+.rsi-risk { border-color: rgba(255,61,61,0.5) !important; background: linear-gradient(145deg, #1f0d0d, #111) !important; box-shadow: 0 0 16px rgba(255,61,61,0.12); }
+.rsi-risk .hisse-ticker { color: #ff3d3d !important; }
+.rsi-dikkat { border-color: rgba(255,179,0,0.4) !important; background: linear-gradient(145deg, #1a1500, #111) !important; }
+.rsi-dikkat .hisse-ticker { color: #ffb300 !important; }
+.hisse-rsi-badge { display: inline-block; margin-top: 5px; padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 700; }
+.rsi-badge-firsat { background: rgba(0,200,83,0.15); color: #00c853; border: 1px solid rgba(0,200,83,0.3); }
+.rsi-badge-risk { background: rgba(255,61,61,0.15); color: #ff3d3d; border: 1px solid rgba(255,61,61,0.3); }
+.rsi-badge-dikkat { background: rgba(255,179,0,0.15); color: #ffb300; border: 1px solid rgba(255,179,0,0.3); }
+.rsi-badge-normal { background: rgba(255,255,255,0.05); color: #666; border: 1px solid #222; }
+.btn-haber { padding: 11px 18px; background: transparent; border: 1px solid rgba(41,121,255,0.4); border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: #2979ff; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.btn-haber:hover { background: rgba(41,121,255,0.08); border-color: #2979ff; }
 @keyframes pulse-green {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.75; }
@@ -154,7 +154,6 @@ select option { background: #181818; }
 </head>
 <body>
 <div class="wrap">
-
 <div class="hdr">
   <div class="hdr-eyebrow">Humeyra Pro Analiz · v8.0</div>
   <h1>HİSSE <em>ANALİZ</em></h1>
@@ -172,18 +171,10 @@ select option { background: #181818; }
     <div id="fetch-status">Önce bir hisse seç</div>
   </div>
   <div class="veri-serit" id="veri-serit"></div>
+  <div id="analyst-bar" style="display:none;margin-top:12px;padding:14px 18px;background:var(--card2);border:1px solid rgba(201,168,76,0.2);border-radius:10px"></div>
 </div>
-
-<div id="analyst-bar" style="display:none;margin-bottom:16px;padding:18px 22px;background:var(--card);border:1px solid rgba(201,168,76,0.2);border-radius:16px"></div>
 
 <div class="card" id="karsilastir" style="display:none;border-color:rgba(41,121,255,0.2)"></div>
-
-<div class="card" style="border-color:rgba(201,168,76,0.3)">
-  <span class="sec-label">🗺️ Portföy Isı Haritası</span>
-  <div class="sec-title">Tüm Hisseler — Bir Bakışta</div>
-  <p class="sec-sub">Renk = RSI + Analist Koridoru · Tıkla = Hisse Seç</p>
-  <div id="heatmap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:8px"></div>
-</div>
 
 <div class="card">
   <span class="sec-label">📋 Temel Bilgiler</span>
@@ -366,6 +357,13 @@ select option { background: #181818; }
   </div>
 </div>
 
+<div class="card" style="border-color:rgba(201,168,76,0.3)">
+  <span class="sec-label">🗺️ Portföy Isı Haritası</span>
+  <div class="sec-title">Tüm Hisseler — Bir Bakışta</div>
+  <p class="sec-sub">Renk = RSI + Analist Koridoru · Tıkla = Hisse Seç</p>
+  <div id="heatmap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:8px"></div>
+</div>
+
 <button class="abtn" onclick="analiz()">🔍 ANALİZİ YAP — DİŞLERİNE BAK</button>
 
 <div class="result" id="result">
@@ -417,7 +415,6 @@ const COL = { sirket:0, ticker:1, fiyat:2, fk:3, yuksek:4, dusuk:5, degisim:6, m
 const VERI_BASLANGIC_SATIRI = 5;
 const SEKTOR_MAP = { 'Gıda':'gida','Çelik':'sanayi','Finans':'finans','Havacılık':'havacilik','Bankacılık':'finans' };
 const S = {};
-let hisseler = [], seciliHisse = null;
 
 function rsiSinif(rsi) {
   if (rsi <= 0) return '';
@@ -426,16 +423,10 @@ function rsiSinif(rsi) {
   if (rsi >= 65) return 'rsi-dikkat';
   return '';
 }
-function rsiBadge(rsi) {
-  if (rsi <= 0) return '';
-  if (rsi < 35) return `<div class="hisse-rsi-badge rsi-badge-firsat">RSI ${rsi.toFixed(0)} 🟢</div>`;
-  if (rsi > 70) return `<div class="hisse-rsi-badge rsi-badge-risk">RSI ${rsi.toFixed(0)} 🔴</div>`;
-  if (rsi >= 65) return `<div class="hisse-rsi-badge rsi-badge-dikkat">RSI ${rsi.toFixed(0)} 🟡</div>`;
-  return `<div class="hisse-rsi-badge rsi-badge-normal">RSI ${rsi.toFixed(0)}</div>`;
-}
 function haberLink(ticker, sirket) {
   return `https://www.google.com/search?q=${encodeURIComponent(sirket + ' stock ' + ticker)}&tbm=nws`;
 }
+let hisseler = [], seciliHisse = null;
 
 async function sheetsYukle() {
   try {
@@ -453,7 +444,8 @@ async function sheetsYukle() {
         degisim: sayi(cols[COL.degisim]), ma20: sayi(cols[COL.ma20]),
         ma200: sayi(cols[COL.ma200]), sektor: temizle(cols[COL.sektor]),
         hedef: sayi(cols[COL.hedef]), beta: sayi(cols[COL.beta]),
-        rsi: sayi(cols[COL.rsi]), hedefMin: sayi(cols[COL.hedefMin]),
+        rsi: sayi(cols[COL.rsi]),
+        hedefMin: sayi(cols[COL.hedefMin]),
         hedefMax: sayi(cols[COL.hedefMax]),
         not: temizle(cols[COL.not]),
       };
@@ -462,7 +454,7 @@ async function sheetsYukle() {
     if (hisseler.length > 0) { gridOlustur(); heatmapOlustur(); }
     else document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Veri bulunamadı</div>';
   } catch(e) {
-    if (hisseler.length === 0) document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Bağlantı hatası: ' + e.message + '</div>';
+    document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Bağlantı hatası: ' + e.message + '</div>';
   }
 }
 
@@ -483,97 +475,20 @@ function gridOlustur() {
   grid.innerHTML = '';
   hisseler.forEach((h, idx) => {
     const deg = h.degisim !== 0 ? (h.degisim > 0 ? '+' : '') + h.degisim.toFixed(2) + '%' : '—';
+    const rsiRenk = h.rsi > 70 ? '#ff3d3d' : h.rsi < 30 ? '#00c853' : '#ffb300';
     const btn = document.createElement('div');
-    btn.className = 'hisse-btn ' + rsiSinif(h.rsi);
-    btn.dataset.idx = idx;
-    btn.innerHTML = `<div class="hisse-ticker">${h.ticker}</div><div class="hisse-name">${h.sirket.length>16?h.sirket.substring(0,16)+'…':h.sirket}</div><div class="hisse-price">€${h.fiyat.toFixed(2)}</div><div class="hisse-change ${h.degisim>=0?'up':'down'}">${deg}</div>${rsiBadge(h.rsi)}`;
+    btn.className = 'hisse-btn ' + rsiSinif(h.rsi); btn.dataset.idx = idx;
+    btn.innerHTML = `
+      <div class="hisse-ticker">${h.ticker}</div>
+      <div class="hisse-name">${h.sirket.length>16?h.sirket.substring(0,16)+'…':h.sirket}</div>
+      <div class="hisse-price">€${h.fiyat.toFixed(2)}</div>
+      <div class="hisse-change ${h.degisim>=0?'up':'down'}">${deg}</div>
+      ${h.rsi>0?`<div style="font-size:10px;margin-top:3px;color:${rsiRenk};font-weight:600">RSI ${h.rsi.toFixed(0)}</div>`:''}
+    `;
     btn.onclick = () => hisseAktif(idx, btn);
     grid.appendChild(btn);
   });
   document.getElementById('fetch-status').textContent = hisseler.length + ' hisse yüklendi — birini seç';
-}
-
-hisseler.forEach((h, idx) => {
-    const upside = h.hedef > 0 && h.fiyat > 0 ? ((h.hedef - h.fiyat) / h.fiyat * 100) : null;
-    const upsideMin = h.hedefMin > 0 && h.fiyat > 0 ? ((h.hedefMin - h.fiyat) / h.fiyat * 100) : null;
-
-    const alimBolgesi = h.rsi > 0 && h.rsi < 35 && upsideMin !== null && upsideMin > 0;
-    const dikkat = h.rsi > 70 || (h.hedefMax > 0 && h.fiyat > h.hedefMax);
-    const firsat = h.rsi > 0 && h.rsi < 35;
-
-    let borderColor, bgGradient, labelColor, statusLabel, statusIcon;
-    if (alimBolgesi) {
-      borderColor = 'rgba(0,200,83,0.8)'; bgGradient = 'linear-gradient(145deg,#0a2415,#111)';
-      labelColor = 'var(--green)'; statusIcon = '🎯'; statusLabel = 'ALIM BÖLGESİ';
-    } else if (dikkat) {
-      borderColor = 'rgba(255,61,61,0.5)'; bgGradient = 'linear-gradient(145deg,#1f0d0d,#111)';
-      labelColor = 'var(--red)'; statusIcon = '⚠️'; statusLabel = 'Dikkat';
-    } else if (firsat) {
-      borderColor = 'rgba(0,200,83,0.4)'; bgGradient = 'linear-gradient(145deg,#0d1f14,#111)';
-      labelColor = 'var(--green)'; statusIcon = '🟢'; statusLabel = 'Fırsat';
-    } else {
-      borderColor = 'rgba(255,179,0,0.3)'; bgGradient = 'linear-gradient(145deg,#1a1500,#111)';
-      labelColor = 'var(--yellow)'; statusIcon = '⚡'; statusLabel = 'İzle';
-    }
-
-    const alimEtiket = alimBolgesi ? `
-      <div style="position:absolute;top:-1px;right:-1px;background:var(--green);color:#000;
-        font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 7px;
-        border-radius:0 12px 0 8px;text-transform:uppercase;
-        animation:pulse-green 2s ease-in-out infinite;">🎯 ALIM</div>` : '';
-
-    const div = document.createElement('div');
-    div.style.cssText = `background:${bgGradient};border:2px solid ${borderColor};border-radius:14px;
-      padding:16px 12px;cursor:pointer;transition:all .2s;text-align:center;position:relative;
-      ${alimBolgesi ? 'box-shadow:0 0 24px rgba(0,200,83,0.25);' : ''}`;
-
-    div.innerHTML = `
-      ${alimEtiket}
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:${labelColor};margin-bottom:4px">${h.ticker}</div>
-      <div style="font-size:10px;color:var(--text2);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.sirket.length>14?h.sirket.substring(0,14)+'…':h.sirket}</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);margin-bottom:2px">€${h.fiyat.toFixed(2)}</div>
-      ${h.rsi > 0 ? `<div style="font-size:10px;color:${labelColor};font-weight:700;margin-bottom:6px">RSI ${h.rsi.toFixed(0)}</div>` : ''}
-      ${upside !== null ? `<div style="font-size:10px;color:${upside>0?'var(--green)':'var(--red)'};font-weight:600">+%${upside.toFixed(1)} potansiyel</div>` : ''}
-      <div style="margin-top:8px;padding:3px 8px;border-radius:100px;background:rgba(255,255,255,0.04);
-        border:1px solid ${borderColor};display:inline-block">
-        <span style="font-size:9px;color:${labelColor};font-weight:700;letter-spacing:1px">${statusIcon} ${statusLabel}</span>
-      </div>
-      ${h.not ? `<div style="margin-top:8px;font-size:10px;color:var(--text2);line-height:1.5;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;text-align:left">📝 ${h.not}</div>` : ''}`;
-
-    div.onmouseover = () => { div.style.transform = 'translateY(-2px)'; div.style.borderColor = labelColor; };
-    div.onmouseout = () => { div.style.transform = ''; div.style.borderColor = borderColor; };
-    div.onclick = () => hisseGriddenSec(h.ticker);
-    el.appendChild(div);
-  });
-
-    const alimEtiket = alimBolgesi ? `
-      <div style="position:absolute;top:-1px;right:-1px;background:var(--green);color:#000;
-        font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 7px;
-        border-radius:0 12px 0 8px;text-transform:uppercase;
-        animation:pulse-green 2s ease-in-out infinite;">🎯 ALIM</div>` : '';
-
-    const div = document.createElement('div');
-    div.style.cssText = `background:${bgGradient};border:2px solid ${borderColor};border-radius:14px;
-      padding:16px 12px;cursor:pointer;transition:all .2s;text-align:center;position:relative;
-      ${alimBolgesi ? 'box-shadow:0 0 24px rgba(0,200,83,0.25);' : ''}`;
-
-    div.innerHTML = `
-      ${alimEtiket}
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:${labelColor};margin-bottom:4px">${h.ticker}</div>
-      <div style="font-size:10px;color:var(--text2);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.sirket.length>14?h.sirket.substring(0,14)+'…':h.sirket}</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);margin-bottom:2px">€${h.fiyat.toFixed(2)}</div>
-      ${h.rsi > 0 ? `<div style="font-size:10px;color:${labelColor};font-weight:700;margin-bottom:6px">RSI ${h.rsi.toFixed(0)}</div>` : ''}
-      ${upside !== null ? `<div style="font-size:10px;color:${upside>0?'var(--green)':'var(--red)'};font-weight:600">+%${upside.toFixed(1)} potansiyel</div>` : ''}
-      <div style="margin-top:8px;padding:3px 8px;border-radius:100px;background:rgba(255,255,255,0.04);
-        border:1px solid ${borderColor};display:inline-block">
-        <span style="font-size:9px;color:${labelColor};font-weight:700;letter-spacing:1px">${statusIcon} ${statusLabel}</span>
-      </div>
-      ${h.not ? `<div style="margin-top:8px;font-size:10px;color:var(--text2);line-height:1.5;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;text-align:left">📝 ${h.not}</div>` : ''}`;
-    div.onmouseover = () => { div.style.transform = 'translateY(-2px)'; div.style.borderColor = labelColor; };
-    div.onmouseout = () => { div.style.transform = ''; div.style.borderColor = borderColor; };
-    div.onclick = () => hisseGriddenSec(h.ticker);
-    el.appendChild(div);
-  });
 }
 
 function hisseAktif(idx, btn) {
@@ -581,15 +496,6 @@ function hisseAktif(idx, btn) {
   btn.classList.add('active');
   seciliHisse = hisseler[idx];
   document.getElementById('fetch-status').textContent = seciliHisse.ticker + ' seçildi — VERİ ÇEK butonuna bas';
-}
-
-function hisseGriddenSec(ticker) {
-  const idx = hisseler.findIndex(h => h.ticker === ticker);
-  if (idx < 0) return;
-  const btn = document.querySelector(`.hisse-btn[data-idx="${idx}"]`);
-  if (btn) hisseAktif(idx, btn);
-  veriCek();
-  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function veriCek() {
@@ -605,19 +511,19 @@ function veriCek() {
   document.getElementById('target').value = h.hedef > 0 ? h.hedef.toFixed(2) : '';
   document.getElementById('beta').value = h.beta > 0 ? h.beta.toFixed(2) : '';
   document.getElementById('rsi').value = h.rsi > 0 ? h.rsi.toFixed(0) : '';
-  const sv = SEKTOR_MAP[h.sektor] || '';
-  if (sv) document.getElementById('sector').value = sv;
   const haberBtn = document.getElementById('btn-haber');
   haberBtn.href = haberLink(h.ticker, h.sirket);
   haberBtn.style.display = 'inline-flex';
+  const sv = SEKTOR_MAP[h.sektor] || '';
+  if (sv) document.getElementById('sector').value = sv;
   const upside = h.hedef > 0 && h.fiyat > 0 ? ((h.hedef - h.fiyat) / h.fiyat * 100).toFixed(1) : null;
-  const rsiRenk = h.rsi > 70 ? 'var(--red)' : h.rsi < 35 ? 'var(--green)' : h.rsi >= 65 ? 'var(--yellow)' : 'var(--text2)';
+  const rsiRenk = h.rsi > 70 ? 'var(--red)' : h.rsi < 30 ? 'var(--green)' : 'var(--yellow)';
   const serit = document.getElementById('veri-serit');
   serit.style.display = 'flex';
   serit.innerHTML = [
     {l:'Fiyat',v:'€'+h.fiyat.toFixed(2),c:'var(--gold)'},
     {l:'Hedef',v:h.hedef>0?'€'+h.hedef.toFixed(2):'N/A',c:'var(--green)'},
-    {l:'Min Hedef',v:h.hedefMin>0?'€'+h.hedefMin.toFixed(2):'N/A',c:'var(--red)'},
+    {l:'Min Hedef',v:h.hedefMin>0?'€'+h.hedefMin.toFixed(2):'N/A',c:'var(--text2)'},
     {l:'Maks Hedef',v:h.hedefMax>0?'€'+h.hedefMax.toFixed(2):'N/A',c:'var(--green)'},
     {l:'Potansiyel',v:upside?'+%'+upside:'N/A',c:upside&&parseFloat(upside)>0?'var(--green)':'var(--red)'},
     {l:'RSI',v:h.rsi>0?h.rsi.toFixed(0):'N/A',c:rsiRenk},
@@ -625,30 +531,30 @@ function veriCek() {
     {l:'Beta',v:h.beta>0?h.beta.toFixed(2):'N/A',c:h.beta>1.5?'var(--red)':h.beta<0.8?'var(--green)':'var(--yellow)'},
     {l:'Değişim',v:(h.degisim>0?'+':'')+h.degisim.toFixed(2)+'%',c:h.degisim>=0?'var(--green)':'var(--red)'},
   ].map(d=>`<div class="veri-item"><div class="veri-label">${d.l}</div><div class="veri-val" style="color:${d.c}">${d.v}</div></div>`).join('');
-
-  // Analist güven aralığı bar
+  sektorKarsilastir(h);
   const barEl = document.getElementById('analyst-bar');
-  if (h.hedefMin > 0 && h.hedefMax > 0) {
-    const min=h.hedefMin, max=h.hedefMax, fiyat=h.fiyat;
-    const pct = Math.min(100, Math.max(0, ((fiyat-min)/(max-min))*100));
-    const durum = fiyat<min?'🚨 Analist koridorunun ALTINDA — Aşırı Fırsat!':fiyat>max?'⚠️ Analist koridorunun ÜSTÜNDE — Dikkat!':'✅ Analist koridoru içinde';
-    const durumRenk = fiyat<min?'var(--green)':fiyat>max?'var(--red)':'var(--gold)';
+  if(h.hedefMin > 0 && h.hedefMax > 0) {
+    const min = h.hedefMin, max = h.hedefMax, fiyat = h.fiyat;
+    const pct = Math.min(100, Math.max(0, ((fiyat - min) / (max - min)) * 100));
+    const durum = fiyat < min ? '🚨 Analist koridorunun ALTINDA — Aşırı Fırsat!' : fiyat > max ? '⚠️ Analist koridorunun ÜSTÜNDE — Dikkat!' : '✅ Analist koridoru içinde';
+    const durumRenk = fiyat < min ? 'var(--green)' : fiyat > max ? 'var(--red)' : 'var(--gold)';
     barEl.style.display = 'block';
     barEl.innerHTML = `
       <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px">📊 Analist Güven Aralığı</div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
         <span style="font-size:11px;color:var(--red);font-weight:600">€${min}</span>
-        <div style="flex:1;position:relative;height:8px;background:linear-gradient(90deg,rgba(255,61,61,0.3),rgba(255,179,0,0.3),rgba(0,200,83,0.3));border-radius:100px;border:1px solid var(--border)">
+        <div style="flex:1;position:relative;height:8px;background:linear-gradient(90deg,var(--red-dim),var(--yellow-dim),var(--green-dim));border-radius:100px;border:1px solid var(--border)">
           <div style="position:absolute;top:50%;left:${pct}%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:white;border:2px solid var(--gold);box-shadow:0 0 8px rgba(201,168,76,0.6)"></div>
         </div>
         <span style="font-size:11px;color:var(--green);font-weight:600">€${max}</span>
       </div>
       <div style="font-size:12px;font-weight:600;color:${durumRenk}">${durum}</div>
-      <div style="font-size:11px;color:var(--text2);margin-top:4px">Şu an: <strong style="color:var(--gold)">€${fiyat.toFixed(2)}</strong> · Ortalama Hedef: <strong style="color:var(--text)">€${h.hedef.toFixed(2)}</strong></div>`;
-  } else { barEl.style.display = 'none'; }
-
-  sektorKarsilastir(h);
-  document.getElementById('fetch-status').innerHTML = '✅ <strong>' + h.ticker + '</strong> yüklendi!';
+      <div style="font-size:11px;color:var(--text2);margin-top:4px">Şu an: <strong style="color:var(--gold)">€${fiyat.toFixed(2)}</strong> · Ortalama Hedef: <strong style="color:var(--text)">€${h.hedef.toFixed(2)}</strong></div>
+    `;
+  } else {
+    barEl.style.display = 'none';
+  }
+  document.getElementById('fetch-status').innerHTML = '✅ <strong>' + h.ticker + '</strong> — RSI dahil tüm veriler yüklendi!';
   setTimeout(() => document.querySelector('.card').scrollIntoView({behavior:'smooth',block:'start'}), 200);
 }
 
@@ -658,22 +564,83 @@ function sektorKarsilastir(secili) {
   if (ayni.length === 0) { el.style.display = 'none'; return; }
   el.style.display = 'block';
   const tumSektor = hisseler.filter(h => h.sektor === secili.sektor);
-  const fkliH = tumSektor.filter(h => h.fk > 0);
-  const ortFk = fkliH.length > 0 ? fkliH.reduce((a,h)=>a+h.fk,0)/fkliH.length : 0;
-  const upH = tumSektor.filter(h => h.hedef > 0 && h.fiyat > 0);
-  const ortUp = upH.length > 0 ? upH.reduce((a,h)=>a+((h.hedef-h.fiyat)/h.fiyat*100),0)/upH.length : 0;
-  const sUp = secili.hedef > 0 && secili.fiyat > 0 ? ((secili.hedef-secili.fiyat)/secili.fiyat*100).toFixed(1) : null;
+  const fkliHisseler = tumSektor.filter(h => h.fk > 0);
+  const ortFk = fkliHisseler.length > 0 ? fkliHisseler.reduce((a,h)=>a+h.fk,0)/fkliHisseler.length : 0;
+  const upsideliHisseler = tumSektor.filter(h => h.hedef > 0 && h.fiyat > 0);
+  const ortUpside = upsideliHisseler.length > 0 ? upsideliHisseler.reduce((a,h)=>a+((h.hedef-h.fiyat)/h.fiyat*100),0)/upsideliHisseler.length : 0;
+  const seciliUpside = secili.hedef > 0 && secili.fiyat > 0 ? ((secili.hedef-secili.fiyat)/secili.fiyat*100).toFixed(1) : null;
   el.innerHTML = `
     <span class="sec-label">🔍 Sektör Karşılaştırması — ${secili.sektor}</span>
     <div class="sec-title">${secili.ticker} vs Sektör</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:16px">
       ${ortFk>0?`<div style="padding:12px;background:var(--card2);border-radius:10px;border:1px solid rgba(201,168,76,0.2)"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">Sektör Ort. F/K</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold)">${ortFk.toFixed(1)}</div><div style="font-size:11px;color:${secili.fk<ortFk?'var(--green)':'var(--red)'}">${secili.ticker}: ${secili.fk.toFixed(1)} ${secili.fk<ortFk?'✅ Ucuz':'⚠️ Pahalı'}</div></div>`:''}
-      ${ortUp>0?`<div style="padding:12px;background:var(--card2);border-radius:10px;border:1px solid rgba(41,121,255,0.2)"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">Sektör Ort. Potansiyel</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--blue)">%${ortUp.toFixed(1)}</div><div style="font-size:11px;color:${sUp&&parseFloat(sUp)>ortUp?'var(--green)':'var(--yellow)'}">${secili.ticker}: %${sUp||'N/A'} ${sUp&&parseFloat(sUp)>ortUp?'✅ Üstünde':'— Altında'}</div></div>`:''}
+      ${ortUpside>0?`<div style="padding:12px;background:var(--card2);border-radius:10px;border:1px solid rgba(41,121,255,0.2)"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">Sektör Ort. Potansiyel</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--blue)">%${ortUpside.toFixed(1)}</div><div style="font-size:11px;color:${seciliUpside&&parseFloat(seciliUpside)>ortUpside?'var(--green)':'var(--yellow)'}">${secili.ticker}: %${seciliUpside||'N/A'} ${seciliUpside&&parseFloat(seciliUpside)>ortUpside?'✅ Üstünde':'— Altında'}</div></div>`:''}
     </div>
     <div style="font-size:11px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:2px">Sektördeki Diğer Hisseler</div>
     <div style="display:flex;flex-wrap:wrap;gap:8px">
-      ${ayni.map(h=>{const up=h.hedef>0&&h.fiyat>0?((h.hedef-h.fiyat)/h.fiyat*100).toFixed(1):null;const rc=h.rsi>70?'var(--red)':h.rsi<35?'var(--green)':h.rsi>=65?'var(--yellow)':'var(--text2)';return`<div style="padding:10px 14px;background:var(--card2);border-radius:10px;border:1px solid var(--border);cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'" onclick="hisseGriddenSec('${h.ticker}')"><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold)">${h.ticker}</div><div style="font-size:11px;color:var(--text2)">€${h.fiyat.toFixed(2)}</div><div style="font-size:10px;color:${h.degisim>=0?'var(--green)':'var(--red)'}">${(h.degisim>0?'+':'')+h.degisim.toFixed(2)}%</div>${h.rsi>0?`<div style="font-size:10px;color:${rc}">RSI ${h.rsi.toFixed(0)}</div>`:''} ${up?`<div style="font-size:10px;color:var(--blue)">+%${up}</div>`:''}</div>`;}).join('')}
+      ${ayni.map(h=>{const up=h.hedef>0&&h.fiyat>0?((h.hedef-h.fiyat)/h.fiyat*100).toFixed(1):null;const rsiR=h.rsi>70?'var(--red)':h.rsi<30?'var(--green)':'var(--yellow)';return`<div style="padding:10px 14px;background:var(--card2);border-radius:10px;border:1px solid var(--border);cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'" onclick="hisseGriddenSec('${h.ticker}')"><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold)">${h.ticker}</div><div style="font-size:11px;color:var(--text2)">€${h.fiyat.toFixed(2)}</div><div style="font-size:10px;color:${h.degisim>=0?'var(--green)':'var(--red)'}">${(h.degisim>0?'+':'')+h.degisim.toFixed(2)}%</div>${h.rsi>0?`<div style="font-size:10px;color:${rsiR}">RSI ${h.rsi.toFixed(0)}</div>`:''} ${up?`<div style="font-size:10px;color:var(--blue)">+%${up}</div>`:''}</div>`;}).join('')}
     </div>`;
+}
+
+function hisseGriddenSec(ticker) {
+  const idx = hisseler.findIndex(h => h.ticker === ticker);
+  if (idx < 0) return;
+  const btn = document.querySelector(`.hisse-btn[data-idx="${idx}"]`);
+  if (btn) hisseAktif(idx, btn);
+  veriCek();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function heatmapOlustur() {
+  const el = document.getElementById('heatmap');
+  if (!el || hisseler.length === 0) return;
+  el.innerHTML = '';
+  hisseler.forEach((h, idx) => {
+    const upside = h.hedef > 0 && h.fiyat > 0 ? ((h.hedef - h.fiyat) / h.fiyat * 100) : null;
+    const upsideMin = h.hedefMin > 0 && h.fiyat > 0 ? ((h.hedefMin - h.fiyat) / h.fiyat * 100) : null;
+    const alimBolgesi = h.rsi > 0 && h.rsi < 35 && upsideMin !== null && upsideMin > 0;
+    const dikkat = h.rsi > 70 || (h.hedefMax > 0 && h.fiyat > h.hedefMax);
+    const firsat = h.rsi > 0 && h.rsi < 35;
+    let borderColor, bgGradient, labelColor, statusLabel, statusIcon;
+    if (alimBolgesi) {
+      borderColor = 'rgba(0,200,83,0.8)'; bgGradient = 'linear-gradient(145deg,#0a2415,#111)';
+      labelColor = 'var(--green)'; statusIcon = '🎯'; statusLabel = 'ALIM BÖLGESİ';
+    } else if (dikkat) {
+      borderColor = 'rgba(255,61,61,0.5)'; bgGradient = 'linear-gradient(145deg,#1f0d0d,#111)';
+      labelColor = 'var(--red)'; statusIcon = '⚠️'; statusLabel = 'Dikkat';
+    } else if (firsat) {
+      borderColor = 'rgba(0,200,83,0.4)'; bgGradient = 'linear-gradient(145deg,#0d1f14,#111)';
+      labelColor = 'var(--green)'; statusIcon = '🟢'; statusLabel = 'Fırsat';
+    } else {
+      borderColor = 'rgba(255,179,0,0.3)'; bgGradient = 'linear-gradient(145deg,#1a1500,#111)';
+      labelColor = 'var(--yellow)'; statusIcon = '⚡'; statusLabel = 'İzle';
+    }
+    const alimEtiket = alimBolgesi ? `
+      <div style="position:absolute;top:-1px;right:-1px;background:var(--green);color:#000;
+        font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 7px;
+        border-radius:0 12px 0 8px;text-transform:uppercase;
+        animation:pulse-green 2s ease-in-out infinite;">🎯 ALIM</div>` : '';
+    const div = document.createElement('div');
+    div.style.cssText = `background:${bgGradient};border:2px solid ${borderColor};border-radius:14px;
+      padding:16px 12px;cursor:pointer;transition:all .2s;text-align:center;position:relative;
+      ${alimBolgesi ? 'box-shadow:0 0 24px rgba(0,200,83,0.25);' : ''}`;
+    div.innerHTML = `
+      ${alimEtiket}
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:${labelColor};margin-bottom:4px">${h.ticker}</div>
+      <div style="font-size:10px;color:var(--text2);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.sirket.length>14?h.sirket.substring(0,14)+'…':h.sirket}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);margin-bottom:2px">€${h.fiyat.toFixed(2)}</div>
+      ${h.rsi > 0 ? `<div style="font-size:10px;color:${labelColor};font-weight:700;margin-bottom:6px">RSI ${h.rsi.toFixed(0)}</div>` : ''}
+      ${upside !== null ? `<div style="font-size:10px;color:${upside>0?'var(--green)':'var(--red)'};font-weight:600">+%${upside.toFixed(1)} potansiyel</div>` : ''}
+      <div style="margin-top:8px;padding:3px 8px;border-radius:100px;background:rgba(255,255,255,0.04);
+        border:1px solid ${borderColor};display:inline-block">
+        <span style="font-size:9px;color:${labelColor};font-weight:700;letter-spacing:1px">${statusIcon} ${statusLabel}</span>
+      </div>
+      ${h.not ? `<div style="margin-top:8px;font-size:10px;color:var(--text2);line-height:1.5;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;text-align:left">📝 ${h.not}</div>` : ''}`;
+    div.onmouseover = () => { div.style.transform = 'translateY(-2px)'; div.style.borderColor = labelColor; };
+    div.onmouseout = () => { div.style.transform = ''; div.style.borderColor = borderColor; };
+    div.onclick = () => hisseGriddenSec(h.ticker);
+    el.appendChild(div);
+  });
 }
 
 function T(btn, grp, cls) {
@@ -692,32 +659,31 @@ function analiz() {
   const margin=gn('margin'),pe=gn('pe'),change1m=gn('change1m');
   const company=gs('company')||'Şirket',ticker=gs('ticker')||'—';
   let score=50,pos=[],neg=[],adv=[];
-  if(price>0&&ma200>0){if(price>ma200*1.05){score+=9;pos.push('Fiyat MA200\'ün belirgin üzerinde');}else if(price>ma200){score+=5;pos.push('Fiyat MA200 üzerinde');}else if(price>ma200*0.95){score-=4;neg.push('Fiyat MA200\'e yakın ama altında');}else{score-=9;neg.push('Fiyat MA200\'ün altında');}}
-  if(price>0&&ma20>0){if(price>ma20){score+=5;pos.push('Fiyat MA20 üzerinde');}else{score-=5;neg.push('Fiyat MA20 altında');}}
-  if(rsi>0){if(rsi>75){score-=10;neg.push('RSI '+rsi+' — aşırı alım!');}else if(rsi>65){score-=4;neg.push('RSI '+rsi+' — alım bölgesine yaklaşıyor');}else if(rsi<30){score+=8;pos.push('RSI '+rsi+' — aşırı satım 💎 Elmas Sinyal!');}else if(rsi<35){score+=6;pos.push('RSI '+rsi+' — fırsat bölgesi');}else{score+=2;pos.push('RSI '+rsi+' — normal');}}
-  if(beta>0){if(beta<0.7)pos.push('Beta '+beta+' — savunmacı');else if(beta<1.2)pos.push('Beta '+beta+' — sağlıklı');else if(beta<1.8){score-=3;neg.push('Beta '+beta+' — dalgalı');}else{score-=7;neg.push('Beta '+beta+' — çok yüksek!');}}
-  if(price>0&&target>0){const up=((target-price)/price*100).toFixed(0);if(up>30){score+=10;pos.push('Analist hedefine %'+up+' potansiyel');}else if(up>15){score+=6;pos.push('Analist hedefine %'+up+' beklenti');}else if(up>0){score+=2;pos.push('Analist hedefine %'+up+' yükseliş');}else{score-=8;neg.push('Fiyat analist hedefinin üzerinde!');}}
-  const macd=gv('macd');if(macd==='pozitif'){score+=7;pos.push('MACD al sinyali');}else if(macd==='negatif'){score-=7;neg.push('MACD sat sinyali');}
-  const hacim=gv('hacim');if(hacim==='artiyor'){score+=4;pos.push('Hacim artıyor');}else if(hacim==='dususyor'){score-=3;neg.push('Hacim düşüyor');}
-  const trend=gv('trend');if(trend==='guclu-yukari'){score+=10;pos.push('Güçlü yukarı trend');}else if(trend==='yukari'){score+=6;pos.push('Yukarı trend');}else if(trend==='yatay')adv.push('Trend yatay');else if(trend==='asagi'){score-=6;neg.push('Aşağı trend');}else if(trend==='guclu-asagi'){score-=12;neg.push('Güçlü aşağı trend!');}
-  if(margin>0){if(margin>=25){score+=10;pos.push('Kâr marjı %'+margin+' — olağanüstü!');}else if(margin>=15){score+=7;pos.push('Kâr marjı %'+margin+' — çok iyi');}else if(margin>=8){score+=3;pos.push('Kâr marjı %'+margin+' — iyi');}else{score-=5;neg.push('Kâr marjı %'+margin+' — düşük');}}
-  if(pe>0){if(pe<10){score+=8;pos.push('F/K '+pe+' — çok ucuz');}else if(pe<20){score+=5;pos.push('F/K '+pe+' — makul');}else if(pe<35){score-=2;neg.push('F/K '+pe+' — biraz pahalı');}else{score-=7;neg.push('F/K '+pe+' — pahalı');}}
-  const borc=gv('borc');if(borc==='dusuk'){score+=8;pos.push('Borç düşük');}else if(borc==='orta'){score+=2;}else if(borc==='yuksek'){score-=8;neg.push('Yüksek borç');}else if(borc==='kritik'){score-=15;neg.push('KRİTİK BORÇ!');}
+  if(price>0&&ma200>0){if(price>ma200*1.05){score+=9;pos.push('Fiyat MA200\'ün belirgin üzerinde — güçlü uzun vade trendi');}else if(price>ma200){score+=5;pos.push('Fiyat MA200 üzerinde — uzun vade olumlu');}else if(price>ma200*0.95){score-=4;neg.push('Fiyat MA200\'e yakın ama altında');}else{score-=9;neg.push('Fiyat MA200\'ün altında — uzun vade baskısı');}}
+  if(price>0&&ma20>0){if(price>ma20){score+=5;pos.push('Fiyat MA20 üzerinde — kısa vade pozitif');}else{score-=5;neg.push('Fiyat MA20 altında — kısa vade zayıf');}}
+  if(rsi>0){if(rsi>75){score-=10;neg.push('RSI '+rsi+' — aşırı alım! Düzeltme riski yüksek');}else if(rsi>65){score-=4;neg.push('RSI '+rsi+' — alım bölgesine yaklaşıyor');}else if(rsi<30){score+=8;pos.push('RSI '+rsi+' — aşırı satım, toparlanma fırsatı olabilir');}else if(rsi<45){score+=4;pos.push('RSI '+rsi+' — sağlıklı bölge');}else{score+=2;pos.push('RSI '+rsi+' — normal seviye');}}
+  if(beta>0){if(beta<0.7)pos.push('Beta '+beta+' — savunmacı hisse, düşük volatilite');else if(beta<1.2)pos.push('Beta '+beta+' — sağlıklı volatilite');else if(beta<1.8){score-=3;neg.push('Beta '+beta+' — piyasadan dalgalı');}else{score-=7;neg.push('Beta '+beta+' — çok yüksek volatilite!');}}
+  if(price>0&&target>0){const up=((target-price)/price*100).toFixed(0);if(up>30){score+=10;pos.push('Analist hedefine %'+up+' yükseliş potansiyeli');}else if(up>15){score+=6;pos.push('Analist hedefine %'+up+' yükseliş beklentisi');}else if(up>0){score+=2;pos.push('Analist hedefine %'+up+' yükseliş var');}else{score-=8;neg.push('Fiyat analist hedefinin üzerinde — pahalı!');}}
+  const macd=gv('macd');if(macd==='pozitif'){score+=7;pos.push('MACD al sinyali — momentum güçlü');}else if(macd==='negatif'){score-=7;neg.push('MACD sat sinyali — satış baskısı');}
+  const hacim=gv('hacim');if(hacim==='artiyor'){score+=4;pos.push('Hacim artıyor — güçlü katılım');}else if(hacim==='dususyor'){score-=3;neg.push('Hacim düşüyor — hareket zayıflıyor');}
+  const trend=gv('trend');if(trend==='guclu-yukari'){score+=10;pos.push('Güçlü yukarı trend');}else if(trend==='yukari'){score+=6;pos.push('Yukarı trend devam ediyor');}else if(trend==='yatay')adv.push('Trend yatay — kırılmayı bekle');else if(trend==='asagi'){score-=6;neg.push('Aşağı trend — zamanlama şart');}else if(trend==='guclu-asagi'){score-=12;neg.push('Güçlü aşağı trend! Düşen bıçağı tutma.');}
+  if(margin>0){if(margin>=25){score+=10;pos.push('Kâr marjı %'+margin+' — olağanüstü!');}else if(margin>=15){score+=7;pos.push('Kâr marjı %'+margin+' — çok iyi');}else if(margin>=8){score+=3;pos.push('Kâr marjı %'+margin+' — kabul edilebilir');}else{score-=5;neg.push('Kâr marjı %'+margin+' — düşük');}}
+  if(pe>0){if(pe<10){score+=8;pos.push('F/K '+pe+' — çok ucuz');}else if(pe<20){score+=5;pos.push('F/K '+pe+' — makul');}else if(pe<35){score-=2;neg.push('F/K '+pe+' — biraz pahalı');}else{score-=7;neg.push('F/K '+pe+' — çok pahalı');}}
+  const borc=gv('borc');if(borc==='dusuk'){score+=8;pos.push('Borç düşük — finansal esneklik güçlü');}else if(borc==='orta'){score+=2;adv.push('Orta borç — büyüme için kullanılıyorsa sorun değil');}else if(borc==='yuksek'){score-=8;neg.push('Yüksek borç — faiz yükü zorlayabilir');}else if(borc==='kritik'){score-=15;neg.push('KRİTİK BORÇ! Şirket sıkışmış olabilir');}
   const nakit=gv('nakit');if(nakit==='guclu'){score+=10;pos.push('Güçlü nakit akışı');}else if(nakit==='pozitif'){score+=6;pos.push('Nakit akışı pozitif');}else if(nakit==='negatif'){score-=12;neg.push('Nakit akışı negatif!');}
   const tem=gv('temettu');if(tem==='artarak'){score+=8;pos.push('Temettü artarak ödeniyor');}else if(tem==='var'){score+=4;pos.push('Temettü ödüyor');}else if(tem==='kesildi'){score-=8;neg.push('Temettü kesildi!');}
-  const haber=gv('haber');if(haber==='cok-iyi'){score+=9;pos.push('Haberler çok olumlu');}else if(haber==='iyi'){score+=5;pos.push('Haberler olumlu');}else if(haber==='kotu'){score-=7;neg.push('Haberler olumsuz');}else if(haber==='karisik')adv.push('Karışık haberler');
-  const buyume=gv('buyume');if(buyume==='guclu'){score+=9;pos.push('Güçlü büyüme beklentisi');}else if(buyume==='var'){score+=5;pos.push('Büyüme bekleniyor');}else if(buyume==='yok'){score-=8;neg.push('Büyüme yok');}
-  if(rsi>0&&rsi<35&&(haber==='iyi'||haber==='cok-iyi')){score+=5;pos.push('💎 ELMAS SİNYAL: RSI fırsat + olumlu haberler!');}
+  const haber=gv('haber');if(haber==='cok-iyi'){score+=9;pos.push('Haberler çok olumlu');}else if(haber==='iyi'){score+=5;pos.push('Haberler olumlu');}else if(haber==='kotu'){score-=7;neg.push('Haberler olumsuz');}else if(haber==='karisik')adv.push('Karışık haberler — izle');
+  const buyume=gv('buyume');if(buyume==='guclu'){score+=9;pos.push('Güçlü büyüme beklentisi');}else if(buyume==='var'){score+=5;pos.push('Büyüme bekleniyor');}else if(buyume==='yok'){score-=8;neg.push('Büyüme beklentisi yok');}else if(buyume==='belirsiz')adv.push('Büyüme belirsiz — raporu bekle');
   let pumpRisk=0;const pumps=[];
-  if(rsi>70){pumps.push({t:'⚠️ RSI 70+ Aşırı Alım',c:'warn'});pumpRisk++;}else if(rsi>0&&rsi<35)pumps.push({t:'🟢 RSI Fırsat Bölgesi',c:'safe'});else if(rsi>0)pumps.push({t:'✅ RSI Normal',c:'safe'});
-  if(change1m>50){pumps.push({t:'🚨 1 Ayda +%'+change1m.toFixed(0),c:'danger'});pumpRisk+=2;}else if(change1m>25){pumps.push({t:'⚠️ 1 Ayda +%'+change1m.toFixed(0),c:'warn'});pumpRisk++;}else if(change1m!==0)pumps.push({t:'✅ Değişim Makul',c:'safe'});
-  const sh=gs('short');if(sh==='cok-yuksek'){pumps.push({t:'🚨 GameStop Riski!',c:'danger'});pumpRisk+=2;score-=8;}else if(sh==='yuksek'){pumps.push({t:'⚠️ Short Interest Yüksek',c:'warn'});pumpRisk++;}else if(sh==='dusuk')pumps.push({t:'✅ Short Interest Düşük',c:'safe'});
-  const seb=gv('sebep');if(seb==='sosyal'){pumps.push({t:'🚨 Sosyal Medya Pompası!',c:'danger'});pumpRisk+=2;score-=10;}else if(seb==='sebepsiz'){pumps.push({t:'⚠️ Sebepsiz Yükseliş',c:'warn'});pumpRisk++;score-=5;}else if(seb==='gercek-kazanc')pumps.push({t:'✅ Gerçek Kazanç',c:'safe'});else if(seb==='haber')pumps.push({t:'✅ Somut Haber',c:'safe'});
-  if(pumpRisk>=4){neg.push('🚨 SAHTE YÜKSELİŞ RİSKİ!');score-=8;}else if(pumpRisk>=2)adv.push('⚠️ Yükselişin gerçekçiliğini sorgula');
+  if(rsi>70){pumps.push({t:'⚠️ RSI 70+ Aşırı Alım',c:'warn'});pumpRisk++;}else if(rsi>0)pumps.push({t:'✅ RSI Normal',c:'safe'});
+  if(change1m>50){pumps.push({t:'🚨 1 Ayda +%'+change1m.toFixed(0)+' Sert Yükseliş!',c:'danger'});pumpRisk+=2;}else if(change1m>25){pumps.push({t:'⚠️ 1 Ayda +%'+change1m.toFixed(0)+' Dikkatli',c:'warn'});pumpRisk++;}else if(change1m!==0)pumps.push({t:'✅ Aylık Değişim Makul',c:'safe'});
+  const sh=gs('short');if(sh==='cok-yuksek'){pumps.push({t:'🚨 Short Interest %30+ GameStop Riski!',c:'danger'});pumpRisk+=2;score-=8;}else if(sh==='yuksek'){pumps.push({t:'⚠️ Short Interest Yüksek',c:'warn'});pumpRisk++;}else if(sh==='dusuk')pumps.push({t:'✅ Short Interest Düşük',c:'safe'});
+  const seb=gv('sebep');if(seb==='sosyal'){pumps.push({t:'🚨 Sosyal Medya Pompası!',c:'danger'});pumpRisk+=2;score-=10;}else if(seb==='sebepsiz'){pumps.push({t:'⚠️ Sebepsiz Yükseliş',c:'warn'});pumpRisk++;score-=5;}else if(seb==='gercek-kazanc')pumps.push({t:'✅ Gerçek Kazanç Artışı',c:'safe'});else if(seb==='haber')pumps.push({t:'✅ Somut Habere Dayalı',c:'safe'});
+  if(pumpRisk>=4){neg.push('🚨 SAHTE YÜKSELİŞ RİSKİ YÜKSEK!');score-=8;}else if(pumpRisk>=2)adv.push('⚠️ Yükselişin gerçekçiliğini sorgula');
   score=Math.max(8,Math.min(93,Math.round(score)));
   let verdict,vclass,summary;
-  if(score>=68){verdict='AL';vclass='AL';summary=company+' sağlıklı görünüyor. Girişi planla, stop loss koy.';}
-  else if(score>=45){verdict='BEKLE';vclass='BEKLE';summary=company+' için karma sinyaller. Raporu bekle.';}
+  if(score>=68){verdict='AL';vclass='AL';summary=company+' genel olarak sağlıklı. Girişi planla, stop loss koy, sabırla bekle.';}
+  else if(score>=45){verdict='BEKLE';vclass='BEKLE';summary=company+' için karma sinyaller var. Raporu veya teknik kırılımı bekle.';}
   else{verdict='ALMA';vclass='ALMA';summary=company+' şu an riskli. Düşen bıçağı tutma.';}
   const ep=entry>0?entry:price;
   const stop=Math.floor(ep*0.88*100)/100;
@@ -754,9 +720,10 @@ function analiz() {
   document.getElementById('ep-t2-sub').textContent='%'+(profit*0.75).toFixed(0)+' kar · 1/3 sat';
   document.getElementById('ep-t3').textContent='€'+t3;
   document.getElementById('ep-t3-sub').textContent='%'+profit+' kar · son 1/3';
-  document.getElementById('exit-note').innerHTML='💡 <strong>Stop Hunter:</strong> Stop €'+Math.floor(ep*0.88)+'.00 yerine €'+stop.toFixed(2)+'.<br>📊 <strong>Kademeli Çıkış:</strong> T1\'de %33, T2\'de %33, T3\'de son %33.'+(shares?'<br>🏦 '+shares+' hisse × €'+ep.toFixed(2)+' = €'+(shares*ep).toFixed(0):'');
-  if(adv.length===0)adv.push('Analiz tamamlandı — doğrula');
+  document.getElementById('exit-note').innerHTML='💡 <strong>Stop Hunter Koruması:</strong> Stop €'+Math.floor(ep*0.88)+'.00 yerine €'+stop.toFixed(2)+' olarak ayarlandı.<br>📊 <strong>Kademeli Çıkış:</strong> T1\'de %33, T2\'de %33, T3\'de son %33 sat.'+(shares?'<br>🏦 <strong>Pozisyon:</strong> '+shares+' hisse × €'+ep.toFixed(2)+' = €'+(shares*ep).toFixed(0):'');
+  if(adv.length===0)adv.push('Analiz tamamlandı — kendi araştırmanla doğrula');
   adv.push('Stop loss her zaman koy!');
+  if(score>=68)adv.push('Giriş fiyatını sabırla bekle');
   document.getElementById('tavsiye').innerHTML=adv.map(a=>sig(a,'var(--blue)')).join('');
   document.getElementById('result').classList.add('show');
   setTimeout(()=>document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'}),100);
@@ -772,8 +739,6 @@ function sifirla() {
   document.getElementById('fetch-status').textContent='Önce bir hisse seç';
   document.getElementById('veri-serit').style.display='none';
   document.getElementById('karsilastir').style.display='none';
-  document.getElementById('analyst-bar').style.display='none';
-  document.getElementById('btn-haber').style.display='none';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -781,4 +746,3 @@ sheetsYukle();
 </script>
 </body>
 </html>
-
