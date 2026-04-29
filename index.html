@@ -491,25 +491,58 @@ function gridOlustur() {
 function heatmapOlustur() {
   const el = document.getElementById('heatmap');
   if (!el || hisseler.length === 0) return;
-  el.innerHTML = hisseler.map(h => {
-    const upside = h.hedef > 0 && h.fiyat > 0 ? ((h.hedef - h.fiyat) / h.fiyat * 100) : 0;
-    const altindaMi = h.hedefMin > 0 && h.fiyat < h.hedefMin;
-    const ustundeMi = h.hedefMax > 0 && h.fiyat > h.hedefMax;
-    let bg, border, label;
-    if (altindaMi && h.rsi > 0 && h.rsi < 35) { bg='linear-gradient(145deg,#0a2e14,#0d1f0d)'; border='#00c853'; label='💎 Elmas Fırsat'; }
-    else if (altindaMi || (h.rsi > 0 && h.rsi < 35)) { bg='linear-gradient(145deg,#0d2010,#111)'; border='#4caf50'; label='🟢 Fırsat'; }
-    else if (ustundeMi && h.rsi > 70) { bg='linear-gradient(145deg,#2e0a0a,#1f0d0d)'; border='#ff3d3d'; label='🚨 Risk'; }
-    else if (ustundeMi || h.rsi > 70) { bg='linear-gradient(145deg,#201010,#111)'; border='#ff7043'; label='⚠️ Dikkat'; }
-    else { bg='var(--card2)'; border='var(--border)'; label='⬜ Nötr'; }
-    return `<div onclick="hisseGriddenSec('${h.ticker}')" style="padding:14px;border-radius:12px;background:${bg};border:1px solid ${border};cursor:pointer;transition:all .2s;text-align:center" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${border};letter-spacing:2px">${h.ticker}</div>
-      <div style="font-size:10px;color:#666;margin:2px 0">${h.sirket.substring(0,14)}</div>
-      <div style="font-size:13px;font-weight:600;color:#f0f0f0;margin:4px 0">€${h.fiyat.toFixed(2)}</div>
-      ${h.rsi>0?`<div style="font-size:11px;color:${border}">RSI ${h.rsi.toFixed(0)}</div>`:''}
-      ${upside>0?`<div style="font-size:11px;color:#2979ff">+%${upside.toFixed(1)}</div>`:''}
-      <div style="font-size:10px;margin-top:6px;padding:2px 8px;border-radius:100px;background:rgba(255,255,255,0.05);color:${border}">${label}</div>
-    </div>`;
-  }).join('');
+  el.innerHTML = '';
+  hisseler.forEach((h, idx) => {
+    const upside = h.hedef > 0 && h.fiyat > 0 ? ((h.hedef - h.fiyat) / h.fiyat * 100) : null;
+    const upsideMin = h.hedefMin > 0 && h.fiyat > 0 ? ((h.hedefMin - h.fiyat) / h.fiyat * 100) : null;
+
+    const alimBolgesi = h.rsi > 0 && h.rsi < 35 && upsideMin !== null && upsideMin > 0;
+    const dikkat = h.rsi > 70 || (h.hedefMax > 0 && h.fiyat > h.hedefMax);
+    const firsat = h.rsi > 0 && h.rsi < 35;
+
+    let borderColor, bgGradient, labelColor, statusLabel, statusIcon;
+    if (alimBolgesi) {
+      borderColor = 'rgba(0,200,83,0.8)'; bgGradient = 'linear-gradient(145deg,#0a2415,#111)';
+      labelColor = 'var(--green)'; statusIcon = '🎯'; statusLabel = 'ALIM BÖLGESİ';
+    } else if (dikkat) {
+      borderColor = 'rgba(255,61,61,0.5)'; bgGradient = 'linear-gradient(145deg,#1f0d0d,#111)';
+      labelColor = 'var(--red)'; statusIcon = '⚠️'; statusLabel = 'Dikkat';
+    } else if (firsat) {
+      borderColor = 'rgba(0,200,83,0.4)'; bgGradient = 'linear-gradient(145deg,#0d1f14,#111)';
+      labelColor = 'var(--green)'; statusIcon = '🟢'; statusLabel = 'Fırsat';
+    } else {
+      borderColor = 'rgba(255,179,0,0.3)'; bgGradient = 'linear-gradient(145deg,#1a1500,#111)';
+      labelColor = 'var(--yellow)'; statusIcon = '⚡'; statusLabel = 'İzle';
+    }
+
+    const alimEtiket = alimBolgesi ? `
+      <div style="position:absolute;top:-1px;right:-1px;background:var(--green);color:#000;
+        font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 7px;
+        border-radius:0 12px 0 8px;text-transform:uppercase;
+        animation:pulse-green 2s ease-in-out infinite;">🎯 ALIM</div>` : '';
+
+    const div = document.createElement('div');
+    div.style.cssText = `background:${bgGradient};border:2px solid ${borderColor};border-radius:14px;
+      padding:16px 12px;cursor:pointer;transition:all .2s;text-align:center;position:relative;
+      ${alimBolgesi ? 'box-shadow:0 0 24px rgba(0,200,83,0.25);' : ''}`;
+
+    div.innerHTML = `
+      ${alimEtiket}
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:${labelColor};margin-bottom:4px">${h.ticker}</div>
+      <div style="font-size:10px;color:var(--text2);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.sirket.length>14?h.sirket.substring(0,14)+'…':h.sirket}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);margin-bottom:2px">€${h.fiyat.toFixed(2)}</div>
+      ${h.rsi > 0 ? `<div style="font-size:10px;color:${labelColor};font-weight:700;margin-bottom:6px">RSI ${h.rsi.toFixed(0)}</div>` : ''}
+      ${upside !== null ? `<div style="font-size:10px;color:${upside>0?'var(--green)':'var(--red)'};font-weight:600">+%${upside.toFixed(1)} potansiyel</div>` : ''}
+      <div style="margin-top:8px;padding:3px 8px;border-radius:100px;background:rgba(255,255,255,0.04);
+        border:1px solid ${borderColor};display:inline-block">
+        <span style="font-size:9px;color:${labelColor};font-weight:700;letter-spacing:1px">${statusIcon} ${statusLabel}</span>
+      </div>`;
+
+    div.onmouseover = () => { div.style.transform = 'translateY(-2px)'; div.style.borderColor = labelColor; };
+    div.onmouseout = () => { div.style.transform = ''; div.style.borderColor = borderColor; };
+    div.onclick = () => hisseGriddenSec(h.ticker);
+    el.appendChild(div);
+  });
 }
 
 function hisseAktif(idx, btn) {
