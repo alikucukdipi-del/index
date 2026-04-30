@@ -11,8 +11,7 @@
   --gold: #c9a84c; --gold2: #e8cc7a; --green: #00c853; --green-dim: rgba(0,200,83,0.08);
   --red: #ff3d3d; --red-dim: rgba(255,61,61,0.08); --yellow: #ffb300;
   --yellow-dim: rgba(255,179,0,0.08); --blue: #2979ff; --blue-dim: rgba(41,121,255,0.08);
-  --text: #f0f0f0; --text2: #666; --text3: #333;
-  --amber: #ffb347;
+  --text: #f0f0f0; --text2: #888; --text3: #555; --amber: #ffb347;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); min-height: 100vh; }
@@ -24,13 +23,10 @@ body::before { content: ''; position: fixed; inset: 0; background-image: linear-
 h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 5.5rem); letter-spacing: 5px; line-height: 1; margin-bottom: 10px; }
 h1 em { color: var(--gold); font-style: normal; }
 .hdr p { font-size: 13px; color: var(--text2); line-height: 1.8; }
-
-/* User Level Badge */
 .level-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 100px; font-size: 11px; font-weight: 600; margin-top: 10px; cursor: pointer; transition: all .2s; }
-.level-1 { background: rgba(255,179,0,0.1); border: 1px solid rgba(255,179,0,0.3); color: var(--yellow); }
-.level-2 { background: rgba(41,121,255,0.1); border: 1px solid rgba(41,121,255,0.3); color: var(--blue); }
-.level-3 { background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3); color: var(--gold); }
-
+.level-1 { background: rgba(255,179,0,0.15); border: 1px solid rgba(255,179,0,0.4); color: var(--yellow); }
+.level-2 { background: rgba(41,121,255,0.15); border: 1px solid rgba(41,121,255,0.4); color: #6fa3ff; }
+.level-3 { background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.4); color: var(--gold); }
 .hisse-sec { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; margin-bottom: 20px; position: relative; overflow: hidden; }
 .hisse-sec::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)55, transparent); }
 .sec-label { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 6px; display: block; }
@@ -152,10 +148,10 @@ select option { background: #181818; }
 
 /* Heatmap */
 .heatmap-grid { display: grid; gap: 10px; margin-top: 8px; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
-.heatmap-card { border-radius: 14px; cursor: pointer; transition: all .3s; text-align: center; position: relative; overflow: visible; }
+.heatmap-card { border-radius: 14px; cursor: pointer; transition: transform .2s, opacity .2s; text-align: center; position: relative; overflow: visible; }
 .heatmap-card.buyuk { grid-column: span 2; grid-row: span 2; }
-.heatmap-card.kucuk { opacity: 0.75; }
-.heatmap-card:hover { transform: translateY(-3px) scale(1.02); opacity: 1 !important; z-index: 10; }
+.heatmap-card.kucuk { opacity: 0.78; }
+.heatmap-card:hover { transform: translateY(-3px) scale(1.02) !important; opacity: 1 !important; z-index: 10; }
 
 /* Animasyonlar */
 @keyframes pulse-green {
@@ -163,27 +159,25 @@ select option { background: #181818; }
   50% { opacity: 0.75; }
 }
 @keyframes pulse-rapor {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,179,0,0.4); }
-  50% { transform: scale(1.03); box-shadow: 0 0 20px 6px rgba(255,179,0,0.15); }
+  0%, 100% { transform: scale(1); box-shadow: 0 0 4px rgba(255,179,0,0.3); }
+  50% { transform: scale(1.04); box-shadow: 0 0 24px rgba(255,179,0,0.5); }
 }
 @keyframes pulse-aplus {
-  0%, 100% { box-shadow: 0 0 12px rgba(0,200,83,0.2); }
-  50% { box-shadow: 0 0 28px rgba(0,200,83,0.45); }
+  0%, 100% { box-shadow: 0 0 10px rgba(0,200,83,0.25), 0 0 0 1px rgba(0,200,83,0.3); }
+  50% { box-shadow: 0 0 30px rgba(0,200,83,0.55), 0 0 0 2px rgba(0,200,83,0.5); }
 }
 @keyframes pulse-a {
   0%, 100% { box-shadow: 0 0 8px rgba(255,179,71,0.2); }
-  50% { box-shadow: 0 0 18px rgba(255,179,71,0.4); }
+  50% { box-shadow: 0 0 20px rgba(255,179,71,0.45); }
 }
 @keyframes shake-riskli {
   0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-3px); }
-  40% { transform: translateX(3px); }
-  60% { transform: translateX(-2px); }
-  80% { transform: translateX(2px); }
-}
-@keyframes pulse-likidite {
-  0%, 100% { box-shadow: 0 0 8px rgba(255,140,0,0.2); }
-  50% { box-shadow: 0 0 20px rgba(255,140,0,0.5); }
+  15% { transform: translateX(-4px); }
+  30% { transform: translateX(4px); }
+  45% { transform: translateX(-3px); }
+  60% { transform: translateX(3px); }
+  75% { transform: translateX(-1px); }
+  90% { transform: translateX(1px); }
 }
 
 /* Tooltip */
@@ -191,20 +185,21 @@ select option { background: #181818; }
 .tooltip-box {
   display: none;
   position: absolute;
-  bottom: calc(100% + 10px);
+  bottom: calc(100% + 12px);
   left: 50%;
   transform: translateX(-50%);
-  width: 240px;
-  background: #1a1a1a;
-  border: 1px solid rgba(201,168,76,0.3);
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 11px;
-  color: var(--text2);
-  line-height: 1.7;
-  z-index: 100;
+  width: 250px;
+  background: #1c1c1c;
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 12px;
+  color: #ccc;
+  line-height: 1.75;
+  z-index: 200;
   text-align: left;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+  pointer-events: none;
 }
 .tooltip-box::after {
   content: '';
@@ -212,20 +207,39 @@ select option { background: #181818; }
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  border: 6px solid transparent;
-  border-top-color: rgba(201,168,76,0.3);
+  border: 7px solid transparent;
+  border-top-color: rgba(201,168,76,0.35);
 }
-.tooltip-wrap:hover .tooltip-box { display: block; }
+.heatmap-card:hover .tooltip-box { display: block; }
 
 /* Mini barlar */
-.mini-bars { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
-.mini-bar-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-.mini-bar-label { font-size: 8px; color: var(--text3); width: 60px; text-align: left; text-transform: uppercase; letter-spacing: 1px; }
-.mini-bar-bg { flex: 1; height: 3px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+.mini-bars { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); }
+.mini-bar-row { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+.mini-bar-label { font-size: 9px; color: #aaa; width: 62px; text-align: left; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.mini-bar-bg { flex: 1; height: 5px; background: rgba(255,255,255,0.08); border-radius: 100px; overflow: hidden; }
 .mini-bar-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
+.mini-bar-val { font-size: 9px; color: #aaa; width: 28px; text-align: right; font-weight: 600; }
 
 /* Zaman etiketi */
-.zaman-etiketi { font-size: 8px; color: var(--text3); margin-top: 4px; letter-spacing: 1px; }
+.zaman-etiketi { font-size: 9px; color: #777; margin-top: 6px; letter-spacing: 1px; }
+
+/* Setup badge */
+.setup-badge-aplus {
+  position: absolute; top: -1px; left: -1px;
+  background: linear-gradient(135deg, #00c853, #4caf50);
+  color: #000; font-size: 9px; font-weight: 900;
+  padding: 4px 10px; border-radius: 12px 0 10px 0;
+  letter-spacing: 1px; text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(0,200,83,0.4);
+}
+.setup-badge-a {
+  position: absolute; top: -1px; left: -1px;
+  background: linear-gradient(135deg, #ffb347, #ff9800);
+  color: #000; font-size: 9px; font-weight: 900;
+  padding: 4px 10px; border-radius: 12px 0 10px 0;
+  letter-spacing: 1px; text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(255,179,71,0.4);
+}
 </style>
 </head>
 <body>
@@ -233,7 +247,7 @@ select option { background: #181818; }
 <div class="hdr">
   <div class="hdr-eyebrow">Humeyra Pro Analiz · v9.0</div>
   <h1>HİSSE <em>ANALİZ</em></h1>
-  <p>AEX · NYSE · NASDAQ · DAX · CAC40<br>RSI Renk Kodları · Isı Haritası · Analist Koridoru 🦷</p>
+  <p>AEX · NYSE · NASDAQ · DAX · CAC40<br>RSI Renk Kodları · Isı Haritası · Mentor Terminal 🦷</p>
   <div id="level-badge" class="level-badge level-1" onclick="levelDegistir()">🌱 Başlangıç Seviyesi</div>
 </div>
 
@@ -254,7 +268,7 @@ select option { background: #181818; }
 <div class="card" style="border-color:rgba(201,168,76,0.3)">
   <span class="sec-label">🗺️ Portföy Isı Haritası</span>
   <div class="sec-title">Tüm Hisseler — Bir Bakışta</div>
-  <p class="sec-sub">Büyük kart = Aksiyon · Renk = Durum · Hover = Detay</p>
+  <p class="sec-sub">Büyük kart = Aksiyon · Renk = Durum · Hover = Detay & Analiz</p>
   <div id="heatmap" class="heatmap-grid"></div>
 </div>
 
@@ -485,7 +499,6 @@ select option { background: #181818; }
   <div class="disc">⚠️ Eğitim amaçlıdır, yatırım tavsiyesi değildir.<br>Her zaman kendi araştırmanı yap — dişlerine kendin bak! 🦷</div>
 </div>
 </div>
-
 <script>
 // ─── USER LEVEL SİSTEMİ ───
 let userLevel = parseInt(localStorage.getItem('humeyra_level') || '1');
@@ -556,78 +569,70 @@ function tooltipMetni(h) {
 // ─── SETUP SEVİYESİ ───
 function setupSeviyesi(h) {
   let puan = 0;
-  // Trend puanı
   if (h.fiyat > 0 && h.ma200 > 0 && h.fiyat > h.ma200) puan += 2;
   if (h.fiyat > 0 && h.ma20 > 0 && h.fiyat > h.ma20) puan += 1;
-  // Momentum puanı
   if (h.rsi > 0 && h.rsi < 35) puan += 3;
-  else if (h.rsi > 0 && h.rsi >= 35 && h.rsi <= 55) puan += 2;
+  else if (h.rsi >= 35 && h.rsi <= 55) puan += 2;
   else if (h.rsi > 55 && h.rsi <= 65) puan += 1;
   else if (h.rsi > 70) puan -= 2;
-  // Analist koridoru
   if (h.hedefMin > 0 && h.fiyat < h.hedefMin) puan += 2;
   else if (h.hedefMax > 0 && h.fiyat > h.hedefMax) puan -= 2;
-  // Beta
   if (h.beta > 0 && h.beta < 1.2) puan += 1;
-
   if (puan >= 7) return 'aplus';
   if (puan >= 4) return 'a';
   if (puan <= 0) return 'riskli';
   return 'normal';
 }
 
-// ─── MİNİ BAR ───
-function miniBar(label, pct, renk, tooltip) {
-  return `
-    <div class="mini-bar-row tooltip-wrap">
-      <div class="mini-bar-label">${label}</div>
-      <div class="mini-bar-bg">
-        <div class="mini-bar-fill" style="width:${pct}%;background:${renk}"></div>
-      </div>
-      <div class="tooltip-box">${tooltip}</div>
-    </div>`;
-}
-
+// ─── MİNİ BARLAR ───
 function miniBarlar(h) {
   // Trend barı
-  let trendPct = 50;
-  let trendRenk = '#ffb300';
-  let trendTip = '';
+  let trendPct = 50, trendRenk = '#ffb300', trendTip = '';
   if (h.fiyat > 0 && h.ma200 > 0) {
-    if (h.fiyat > h.ma200 * 1.05) { trendPct = 85; trendRenk = '#00c853'; trendTip = userLevel === 1 ? 'Uzun vadeli ortalama üzerinde, trend güçlü.' : `Fiyat MA200 (€${h.ma200.toFixed(2)}) üzerinde, uzun vade trendi pozitif.`; }
+    if (h.fiyat > h.ma200 * 1.05) { trendPct = 85; trendRenk = '#00c853'; trendTip = userLevel === 1 ? 'Uzun vadeli ortalama üzerinde, trend güçlü.' : `Fiyat MA200 (€${h.ma200.toFixed(2)}) belirgin üzerinde — uzun vade trendi pozitif.`; }
     else if (h.fiyat > h.ma200) { trendPct = 65; trendRenk = '#4caf50'; trendTip = userLevel === 1 ? 'Ortalama üzerinde, iyi görünüyor.' : 'MA200 üzerinde ama yakın, dikkatli ol.'; }
-    else if (h.fiyat > h.ma200 * 0.95) { trendPct = 40; trendRenk = '#ffb300'; trendTip = userLevel === 1 ? 'Ortalamanın biraz altında.' : 'MA200 altında ama yakın, kritik bölge.'; }
-    else { trendPct = 20; trendRenk = '#ff3d3d'; trendTip = userLevel === 1 ? 'Ortalama oldukça altında, dikkat.' : `Fiyat MA200'ün belirgin altında (€${h.ma200.toFixed(2)}), uzun vade baskısı var.`; }
+    else if (h.fiyat > h.ma200 * 0.95) { trendPct = 38; trendRenk = '#ffb300'; trendTip = userLevel === 1 ? 'Ortalamanın biraz altında.' : 'MA200 altında ama yakın, kritik bölge.'; }
+    else { trendPct = 18; trendRenk = '#ff3d3d'; trendTip = userLevel === 1 ? 'Ortalama oldukça altında, dikkat.' : `Fiyat MA200'ün belirgin altında — uzun vade baskısı var.`; }
   }
 
-  // Momentum barı
-  let momPct = h.rsi > 0 ? h.rsi : 50;
-  let momRenk = '#ffb300';
-  let momTip = '';
-  if (h.rsi > 75) { momRenk = '#ff3d3d'; momTip = userLevel === 1 ? 'Çok hızlı yükselmiş, dikkat et.' : `RSI ${h.rsi.toFixed(0)} — aşırı ısınmış, düzeltme riski yüksek.`; }
-  else if (h.rsi > 60) { momRenk = '#ff8c00'; momTip = userLevel === 1 ? 'Momentum yüksek, biraz temkinli ol.' : `RSI ${h.rsi.toFixed(0)} — güçlü momentum ama aşırı alım bölgesine yaklaşıyor.`; }
-  else if (h.rsi > 40) { momRenk = '#00c853'; momTip = userLevel === 1 ? 'Dengeli bir seviyede.' : `RSI ${h.rsi.toFixed(0)} — sağlıklı bölge, ne aşırı alım ne aşırı satım.`; }
-  else if (h.rsi > 0) { momRenk = '#2979ff'; momTip = userLevel === 1 ? 'Çok düşük, toparlanma fırsatı olabilir.' : `RSI ${h.rsi.toFixed(0)} — aşırı satım bölgesi, dip fırsatı izlenebilir.`; }
+  // Momentum barı — RSI cap 95
+  const rsiGoster = Math.min(95, h.rsi);
+  let momPct = rsiGoster > 0 ? rsiGoster : 50;
+  let momRenk = '#ffb300', momTip = '';
+  if (h.rsi > 75) { momRenk = '#ff3d3d'; momTip = userLevel === 1 ? 'Çok hızlı yükselmiş, dikkat et.' : `RSI ${rsiGoster.toFixed(0)} — aşırı ısınmış, düzeltme riski yüksek.`; }
+  else if (h.rsi > 60) { momRenk = '#ff8c00'; momTip = userLevel === 1 ? 'Momentum yüksek, biraz temkinli ol.' : `RSI ${rsiGoster.toFixed(0)} — güçlü ama aşırı alım bölgesine yaklaşıyor.`; }
+  else if (h.rsi > 40) { momRenk = '#00c853'; momTip = userLevel === 1 ? 'Dengeli bir seviyede.' : `RSI ${rsiGoster.toFixed(0)} — sağlıklı bölge.`; }
+  else if (h.rsi > 0) { momRenk = '#2979ff'; momTip = userLevel === 1 ? 'Çok düşük, toparlanma fırsatı olabilir.' : `RSI ${rsiGoster.toFixed(0)} — aşırı satım bölgesi, dip fırsatı izlenebilir.`; }
 
-  // Hacim barı (değişim%'ye göre yaklaşık)
-  const hacimPct = Math.min(95, Math.max(10, Math.abs(h.degisim) * 8 + 30));
-  const hacimRenk = Math.abs(h.degisim) > 3 ? '#00c853' : Math.abs(h.degisim) > 1 ? '#ffb300' : '#666';
-  const hacimTip = userLevel === 1 ? `Günlük hareket: ${h.degisim > 0 ? '+' : ''}${h.degisim.toFixed(2)}%` : `Günlük değişim ${h.degisim > 0 ? '+' : ''}${h.degisim.toFixed(2)}% — hacim verisi yakında eklenecek.`;
+  // Hacim barı
+  const hacimPct = Math.min(92, Math.max(12, Math.abs(h.degisim) * 8 + 30));
+  const hacimRenk = Math.abs(h.degisim) > 3 ? '#00c853' : Math.abs(h.degisim) > 1 ? '#ffb300' : '#555';
+  const hacimTip = userLevel === 1 ? `Günlük hareket: ${h.degisim > 0 ? '+' : ''}${h.degisim.toFixed(2)}%` : `Günlük değişim ${h.degisim > 0 ? '+' : ''}${h.degisim.toFixed(2)}% — gerçek hacim verisi yakında eklenecek.`;
+
+  const bar = (label, pct, renk, tip, val) => `
+    <div class="mini-bar-row">
+      <div class="mini-bar-label">${label}</div>
+      <div class="mini-bar-bg" title="${tip}">
+        <div class="mini-bar-fill" style="width:${pct}%;background:${renk}"></div>
+      </div>
+      <div class="mini-bar-val" style="color:${renk}">${val}</div>
+    </div>`;
 
   return `<div class="mini-bars">
-    ${miniBar('Trend', trendPct, trendRenk, trendTip)}
-    ${miniBar('Momentum', momPct, momRenk, momTip)}
-    ${miniBar('Hacim', hacimPct, hacimRenk, hacimTip)}
+    ${bar('Trend', trendPct, trendRenk, trendTip, h.fiyat > h.ma200 ? '↑' : '↓')}
+    ${bar('Momentum', momPct, momRenk, momTip, rsiGoster.toFixed(0))}
+    ${bar('Hacim', hacimPct, hacimRenk, hacimTip, (h.degisim > 0 ? '+' : '') + h.degisim.toFixed(1) + '%')}
   </div>`;
 }
 
 // ─── ZAMAN ETİKETİ ───
 function zamanEtiketi() {
-  const simdi = new Date();
-  const saat = simdi.getHours();
-  if (saat < 10) return '🌅 Sabah verisi';
-  if (saat < 14) return '🟢 Güncellendi';
-  if (saat < 18) return '📊 Öğleden sonra';
+  const s = new Date();
+  const h = s.getHours();
+  if (h < 9) return '🌅 Piyasa öncesi';
+  if (h < 12) return '🟢 Sabah seansı';
+  if (h < 15) return '📊 Öğle seansı';
+  if (h < 18) return '📈 Kapanışa yakın';
   return '🌙 Kapanış verisi';
 }
 
@@ -675,13 +680,14 @@ let hisseler = [], seciliHisse = null;
 
 async function sheetsYukle() {
   try {
-    const res = await fetch(SHEETS_CSV);
+    const res = await fetch(SHEETS_CSV + '&t=' + Date.now());
     const text = await res.text();
     const satirlar = text.trim().split('\n');
     hisseler = [];
     for (let i = VERI_BASLANGIC_SATIRI; i < satirlar.length; i++) {
       const cols = csvParcala(satirlar[i]);
       if (!cols[COL.ticker] || cols[COL.ticker].trim() === '') continue;
+      const rsiRaw = sayi(cols[COL.rsi]);
       const h = {
         sirket: temizle(cols[COL.sirket]), ticker: temizle(cols[COL.ticker]),
         fiyat: sayi(cols[COL.fiyat]), fk: sayi(cols[COL.fk]),
@@ -689,7 +695,7 @@ async function sheetsYukle() {
         degisim: sayi(cols[COL.degisim]), ma20: sayi(cols[COL.ma20]),
         ma200: sayi(cols[COL.ma200]), sektor: temizle(cols[COL.sektor]),
         hedef: sayi(cols[COL.hedef]), beta: sayi(cols[COL.beta]),
-        rsi: sayi(cols[COL.rsi]),
+        rsi: Math.min(95, rsiRaw), // RSI max 95!
         hedefMin: sayi(cols[COL.hedefMin]),
         hedefMax: sayi(cols[COL.hedefMax]),
         not: temizle(cols[COL.not]),
@@ -861,28 +867,28 @@ function heatmapOlustur() {
       raporGecti = gunFark < 0;
     }
 
-    // Setup'a göre renk ve animasyon
-    let borderColor, bgGradient, labelColor, statusLabel, statusIcon, animasyon = '', setupBadge = '';
+    let borderColor, bgGradient, labelColor, statusLabel, statusIcon, animStyle = '', setupBadgeHtml = '';
+
     if (setup === 'aplus') {
-      borderColor = 'rgba(0,200,83,0.6)';
-      bgGradient = 'linear-gradient(145deg,#071a0f,#111)';
-      labelColor = 'var(--green)';
+      borderColor = 'rgba(0,200,83,0.7)';
+      bgGradient = 'linear-gradient(145deg,#061a0c,#111)';
+      labelColor = '#00e676';
       statusIcon = '💎'; statusLabel = 'A+ Setup';
-      animasyon = 'animation:pulse-aplus 3s ease-in-out infinite;';
-      setupBadge = `<div style="position:absolute;top:-1px;left:-1px;background:linear-gradient(135deg,#00c853,#4caf50);color:#000;font-size:8px;font-weight:800;padding:3px 8px;border-radius:12px 0 8px 0;letter-spacing:1px">💎 A+</div>`;
+      animStyle = 'animation:pulse-aplus 3s ease-in-out infinite;';
+      setupBadgeHtml = `<div class="setup-badge-aplus">💎 A+</div>`;
     } else if (setup === 'a') {
-      borderColor = 'rgba(255,179,71,0.5)';
-      bgGradient = 'linear-gradient(145deg,#1a1200,#111)';
-      labelColor = 'var(--amber)';
+      borderColor = 'rgba(255,179,71,0.6)';
+      bgGradient = 'linear-gradient(145deg,#1a1100,#111)';
+      labelColor = '#ffb347';
       statusIcon = '⭐'; statusLabel = 'A Setup';
-      animasyon = 'animation:pulse-a 2.5s ease-in-out infinite;';
-      setupBadge = `<div style="position:absolute;top:-1px;left:-1px;background:var(--amber);color:#000;font-size:8px;font-weight:800;padding:3px 8px;border-radius:12px 0 8px 0;letter-spacing:1px">⭐ A</div>`;
+      animStyle = 'animation:pulse-a 2.5s ease-in-out infinite;';
+      setupBadgeHtml = `<div class="setup-badge-a">⭐ A</div>`;
     } else if (setup === 'riskli') {
-      borderColor = 'rgba(180,30,30,0.6)';
-      bgGradient = 'linear-gradient(145deg,#1a0505,#111)';
-      labelColor = '#cc2222';
+      borderColor = 'rgba(180,20,20,0.7)';
+      bgGradient = 'linear-gradient(145deg,#180404,#111)';
+      labelColor = '#ff4444';
       statusIcon = '⚠️'; statusLabel = 'Riskli';
-      animasyon = 'animation:shake-riskli 0.5s ease-in-out 3;';
+      animStyle = 'animation:shake-riskli 4s ease-in-out infinite;';
     } else if (dikkat) {
       borderColor = 'rgba(255,61,61,0.5)';
       bgGradient = 'linear-gradient(145deg,#1f0d0d,#111)';
@@ -900,35 +906,34 @@ function heatmapOlustur() {
       statusIcon = '⚡'; statusLabel = 'İzle';
     }
 
-    const alimEtiket = alimBolgesi && setup !== 'aplus' ? `<div style="position:absolute;top:-1px;right:-1px;background:var(--green);color:#000;font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 7px;border-radius:0 12px 0 8px;text-transform:uppercase;animation:pulse-green 2s ease-in-out infinite;">🎯 ALIM</div>` : '';
-    const raporEtiket = raporYaklasiyor ? `<div style="position:absolute;top:-1px;right:-1px;background:var(--yellow);color:#000;font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 7px;border-radius:0 12px 0 8px;text-transform:uppercase;">💓 RAPOR</div>` : '';
+    const alimEtiket = alimBolgesi && setup !== 'aplus' ? `<div style="position:absolute;top:-1px;right:-1px;background:var(--green);color:#000;font-size:8px;font-weight:900;letter-spacing:1px;padding:3px 8px;border-radius:0 12px 0 8px;animation:pulse-green 2s ease-in-out infinite;">🎯 ALIM</div>` : '';
+    const raporEtiket = raporYaklasiyor ? `<div style="position:absolute;top:-1px;right:-1px;background:var(--yellow);color:#000;font-size:8px;font-weight:900;letter-spacing:1px;padding:3px 8px;border-radius:0 12px 0 8px;">💓 RAPOR</div>` : '';
 
     const raporBilgi = raporYaklasiyor
-      ? `<div style="font-size:9px;color:var(--yellow);font-weight:700;margin-top:4px">💓 ${gunFark===0?'BUGÜN!':gunFark===1?'YARIN!':gunFark+' gün'}</div>`
-      : raporGecti && h.kazancTarihi ? `<div style="font-size:9px;color:var(--red);margin-top:4px">⚠️ Tarihi Güncelle</div>` : '';
+      ? `<div style="font-size:9px;color:var(--yellow);font-weight:700;margin-top:5px">💓 ${gunFark===0?'BUGÜN!':gunFark===1?'YARIN!':gunFark+' gün'}</div>`
+      : raporGecti && h.kazancTarihi ? `<div style="font-size:9px;color:#ff6666;margin-top:4px">⚠️ Tarihi Güncelle</div>` : '';
 
-    // Tooltip metni
     const ttMetin = tooltipMetni(h);
 
     const div = document.createElement('div');
-    div.className = 'heatmap-card tooltip-wrap' + (buyuk ? ' buyuk' : ' kucuk');
-    div.style.cssText = `background:${bgGradient};border:2px solid ${borderColor};padding:${buyuk?'16px 12px':'10px 8px'};${animasyon}`;
+    div.className = 'heatmap-card' + (buyuk ? ' buyuk' : ' kucuk');
+    div.style.cssText = `background:${bgGradient};border:2px solid ${borderColor};padding:${buyuk?'16px 12px':'10px 8px'};${animStyle}`;
 
     div.innerHTML = `
-      ${setupBadge}${alimEtiket}${raporEtiket}
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:${buyuk?'22px':'16px'};letter-spacing:2px;color:${labelColor};margin-top:${(setupBadge||raporYaklasiyor)?'10px':'0'}">${tickerKisa(h.ticker)}</div>
-      <div style="font-size:${buyuk?'10px':'9px'};color:var(--text2);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.sirket.length>14?h.sirket.substring(0,14)+'…':h.sirket}</div>
+      ${setupBadgeHtml}${alimEtiket}${raporEtiket}
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:${buyuk?'22px':'16px'};letter-spacing:2px;color:${labelColor};margin-top:${(setupBadgeHtml||raporYaklasiyor)?'12px':'0'}">${tickerKisa(h.ticker)}</div>
+      <div style="font-size:${buyuk?'10px':'9px'};color:#999;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.sirket.length>14?h.sirket.substring(0,14)+'…':h.sirket}</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:${buyuk?'18px':'14px'};color:var(--text)">€${h.fiyat.toFixed(2)}</div>
       ${h.rsi > 0 ? `<div style="font-size:${buyuk?'10px':'9px'};color:${labelColor};font-weight:700;margin:3px 0">RSI ${h.rsi.toFixed(0)}</div>` : ''}
       ${buyuk && upside !== null ? `<div style="font-size:10px;color:${upside>0?'var(--green)':'var(--red)'};font-weight:600">+%${upside.toFixed(1)}</div>` : ''}
-      ${buyuk ? `<div style="margin-top:6px;padding:2px 7px;border-radius:100px;background:rgba(255,255,255,0.04);border:1px solid ${borderColor};display:inline-block"><span style="font-size:8px;color:${labelColor};font-weight:700">${statusIcon} ${statusLabel}</span></div>` : ''}
+      ${buyuk ? `<div style="margin-top:6px;padding:2px 8px;border-radius:100px;background:rgba(255,255,255,0.05);border:1px solid ${borderColor};display:inline-block"><span style="font-size:8px;color:${labelColor};font-weight:700">${statusIcon} ${statusLabel}</span></div>` : ''}
       ${raporBilgi}
       ${buyuk ? miniBarlar(h) : ''}
       ${buyuk ? `<div class="zaman-etiketi">${zamanEtiketi()}</div>` : ''}
       <div class="tooltip-box">${ttMetin}</div>`;
 
     div.onmouseover = () => { div.style.transform = 'translateY(-3px) scale(1.02)'; div.style.zIndex = '10'; div.style.opacity = '1'; };
-    div.onmouseout = () => { div.style.transform = ''; div.style.zIndex = ''; div.style.opacity = buyuk ? '1' : '0.75'; };
+    div.onmouseout = () => { div.style.transform = ''; div.style.zIndex = ''; div.style.opacity = buyuk ? '1' : '0.78'; };
     div.onclick = () => hisseGriddenSec(h.ticker);
     el.appendChild(div);
   });
@@ -947,7 +952,6 @@ function analiz() {
   analizSayisi++;
   localStorage.setItem('humeyra_analiz', analizSayisi);
   levelGuncelle();
-
   const price=gn('price'),target=gn('target'),entry=gn('entry')||price;
   const amount=gn('amount'),profit=gn('profit')||20;
   const ma200=gn('ma200'),ma20=gn('ma20'),rsi=gn('rsi'),beta=gn('beta');
@@ -1037,8 +1041,14 @@ function sifirla() {
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+// Başlat
 levelGuncelle();
 sheetsYukle();
+
+// 5 dakikada bir otomatik yenile
+setInterval(() => {
+  sheetsYukle();
+}, 5 * 60 * 1000);
 </script>
 </body>
 </html>
