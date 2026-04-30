@@ -864,8 +864,7 @@ function heatmapOlustur() {
       kazancDate.setHours(0,0,0,0);
       gunFark = Math.ceil((kazancDate - bugun) / (1000*60*60*24));
       raporYaklasiyor = gunFark >= 0 && gunFark <= 5;
-      if(raporYaklasiyor) console.log(h.ticker + ' RAPOR YAKLАŞIYOR, gunFark: ' + gunFark);
-      raporGecti = gunFark < 0;
+            raporGecti = gunFark < 0;
     }
 
     let borderColor, bgGradient, labelColor, statusLabel, statusIcon, animStyle = '', setupBadgeHtml = '';
