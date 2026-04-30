@@ -911,7 +911,7 @@ function heatmapOlustur() {
     const raporEtiket = raporYaklasiyor ? `<div style="position:absolute;top:-1px;right:-1px;background:var(--yellow);color:#000;font-size:8px;font-weight:900;letter-spacing:1px;padding:3px 8px;border-radius:0 12px 0 8px;">💓 RAPOR</div>` : '';
 
    const raporBilgi = raporYaklasiyor
-  ? `<div style="font-size:9px;color:var(--yellow);font-weight:700;margin-top:5px"><span style="display:inline-block;animation:pulse-green 1s ease-in-out infinite;font-size:12px">💓</span> ${gunFark===0?'BUGÜN!':gunFark===1?'YARIN!':gunFark+' gün'}</div>`
+  ? `<div style="font-size:9px;color:var(--yellow);font-weight:700;margin-top:5px"><span style="display:inline-block;animation:pulse-green 0.8s ease-in-out infinite;font-size:16px;filter:drop-shadow(0 0 6px #ff69b4)">💓</span> ${gunFark===0?'BUGÜN!':gunFark===1?'YARIN!':gunFark+' gün'}</div>`
   : raporGecti && h.kazancTarihi ? `<div style="font-size:9px;color:#ff6666;margin-top:4px">⚠️ Tarihi Güncelle</div>` : '';
     const ttMetin = tooltipMetni(h);
 
