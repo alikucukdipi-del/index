@@ -495,7 +495,7 @@ function gridOlustur() {
     const btn = document.createElement('div');
     btn.className = 'hisse-btn ' + rsiSinif(h.rsi); btn.dataset.idx = idx;
     btn.innerHTML = `
-      <div class="hisse-ticker">${h.ticker}</div>
+      <div class="hisse-ticker">${tickerKisa(h.ticker)}</div>
       <div class="hisse-name">${h.sirket.length>16?h.sirket.substring(0,16)+'…':h.sirket}</div>
       <div class="hisse-price">€${h.fiyat.toFixed(2)}</div>
       <div class="hisse-change ${h.degisim>=0?'up':'down'}">${deg}</div>
