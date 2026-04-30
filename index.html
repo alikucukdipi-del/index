@@ -483,6 +483,7 @@ function csvParcala(satir) {
   r.push(a); return r;
 }
 function temizle(s) { return s ? s.replace(/"/g,'').trim() : ''; }
+function tickerKisa(t) { return t ? t.split(':').pop() : ''; }
 function sayi(s) { if (!s) return 0; const n = parseFloat(s.replace(/"/g,'').replace(',','.').trim()); return isNaN(n) ? 0 : n; }
 
 function gridOlustur() {
