@@ -909,15 +909,14 @@ function heatmapOlustur() {
     const alimEtiket = alimBolgesi && setup !== 'aplus' ? `<div style="position:absolute;top:-1px;right:-1px;background:var(--green);color:#000;font-size:8px;font-weight:900;letter-spacing:1px;padding:3px 8px;border-radius:0 12px 0 8px;animation:pulse-green 2s ease-in-out infinite;">🎯 ALIM</div>` : '';
     const raporEtiket = raporYaklasiyor ? `<div style="position:absolute;top:-1px;right:-1px;background:var(--yellow);color:#000;font-size:8px;font-weight:900;letter-spacing:1px;padding:3px 8px;border-radius:0 12px 0 8px;">💓 RAPOR</div>` : '';
 
-    const raporBilgi = raporYaklasiyor
-      ? `<div style="font-size:9px;color:var(--yellow);font-weight:700;margin-top:5px">💓 ${gunFark===0?'BUGÜN!':gunFark===1?'YARIN!':gunFark+' gün'}</div>`
-      : raporGecti && h.kazancTarihi ? `<div style="font-size:9px;color:#ff6666;margin-top:4px">⚠️ Tarihi Güncelle</div>` : '';
-
+   const raporBilgi = raporYaklasiyor
+  ? `<div style="font-size:9px;color:var(--yellow);font-weight:700;margin-top:5px"><span style="display:inline-block;animation:pulse-rapor 1s ease-in-out infinite">💓</span> ${gunFark===0?'BUGÜN!':gunFark===1?'YARIN!':gunFark+' gün'}</div>`
+  : raporGecti && h.kazancTarihi ? `<div style="font-size:9px;color:#ff6666;margin-top:4px">⚠️ Tarihi Güncelle</div>` : '';
     const ttMetin = tooltipMetni(h);
 
     const div = document.createElement('div');
     div.className = 'heatmap-card' + (buyuk ? ' buyuk' : ' kucuk');
-   const finalAnim = raporYaklasiyor ? 'animation:pulse-rapor 1.5s ease-in-out infinite;' : animStyle;
+   const finalAnim = animStyle; // Kart animasyonu
 div.style.cssText = `background:${bgGradient};border:2px solid ${borderColor};padding:${buyuk?'16px 12px':'10px 8px'};${finalAnim}`;
 
     div.innerHTML = `
