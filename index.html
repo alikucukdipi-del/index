@@ -721,7 +721,7 @@ function heatmapOlustur() {
     div.innerHTML = `
       ${alimEtiket}
       ${raporEtiket}
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:${labelColor};margin-bottom:4px;margin-top:${raporYaklasiyor?'8px':'0'}">${h.ticker}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:${labelColor};margin-bottom:4px;margin-top:${raporYaklasiyor?'8px':'0'}">${tickerKisa(h.ticker)}</div>
       <div style="font-size:10px;color:var(--text2);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.sirket.length>14?h.sirket.substring(0,14)+'…':h.sirket}</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);margin-bottom:2px">€${h.fiyat.toFixed(2)}</div>
       ${h.rsi > 0 ? `<div style="font-size:10px;color:${labelColor};font-weight:700;margin-bottom:6px">RSI ${h.rsi.toFixed(0)}</div>` : ''}
