@@ -587,41 +587,70 @@ function setupSeviyesi(h) {
 // ─── MİNİ BARLAR ───
 function miniBarlar(h) {
   // Trend barı
-  let trendPct = 50, trendRenk = '#ffb300', trendTip = '';
+  let trendPct = 50, trendGradient = 'linear-gradient(90deg,#2e2000,#ffb300)', trendTip = '';
   if (h.fiyat > 0 && h.ma200 > 0) {
-    if (h.fiyat > h.ma200 * 1.05) { trendPct = 85; trendRenk = '#00c853'; trendTip = userLevel === 1 ? 'Uzun vadeli ortalama üzerinde, trend güçlü.' : `Fiyat MA200 (€${h.ma200.toFixed(2)}) belirgin üzerinde — uzun vade trendi pozitif.`; }
-    else if (h.fiyat > h.ma200) { trendPct = 65; trendRenk = '#4caf50'; trendTip = userLevel === 1 ? 'Ortalama üzerinde, iyi görünüyor.' : 'MA200 üzerinde ama yakın, dikkatli ol.'; }
-    else if (h.fiyat > h.ma200 * 0.95) { trendPct = 38; trendRenk = '#ffb300'; trendTip = userLevel === 1 ? 'Ortalamanın biraz altında.' : 'MA200 altında ama yakın, kritik bölge.'; }
-    else { trendPct = 18; trendRenk = '#ff3d3d'; trendTip = userLevel === 1 ? 'Ortalama oldukça altında, dikkat.' : `Fiyat MA200'ün belirgin altında — uzun vade baskısı var.`; }
+    if (h.fiyat > h.ma200 * 1.05) { 
+      trendPct = 85; 
+      trendGradient = 'linear-gradient(90deg,#0a2e1a,#00e676)'; 
+      trendTip = userLevel === 1 ? 'Uzun vadeli ortalama üzerinde, trend güçlü.' : `Fiyat MA200 (€${h.ma200.toFixed(2)}) belirgin üzerinde — uzun vade trendi pozitif.`; 
+    } else if (h.fiyat > h.ma200) { 
+      trendPct = 65; 
+      trendGradient = 'linear-gradient(90deg,#0d2e10,#4caf50)'; 
+      trendTip = userLevel === 1 ? 'Ortalama üzerinde, iyi görünüyor.' : 'MA200 üzerinde ama yakın, dikkatli ol.'; 
+    } else if (h.fiyat > h.ma200 * 0.95) { 
+      trendPct = 38; 
+      trendGradient = 'linear-gradient(90deg,#2e2000,#ffb300)'; 
+      trendTip = userLevel === 1 ? 'Ortalamanın biraz altında.' : 'MA200 altında ama yakın, kritik bölge.'; 
+    } else { 
+      trendPct = 18; 
+      trendGradient = 'linear-gradient(90deg,#2e0a0a,#ff3d3d)'; 
+      trendTip = userLevel === 1 ? 'Ortalama oldukça altında, dikkat.' : `Fiyat MA200'ün belirgin altında — uzun vade baskısı var.`; 
+    }
   }
 
-  // Momentum barı — RSI cap 95
+  // Momentum barı
   const rsiGoster = Math.min(95, h.rsi);
   let momPct = rsiGoster > 0 ? rsiGoster : 50;
-  let momRenk = '#ffb300', momTip = '';
-  if (h.rsi > 75) { momRenk = '#ff3d3d'; momTip = userLevel === 1 ? 'Çok hızlı yükselmiş, dikkat et.' : `RSI ${rsiGoster.toFixed(0)} — aşırı ısınmış, düzeltme riski yüksek.`; }
-  else if (h.rsi > 60) { momRenk = '#ff8c00'; momTip = userLevel === 1 ? 'Momentum yüksek, biraz temkinli ol.' : `RSI ${rsiGoster.toFixed(0)} — güçlü ama aşırı alım bölgesine yaklaşıyor.`; }
-  else if (h.rsi > 40) { momRenk = '#00c853'; momTip = userLevel === 1 ? 'Dengeli bir seviyede.' : `RSI ${rsiGoster.toFixed(0)} — sağlıklı bölge.`; }
-  else if (h.rsi > 0) { momRenk = '#2979ff'; momTip = userLevel === 1 ? 'Çok düşük, toparlanma fırsatı olabilir.' : `RSI ${rsiGoster.toFixed(0)} — aşırı satım bölgesi, dip fırsatı izlenebilir.`; }
+  let momGradient = 'linear-gradient(90deg,#2e2000,#ffb300)', momTip = '';
+  if (h.rsi > 75) { 
+    momGradient = 'linear-gradient(90deg,#2e0a0a,#ff3d3d)'; 
+    momTip = userLevel === 1 ? 'Çok hızlı yükselmiş, dikkat et.' : `RSI ${rsiGoster.toFixed(0)} — aşırı ısınmış, düzeltme riski yüksek.`; 
+  } else if (h.rsi > 60) { 
+    momGradient = 'linear-gradient(90deg,#2e1800,#ff8c00)'; 
+    momTip = userLevel === 1 ? 'Momentum yüksek, biraz temkinli ol.' : `RSI ${rsiGoster.toFixed(0)} — güçlü ama aşırı alım bölgesine yaklaşıyor.`; 
+  } else if (h.rsi > 40) { 
+    momGradient = 'linear-gradient(90deg,#0a2e1a,#00c853)'; 
+    momTip = userLevel === 1 ? 'Dengeli bir seviyede.' : `RSI ${rsiGoster.toFixed(0)} — sağlıklı bölge.`; 
+  } else if (h.rsi > 0) { 
+    momGradient = 'linear-gradient(90deg,#0a1a2e,#2979ff)'; 
+    momTip = userLevel === 1 ? 'Çok düşük, toparlanma fırsatı olabilir.' : `RSI ${rsiGoster.toFixed(0)} — aşırı satım bölgesi, dip fırsatı izlenebilir.`; 
+  }
 
   // Hacim barı
   const hacimPct = Math.min(92, Math.max(12, Math.abs(h.degisim) * 8 + 30));
-  const hacimRenk = Math.abs(h.degisim) > 3 ? '#00c853' : Math.abs(h.degisim) > 1 ? '#ffb300' : '#555';
+  let hacimGradient = 'linear-gradient(90deg,#1a1a1a,#555)';
+  if (Math.abs(h.degisim) > 3) hacimGradient = 'linear-gradient(90deg,#0a2e1a,#00c853)';
+  else if (Math.abs(h.degisim) > 1) hacimGradient = 'linear-gradient(90deg,#2e2000,#ffb300)';
   const hacimTip = userLevel === 1 ? `Günlük hareket: ${h.degisim > 0 ? '+' : ''}${h.degisim.toFixed(2)}%` : `Günlük değişim ${h.degisim > 0 ? '+' : ''}${h.degisim.toFixed(2)}% — gerçek hacim verisi yakında eklenecek.`;
 
-  const bar = (label, pct, renk, tip, val) => `
+  const bar = (label, pct, gradient, tip, val, valRenk) => `
     <div class="mini-bar-row">
       <div class="mini-bar-label">${label}</div>
       <div class="mini-bar-bg" title="${tip}">
-        <div class="mini-bar-fill" style="width:${pct}%;background:${renk}"></div>
+        <div class="mini-bar-fill" style="width:${pct}%;background:${gradient}"></div>
       </div>
-      <div class="mini-bar-val" style="color:${renk}">${val}</div>
+      <div class="mini-bar-val" style="color:${valRenk};font-weight:700">${val}</div>
     </div>`;
 
+  const trendVal = h.fiyat > h.ma200 ? '↑' : '↓';
+  const trendValRenk = h.fiyat > h.ma200 ? '#00e676' : '#ff3d3d';
+  const momValRenk = h.rsi > 70 ? '#ff3d3d' : h.rsi < 35 ? '#2979ff' : '#00c853';
+  const hacimValRenk = Math.abs(h.degisim) > 3 ? '#00c853' : Math.abs(h.degisim) > 1 ? '#ffb300' : '#555';
+
   return `<div class="mini-bars">
-    ${bar('Trend', trendPct, trendRenk, trendTip, h.fiyat > h.ma200 ? '↑' : '↓')}
-    ${bar('Momentum', momPct, momRenk, momTip, rsiGoster.toFixed(0))}
-    ${bar('Hacim', hacimPct, hacimRenk, hacimTip, (h.degisim > 0 ? '+' : '') + h.degisim.toFixed(1) + '%')}
+    ${bar('Trend', trendPct, trendGradient, trendTip, trendVal, trendValRenk)}
+    ${bar('Momentum', momPct, momGradient, momTip, rsiGoster.toFixed(0), momValRenk)}
+    ${bar('Hacim', hacimPct, hacimGradient, hacimTip, (h.degisim > 0 ? '+' : '') + h.degisim.toFixed(1) + '%', hacimValRenk)}
   </div>`;
 }
 
