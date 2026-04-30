@@ -917,7 +917,8 @@ function heatmapOlustur() {
 
     const div = document.createElement('div');
     div.className = 'heatmap-card' + (buyuk ? ' buyuk' : ' kucuk');
-   div.style.cssText = `background:${bgGradient};border:2px solid ${borderColor};padding:${buyuk?'16px 12px':'10px 8px'};${animStyle}${raporYaklasiyor?'animation:pulse-rapor 1.5s ease-in-out infinite;':''}`;
+   const finalAnim = raporYaklasiyor ? 'animation:pulse-rapor 1.5s ease-in-out infinite;' : animStyle;
+div.style.cssText = `background:${bgGradient};border:2px solid ${borderColor};padding:${buyuk?'16px 12px':'10px 8px'};${finalAnim}`;
 
     div.innerHTML = `
       ${setupBadgeHtml}${alimEtiket}${raporEtiket}
