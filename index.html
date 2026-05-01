@@ -764,39 +764,40 @@ function setupSeviyesi(h) {
 
 // ─── MİNİ BARLAR (öğretici tooltip) ───
 function miniBarHesapla(h) {
-  // Trend skoru
-  let trendPct = 50, trendG = 'linear-gradient(90deg,#2e2000,#ffb300)', trendV = '—', trendVC = '#ffb300', trendTip = '';
+  const GRI = 'linear-gradient(90deg,#1a1a1a,#e0e0e0)';
+
+  // Trend
+  let trendPct = 50, trendV = '—', trendVC = '#ffb300', trendTip = '';
   if (h.fiyat > 0 && h.ma200 > 0) {
     const r = h.fiyat / h.ma200;
     trendPct = Math.min(95, Math.max(10, Math.round((r - 0.7) / 0.6 * 100)));
-    if (r > 1.05) { trendG = 'linear-gradient(90deg,#0a2e1a,#00e676)'; trendV = '↑'; trendVC = '#00e676'; trendTip = 'Trend güçlü — fiyat uzun vadeli ortalamanın belirgin üzerinde.'; }
-    else if (r > 1) { trendG = 'linear-gradient(90deg,#0d2e10,#4caf50)'; trendV = '↑'; trendVC = '#4caf50'; trendTip = 'Trend pozitif ama dikkatli — ortalamaya yakın, kırılma riski var.'; }
-    else if (r > 0.97) { trendG = 'linear-gradient(90deg,#2e2000,#ffb300)'; trendV = '→'; trendVC = '#ffb300'; trendTip = 'Trend zayıf — fiyat kritik ortalama seviyesinin altında, yön net değil.'; }
-    else { trendG = 'linear-gradient(90deg,#2e0a0a,#ff3d3d)'; trendV = '↓'; trendVC = '#ff3d3d'; trendTip = 'Trend olumsuz — fiyat uzun vadeli ortalamanın belirgin altında.'; }
+    if (r > 1.05) { trendV = '↑'; trendVC = '#e0e0e0'; trendTip = 'Trend güçlü — fiyat uzun vadeli ortalamanın belirgin üzerinde.'; }
+    else if (r > 1) { trendV = '↑'; trendVC = '#aaaaaa'; trendTip = 'Trend pozitif ama dikkatli — ortalamaya yakın, kırılma riski var.'; }
+    else if (r > 0.97) { trendV = '→'; trendVC = '#666666'; trendTip = 'Trend zayıf — fiyat kritik ortalama seviyesinin altında, yön net değil.'; }
+    else { trendV = '↓'; trendVC = '#444444'; trendTip = 'Trend olumsuz — fiyat uzun vadeli ortalamanın belirgin altında.'; }
   }
   const trendSkor = Math.round(trendPct / 10);
 
-  // Momentum skoru
+  // Momentum
   const rsiG = Math.min(95, h.rsi);
-  let momG = 'linear-gradient(90deg,#2e2000,#ffb300)', momVC = '#ffb300', momTip = '';
-  if (h.rsi > 75) { momG = 'linear-gradient(90deg,#2e0a0a,#ff3d3d)'; momVC = '#ff3d3d'; momTip = `Momentum aşırı ısınmış (RSI ${rsiG}) — düzeltme ihtimali yüksek, yeni giriş için acele etme.`; }
-  else if (h.rsi > 60) { momG = 'linear-gradient(90deg,#2e1800,#ff8c00)'; momVC = '#ff8c00'; momTip = `Momentum güçlü (RSI ${rsiG}) — iyi ama aşırı alım bölgesine yaklaşıyor, dikkatli ol.`; }
-  else if (h.rsi > 40) { momG = 'linear-gradient(90deg,#0a2e1a,#00c853)'; momVC = '#00c853'; momTip = `Momentum dengeli (RSI ${rsiG}) — sağlıklı bölge, ne aşırı alım ne aşırı satım.`; }
-  else if (h.rsi > 0) { momG = 'linear-gradient(90deg,#0a1a2e,#2979ff)'; momVC = '#2979ff'; momTip = `Momentum zayıf (RSI ${rsiG}) — aşırı satım bölgesi, tepki dönüşü izlenebilir.`; }
+  let momVC = '#ffb300', momTip = '';
+  if (h.rsi > 75) { momVC = '#e0e0e0'; momTip = `Momentum aşırı ısınmış (RSI ${rsiG}) — düzeltme ihtimali yüksek.`; }
+  else if (h.rsi > 60) { momVC = '#aaaaaa'; momTip = `Momentum güçlü (RSI ${rsiG}) — aşırı alım bölgesine yaklaşıyor.`; }
+  else if (h.rsi > 40) { momVC = '#888888'; momTip = `Momentum dengeli (RSI ${rsiG}) — sağlıklı bölge.`; }
+  else if (h.rsi > 0) { momVC = '#555555'; momTip = `Momentum zayıf (RSI ${rsiG}) — aşırı satım, tepki izlenebilir.`; }
   const momSkor = Math.round(rsiG / 10);
 
-  // Hacim skoru
+  // Hacim
   const hacimPct = Math.min(92, Math.max(12, Math.abs(h.degisim) * 8 + 30));
-  let hacimG = 'linear-gradient(90deg,#1a1a1a,#444)', hacimVC = '#555', hacimTip = '';
-  if (Math.abs(h.degisim) > 3) { hacimG = 'linear-gradient(90deg,#0a2e1a,#00c853)'; hacimVC = '#00c853'; hacimTip = `Hacim güçlü (${h.degisim > 0 ? '+' : ''}${h.degisim.toFixed(1)}%) — hareket gerçek alıcılarla destekleniyor.`; }
-  else if (Math.abs(h.degisim) > 1) { hacimG = 'linear-gradient(90deg,#2e2000,#ffb300)'; hacimVC = '#ffb300'; hacimTip = `Hacim orta (${h.degisim > 0 ? '+' : ''}${h.degisim.toFixed(1)}%) — hareket var ama güçlü katılım yok.`; }
-  else { hacimTip = `Hacim düşük (${h.degisim > 0 ? '+' : ''}${h.degisim.toFixed(1)}%) — işlem az, hareket güvenilir olmayabilir.`; }
+  let hacimVC = '#555', hacimTip = '';
+  if (Math.abs(h.degisim) > 3) { hacimVC = '#e0e0e0'; hacimTip = `Hacim güçlü (+${h.degisim.toFixed(1)}%) — hareket gerçek alıcılarla destekleniyor.`; }
+  else if (Math.abs(h.degisim) > 1) { hacimVC = '#888888'; hacimTip = `Hacim orta (${h.degisim.toFixed(1)}%) — hareket var ama güçlü katılım yok.`; }
+  else { hacimTip = `Hacim düşük (${h.degisim.toFixed(1)}%) — işlem az, hareket güvenilir olmayabilir.`; }
   const hacimSkor = Math.round(hacimPct / 10);
 
-  // Güçlü sinyal efekti
   const gucluSinyal = trendSkor > 6 && hacimSkor > 6;
 
-  return { trendPct, trendG, trendV, trendVC, trendTip, trendSkor, rsiG, momG, momVC, momTip, momSkor, hacimPct, hacimG, hacimVC, hacimTip, hacimSkor, gucluSinyal };
+  return { trendPct, trendG: GRI, trendV, trendVC, trendTip, trendSkor, rsiG, momG: GRI, momVC, momTip, momSkor, hacimPct, hacimG: GRI, hacimVC, hacimTip, hacimSkor, gucluSinyal };
 }
 
 function miniBarlarHtml(bars) {
