@@ -1481,8 +1481,7 @@ function heatmapOlustur() {
       '</div>':'';
     const div=document.createElement('div');
     div.className='heatmap-card'+(buyuk?' buyuk':' kucuk');
-    div.style.cssText='background:'+bgGradient+';border:2px solid '+borderColor+';padding:'+(buyuk?'16px 12px':'10px 8px');
-if(animStyle) div.style.animation = animStyle.replace('animation:','').replace(';','');
+   div.setAttribute('style', 'background:'+bgGradient+';border:2px solid '+borderColor+';padding:'+(buyuk?'16px 12px':'10px 8px')+';'+animStyle);
     div.innerHTML=kirilimBadge+
       (!h.direncKirildi&&!h.destekKirildi?setupBadgeHtml:'')+
       alimEtiket+raporEtiket+favoriBtn+
