@@ -19,7 +19,7 @@ body::before { content: ''; position: fixed; inset: 0; background-image: linear-
 .wrap { max-width: 1200px; margin: 0 auto; padding: 48px 20px 100px; position: relative; z-index: 1; }
 
 /* KARŞILAMA POPUP */
-.karsilama-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+.karsilama-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 2000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
 .karsilama-modal { background: #141414; border: 1px solid rgba(201,168,76,0.3); border-radius: 20px; padding: 40px; max-width: 480px; width: 90%; text-align: center; position: relative; box-shadow: 0 40px 80px rgba(0,0,0,0.8); }
 .karsilama-icon { font-size: 48px; margin-bottom: 16px; }
 .karsilama-baslik { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; color: var(--gold); margin-bottom: 8px; }
@@ -611,9 +611,9 @@ function karsilamaGoster() {
   if (localStorage.getItem('humeyra_karsilama_bugun') === new Date().toDateString()) return;
   const saat = new Date().getHours();
   let icon, baslik, alt;
-  if (saat >= 5 && saat < 12) { icon = '☀️'; baslik = 'GÜNAYDИН'; alt = 'Piyasa açılmak üzere. Bugün öne çıkan hisseler:'; }
+  if (saat >= 5 && saat < 12) { icon = '☀️'; baslik = 'GÜNAYDIN'; alt = 'Piyasa açılmak üzere. Bugün öne çıkan hisseler:'; }
   else if (saat >= 12 && saat < 17) { icon = '📊'; baslik = 'İYİ ÖĞLENLER'; alt = 'Öğle seansında öne çıkan hisseler:'; }
-  else if (saat >= 17 && saat < 21) { icon = '🌆'; baslik = 'KAPANIŞA YAKИН'; alt = 'Bugün öne çıkan hisseler:'; }
+  else if (saat >= 17 && saat < 21) { icon = '🌆'; baslik = 'KAPANIŞA YAKIN'; alt = 'Bugün öne çıkan hisseler:'; }
   else { icon = '🌙'; baslik = 'İYİ GECELER'; alt = 'Piyasa kapandı. Yarın için izleme listesi:'; }
   document.getElementById('karsilama-icon').textContent = icon;
   document.getElementById('karsilama-baslik').textContent = baslik;
