@@ -878,7 +878,7 @@ let aktifSenaryo = null;
 function senaryoPanelAc() {
   const panel = document.getElementById('senaryo-panel');
   const grid = document.getElementById('senaryo-grid');
-  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  panel.style.display = 'block';
   if (panel.style.display === 'none') return;
   let html = '';
   for (let i = 0; i < SENARYOLAR.length; i++) {
