@@ -285,6 +285,9 @@ select option { background: #181818; }
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px" id="paket-grid"></div>
   <button onclick="paketSifirla()" style="margin-top:14px;padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer">↩️ Paketi Kaldır</button>
 </div>
+  <button onclick="senaryoPanelAc()" style="padding:8px 18px;background:linear-gradient(135deg,rgba(41,121,255,0.15),rgba(41,121,255,0.05));border:1px solid rgba(41,121,255,0.4);border-radius:10px;color:#6fa3ff;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px;margin-left:8px">
+  🎬 SENARYOLAR
+</button>
 <!-- SEKME -->
 <div class="sekme-wrap">
   <button class="sekme-btn aktif" onclick="sekmeGec('aksiyon', this)">🔥 AKSİYON</button>
@@ -607,6 +610,69 @@ function paketSec(paketId) {
 function paketSifirla() {
   aktifPaket = null;
   document.getElementById('paket-panel').style.display = 'none';
+  heatmapOlustur();
+}
+  // ─── SENARYO SİSTEMİ ───
+const SENARYOLAR = [
+  {
+    icon: '🔄',
+    baslik: 'Toparlanma Adayları',
+    aciklama: 'RSI dip bölgesinde, fiyat analist koridorunun altında. Tepki potansiyeli yüksek.',
+    filtre: h => h.rsi > 0 && h.rsi < 35 && h.fiyat > 0
+  },
+  {
+    icon: '😴',
+    baslik: 'Sessiz Birikim',
+    aciklama: 'Fiyat yatay seyrediyor, hacim düşük ama yapı bozulmamış. Patlama yakın olabilir.',
+    filtre: h => h.rsi > 35 && h.rsi < 55 && h.fiyat > h.ma200 * 0.97 && Math.abs(h.degisim) < 1.5
+  },
+  {
+    icon: '💥',
+    baslik: 'Patlamaya Yakın',
+    aciklama: 'RSI güçleniyor, trend yukarı, direnç yakın. Kırılım gelebilir.',
+    filtre: h => h.rsi > 50 && h.rsi < 68 && h.fiyat > h.ma200 && h.direncKirildi === false
+  }
+];
+
+let aktifSenaryo = null;
+
+function senaryoPanelAc() {
+  let panel = document.getElementById('senaryo-panel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'senaryo-panel';
+    panel.style.cssText = 'margin-bottom:16px;background:var(--card);border:1px solid rgba(41,121,255,0.3);border-radius:16px;padding:20px';
+    document.getElementById('paket-panel').after(panel);
+  }
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  if (panel.style.display === 'none') return;
+
+  panel.innerHTML = `
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#6fa3ff;margin-bottom:16px">🎬 BUGÜNÜN SENARYOLARI</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+      ${SENARYOLAR.map((s, i) => {
+        const eslesen = hisseler.filter(s.filtre);
+        return `
+          <div onclick="senaryoSec(${i})" style="padding:16px;background:${aktifSenaryo===i?'rgba(41,121,255,0.1)':'var(--card2)'};border:1px solid ${aktifSenaryo===i?'rgba(41,121,255,0.5)':'var(--border)'};border-radius:12px;cursor:pointer;transition:all .2s;box-shadow:${aktifSenaryo===i?'0 0 16px rgba(41,121,255,0.2)':'none'}">
+            <div style="font-size:24px;margin-bottom:8px">${s.icon}</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--text);margin-bottom:6px">${s.baslik}</div>
+            <div style="font-size:10px;color:var(--text2);line-height:1.5;margin-bottom:8px">${s.aciklama}</div>
+            <div style="font-size:11px;font-weight:700;color:#6fa3ff">${eslesen.length} hisse eşleşti</div>
+          </div>`;
+      }).join('')}
+    </div>
+    <button onclick="senaryoSifirla()" style="margin-top:14px;padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer">↩️ Senaryoyu Kaldır</button>`;
+}
+
+function senaryoSec(idx) {
+  aktifSenaryo = aktifSenaryo === idx ? null : idx;
+  senaryoPanelAc();
+  heatmapOlustur();
+}
+
+function senaryoSifirla() {
+  aktifSenaryo = null;
+  document.getElementById('senaryo-panel').style.display = 'none';
   heatmapOlustur();
 }
 function levelGuncelle() {
@@ -1164,6 +1230,11 @@ function heatmapOlustur() {
 if (aktifPaket) {
   const paket = PAKETLER.find(p => p.id === aktifPaket);
   if (paket) filtreli = filtreli.filter(paket.filtre);
+}
+  // Senaryo filtresi
+if (aktifSenaryo !== null) {
+  const s = SENARYOLAR[aktifSenaryo];
+  if (s) filtreli = filtreli.filter(s.filtre);
 }
   if (aktifSekme === 'aksiyon') {
     filtreli = hisseler.filter(h => aktifPuan(h) >= 15 || h.direncKirildi || h.destekKirildi);
