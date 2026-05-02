@@ -272,6 +272,19 @@ select option { background: #181818; }
   <div class="akim-kart" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3)"><div class="akim-sayi" style="color:var(--gold)" id="akim-firsat">0</div><div class="akim-label">💎 A+ Setup</div></div>
 </div>
 
+  <!-- PAKET SİSTEMİ BUTONU -->
+<div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+  <button onclick="paketPanelAc()" style="padding:8px 18px;background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border:1px solid rgba(201,168,76,0.4);border-radius:10px;color:var(--gold);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px">
+    📦 STRATEJİ PAKETLERİ
+  </button>
+</div>
+
+<!-- PAKET PANELİ -->
+<div id="paket-panel" style="display:none;margin-bottom:16px;background:var(--card);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:20px">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gold);margin-bottom:16px">📦 STRATEJİ PAKETLERİ</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px" id="paket-grid"></div>
+  <button onclick="paketSifirla()" style="margin-top:14px;padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer">↩️ Paketi Kaldır</button>
+</div>
 <!-- SEKME -->
 <div class="sekme-wrap">
   <button class="sekme-btn aktif" onclick="sekmeGec('aksiyon', this)">🔥 AKSİYON</button>
@@ -519,6 +532,83 @@ select option { background: #181818; }
 // ─── USER LEVEL ───
 let userLevel = parseInt(localStorage.getItem('humeyra_level') || '1');
 
+// ─── PAKET SİSTEMİ ───
+const PAKETLER = [
+  {
+    id: 'temkinli',
+    icon: '💎',
+    baslik: 'Temkinli Yatırımcı',
+    aciklama: 'Düşük beta, dengeli RSI, temettü ödeyen hisseler.',
+    karar: 'Beta < 1.2, RSI 35-65, stabil yapı',
+    filtre: h => h.beta > 0 && h.beta < 1.2 && h.rsi > 35 && h.rsi < 65,
+    renk: 'rgba(201,168,76,0.3)',
+    glow: 'rgba(201,168,76,0.15)'
+  },
+  {
+    id: 'buyume',
+    icon: '🚀',
+    baslik: 'Büyüme Avcısı',
+    aciklama: 'Trend güçlü, yüksek potansiyelli, momentum artıyor.',
+    karar: 'MA200 üstü, RSI 40-70, yüksek upside',
+    filtre: h => h.fiyat > h.ma200 && h.rsi > 40 && h.rsi < 70 && h.hedef > h.fiyat * 1.15,
+    renk: 'rgba(0,200,83,0.3)',
+    glow: 'rgba(0,200,83,0.1)'
+  },
+  {
+    id: 'firsat',
+    icon: '🎯',
+    baslik: 'Fırsat Avcısı',
+    aciklama: 'RSI düşük, analist koridoru altında, dip bölgesi.',
+    karar: 'RSI < 40, fiyat analist min altında',
+    filtre: h => h.rsi > 0 && h.rsi < 40 && h.hedefMin > 0 && h.fiyat < h.hedefMin,
+    renk: 'rgba(41,121,255,0.3)',
+    glow: 'rgba(41,121,255,0.1)'
+  },
+  {
+    id: 'dikkat',
+    icon: '⚠️',
+    baslik: 'Dikkat Listesi',
+    aciklama: 'RSI yüksek veya destek kırıldı. Riskli bölge.',
+    karar: 'RSI > 70 veya destek kırıldı',
+    filtre: h => h.rsi > 70 || h.destekKirildi,
+    renk: 'rgba(255,61,61,0.3)',
+    glow: 'rgba(255,61,61,0.1)'
+  }
+];
+
+let aktifPaket = null;
+
+function paketPanelAc() {
+  const panel = document.getElementById('paket-panel');
+  const grid = document.getElementById('paket-grid');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  if (panel.style.display === 'none') return;
+  grid.innerHTML = PAKETLER.map(p => {
+    const eslesenler = hisseler.filter(p.filtre);
+    return `
+      <div onclick="paketSec('${p.id}')" style="padding:16px;background:${aktifPaket===p.id?p.glow:'var(--card2)'};border:1px solid ${aktifPaket===p.id?p.renk:'var(--border)'};border-radius:12px;cursor:pointer;transition:all .2s;box-shadow:${aktifPaket===p.id?'0 0 16px '+p.glow:'none'}">
+        <div style="font-size:18px;margin-bottom:6px">${p.icon}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--text);margin-bottom:4px">${p.baslik}</div>
+        <div style="font-size:10px;color:var(--text2);margin-bottom:8px;line-height:1.5">${p.aciklama}</div>
+        <div style="font-size:9px;color:var(--text3);margin-bottom:8px;font-style:italic">${p.karar}</div>
+        <div style="font-size:11px;font-weight:700;color:${p.renk.includes('76')?'var(--gold)':p.renk.includes('200')?'var(--green)':p.renk.includes('121')?'var(--blue)':'var(--red)'}">
+          ${eslesenler.length} hisse eşleşti
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function paketSec(paketId) {
+  aktifPaket = aktifPaket === paketId ? null : paketId;
+  paketPanelAc();
+  heatmapOlustur();
+}
+
+function paketSifirla() {
+  aktifPaket = null;
+  document.getElementById('paket-panel').style.display = 'none';
+  heatmapOlustur();
+}
 function levelGuncelle() {
   const badge = document.getElementById('level-badge');
   if (!badge) return;
@@ -1070,6 +1160,11 @@ function heatmapOlustur() {
   const bugun = new Date(); bugun.setHours(0,0,0,0);
 
   let filtreli = [...hisseler];
+  // Paket filtresi
+if (aktifPaket) {
+  const paket = PAKETLER.find(p => p.id === aktifPaket);
+  if (paket) filtreli = filtreli.filter(paket.filtre);
+}
   if (aktifSekme === 'aksiyon') {
     filtreli = hisseler.filter(h => aktifPuan(h) >= 15 || h.direncKirildi || h.destekKirildi);
     document.getElementById('heatmap-baslik').textContent = '🔥 Aksiyon — Bugünün Öne Çıkanları';
