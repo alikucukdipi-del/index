@@ -610,24 +610,27 @@ function levelDegistir() {
 function karsilamaGoster() {
   if (localStorage.getItem('humeyra_karsilama_bugun') === new Date().toDateString()) return;
   const saat = new Date().getHours();
+  const gun = new Date().getDay();
+  const haftsonu = gun === 0 || gun === 6;
   let icon, baslik, alt;
- const gun = new Date().getDay(); // 0=Pazar, 6=Cumartesi
-const haftsonu = gun === 0 || gun === 6;
-
-if (haftsonu) {
-  icon = '☕'; baslik = 'HAFTASONU'; alt = 'Piyasalar kapalı. Hafta içi için izleme listeni hazırla:';
-} else if (saat >= 0 && saat < 9) {
-  icon = '🌙'; baslik = 'GÜNAYIN'; alt = 'Piyasa saat 09:00\'da açılıyor. Hazırlık zamanı:';
-} else if (saat >= 9 && saat < 12) {
-  icon = '☀️'; baslik = 'SABAH SEANSI'; alt = 'Piyasa açık! Sabah öne çıkanlar:';
-} else if (saat >= 12 && saat < 17) {
-  icon = '📊'; baslik = 'ÖĞLE SEANSI'; alt = 'Kapanışa yaklaşıyoruz. Öne çıkanlar:';
-} else if (saat >= 17 && saat < 18) {
-  icon = '🔔'; baslik = 'KAPANIŞA YAKIN'; alt = 'Son dakika! Bugün öne çıkanlar:';
-} else {
-  icon = '🌆'; baslik = 'PİYASA KAPANDI'; alt = 'Bugünlük bitti. Yarın için izleme listesi:';
+  if (haftsonu) {
+    icon = '☕'; baslik = 'HAFTASONU'; alt = 'Piyasalar kapalı. Hafta içi için izleme listeni hazırla:';
+  } else if (saat < 9) {
+    icon = '🌙'; baslik = 'GÜNAYIN'; alt = 'Piyasa saat 09:00da açılıyor. Hazırlık zamanı:';
+  } else if (saat < 12) {
+    icon = '☀️'; baslik = 'SABAH SEANSI'; alt = 'Piyasa açık! Sabah öne çıkanlar:';
+  } else if (saat < 17) {
+    icon = '📊'; baslik = 'ÖĞLE SEANSI'; alt = 'Kapanışa yaklaşıyoruz. Öne çıkanlar:';
+  } else if (saat < 18) {
+    icon = '🔔'; baslik = 'KAPANIŞA YAKIN'; alt = 'Son dakika! Bugün öne çıkanlar:';
+  } else {
+    icon = '🌆'; baslik = 'PİYASA KAPANDI'; alt = 'Bugünlük bitti. Yarın için izleme listesi:';
+  }
+  document.getElementById('karsilama-icon').textContent = icon;
+  document.getElementById('karsilama-baslik').textContent = baslik;
+  document.getElementById('karsilama-alt').textContent = alt;
+  document.getElementById('karsilama-overlay').style.display = 'flex';
 }
-
 function karsilamaHisseleriDoldur() {
   const el = document.getElementById('karsilama-hisseler');
   if (!el || hisseler.length === 0) return;
@@ -635,17 +638,23 @@ function karsilamaHisseleriDoldur() {
     .filter(h => h.rsi > 0 && h.fiyat > 0)
     .sort((a, b) => aktifPuan(b) - aktifPuan(a))
     .slice(0, 3);
-  if (onceCikanlar.length === 0) { el.innerHTML = '<div style="color:var(--text2);font-size:12px">Veri yükleniyor...</div>'; return; }
-  el.innerHTML = onceCikanlar.map(h => {
+  if (onceCikanlar.length === 0) {
+    el.innerHTML = '<div style="color:var(--text2);font-size:12px">Veri yükleniyor...</div>';
+    return;
+  }
+  let html = '';
+  for (let i = 0; i < onceCikanlar.length; i++) {
+    const h = onceCikanlar[i];
     const durum = durumHesapla(h);
     const rsiRenk = rsiRenkHesapla(h.rsi);
-    return '<div class="karsilama-hisse">' +
+    html += '<div class="karsilama-hisse">' +
       '<div><div class="karsilama-hisse-ticker">' + tickerKisa(h.ticker) + '</div>' +
       '<div class="karsilama-hisse-aciklama">' + durum.etiket + '</div></div>' +
       '<div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--text)">€' + h.fiyat.toFixed(2) + '</div>' +
       '<div style="font-size:10px;color:' + rsiRenk + '">RSI ' + h.rsi.toFixed(0) + '</div></div>' +
       '</div>';
-  }).join('');
+  }
+  el.innerHTML = html;
 }
 
 function karsilamaKapat() {
