@@ -660,6 +660,7 @@ function karsilamaHisseleriDoldur() {
 function karsilamaKapat() {
   document.getElementById('karsilama-overlay').style.display = 'none';
   localStorage.setItem('humeyra_karsilama_bugun', new Date().toDateString());
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 // ─── RSI RENK SİSTEMİ (Kademeli) ───
