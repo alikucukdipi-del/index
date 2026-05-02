@@ -618,18 +618,21 @@ const SENARYOLAR = [
     icon: '🔄',
     baslik: 'Toparlanma Adayları',
     aciklama: 'RSI dip bölgesinde, fiyat analist koridorunun altında. Tepki potansiyeli yüksek.',
+    sinyaller: ['📉 RSI < 35', '🎯 Analist dipi', '⚡ Tepki beklenir'],
     filtre: h => h.rsi > 0 && h.rsi < 35 && h.fiyat > 0
   },
   {
     icon: '😴',
     baslik: 'Sessiz Birikim',
     aciklama: 'Fiyat yatay seyrediyor, hacim düşük ama yapı bozulmamış. Patlama yakın olabilir.',
+    sinyaller: ['➡️ Yatay trend', '😴 Düşük hacim', '🏗️ Yapı sağlam'],
     filtre: h => h.rsi > 35 && h.rsi < 55 && h.fiyat > h.ma200 * 0.97 && Math.abs(h.degisim) < 1.5
   },
   {
     icon: '💥',
     baslik: 'Patlamaya Yakın',
     aciklama: 'RSI güçleniyor, trend yukarı, direnç yakın. Kırılım gelebilir.',
+    sinyaller: ['🚀 Momentum artıyor', '📈 MA200 üstü', '💥 Direnç yakın'],
     filtre: h => h.rsi > 50 && h.rsi < 68 && h.fiyat > h.ma200 && h.direncKirildi === false
   }
 ];
@@ -657,6 +660,9 @@ function senaryoPanelAc() {
             <div style="font-size:24px;margin-bottom:8px">${s.icon}</div>
             <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--text);margin-bottom:6px">${s.baslik}</div>
             <div style="font-size:10px;color:var(--text2);line-height:1.5;margin-bottom:8px">${s.aciklama}</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+  ${s.sinyaller.map(sin => `<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);color:#6fa3ff">${sin}</span>`).join('')}
+</div>
             <div style="font-size:11px;font-weight:700;color:#6fa3ff">${eslesen.length} hisse eşleşti</div>
           </div>`;
       }).join('')}
