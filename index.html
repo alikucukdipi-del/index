@@ -1260,7 +1260,7 @@ function heatmapOlustur() {
   const sirali = [...filtreli].sort((a,b) => aktifPuan(b) - aktifPuan(a));
   sirali.forEach(h => {
     const puan = aktifPuan(h);
-    const buyuk = puan >= 30 || h.direncKirildi || h.destekKirildi;
+    const buyuk = puan >= 15 || h.direncKirildi || h.destekKirildi || setupSeviyesi(h) === 'aplus' || setupSeviyesi(h) === 'a';
     const setup = setupSeviyesi(h);
     const upside = h.hedef > 0 && h.fiyat > 0 ? ((h.hedef - h.fiyat) / h.fiyat * 100) : null;
     const upsideMin = h.hedefMin > 0 && h.fiyat > 0 ? ((h.hedefMin - h.fiyat) / h.fiyat * 100) : null;
