@@ -611,14 +611,21 @@ function karsilamaGoster() {
   if (localStorage.getItem('humeyra_karsilama_bugun') === new Date().toDateString()) return;
   const saat = new Date().getHours();
   let icon, baslik, alt;
-  if (saat >= 5 && saat < 12) { icon = '☀️'; baslik = 'GÜNAYDIN'; alt = 'Piyasa açılmak üzere. Bugün öne çıkan hisseler:'; }
-  else if (saat >= 12 && saat < 17) { icon = '📊'; baslik = 'İYİ ÖĞLENLER'; alt = 'Öğle seansında öne çıkan hisseler:'; }
-  else if (saat >= 17 && saat < 21) { icon = '🌆'; baslik = 'KAPANIŞA YAKIN'; alt = 'Bugün öne çıkan hisseler:'; }
-  else { icon = '🌙'; baslik = 'İYİ GECELER'; alt = 'Piyasa kapandı. Yarın için izleme listesi:'; }
-  document.getElementById('karsilama-icon').textContent = icon;
-  document.getElementById('karsilama-baslik').textContent = baslik;
-  document.getElementById('karsilama-alt').textContent = alt;
-  document.getElementById('karsilama-overlay').style.display = 'flex';
+ const gun = new Date().getDay(); // 0=Pazar, 6=Cumartesi
+const haftsonu = gun === 0 || gun === 6;
+
+if (haftsonu) {
+  icon = '☕'; baslik = 'HAFTASONU'; alt = 'Piyasalar kapalı. Hafta içi için izleme listeni hazırla:';
+} else if (saat >= 0 && saat < 9) {
+  icon = '🌙'; baslik = 'GÜNAYIN'; alt = 'Piyasa saat 09:00\'da açılıyor. Hazırlık zamanı:';
+} else if (saat >= 9 && saat < 12) {
+  icon = '☀️'; baslik = 'SABAH SEANSI'; alt = 'Piyasa açık! Sabah öne çıkanlar:';
+} else if (saat >= 12 && saat < 17) {
+  icon = '📊'; baslik = 'ÖĞLE SEANSI'; alt = 'Kapanışa yaklaşıyoruz. Öne çıkanlar:';
+} else if (saat >= 17 && saat < 18) {
+  icon = '🔔'; baslik = 'KAPANIŞA YAKIN'; alt = 'Son dakika! Bugün öne çıkanlar:';
+} else {
+  icon = '🌆'; baslik = 'PİYASA KAPANDI'; alt = 'Bugünlük bitti. Yarın için izleme listesi:';
 }
 
 function karsilamaHisseleriDoldur() {
