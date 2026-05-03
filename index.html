@@ -897,11 +897,17 @@ function kararRenk(mod) {
   return 'var(--red)';
 }
 
+function guvenLabel(skor) {
+  if (skor >= 70) return 'yüksek';
+  if (skor >= 50) return 'orta';
+  return 'düşük';
+}
+
 function portfoyMesaj(sonuc) {
   if (sonuc.mod === 'ATAK') return '🟢 Fırsat var, piyasa destekliyor';
-  if (sonuc.mod === 'KORUMA') return '🟠 Piyasa zayıf, dikkatli ol';
-  if (sonuc.mod === 'DEFANSİF') return '🔴 Risk yüksek, pozisyon azalt';
-  return '🟡 Piyasa kararsız, bekle';
+  if (sonuc.mod === 'KORUMA') return '❄️ Piyasa zayıf, satış baskısı var';
+  if (sonuc.mod === 'DEFANSİF') return '🔴 Risk yüksek, kayıplar artıyor';
+  return '🟡 Piyasa kararsız, net sinyal yok';
 }
   
 function portfolioIsiHesapla() {
