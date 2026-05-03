@@ -1110,7 +1110,7 @@ function aksiyonButonlari(ticker, defaultTip, neden, lv) {
   for (let i = 0; i < butonlar.length; i++) {
     const b = butonlar[i];
     const secili = aktif === b.tip;
-    const tooltip = NEDEN.aksiyon[b.tip] ? NEDEN.aksiyon[b.tip][lv] : '';
+    const tooltip = NEDEN.aksiyon[b.tip] ? NEDEN.aksiyon[b.tip][lv] + (b.tip === defaultTip ? ' (Sistem önerisi: ' + neden + ')' : '') : '';
     html += '<div onclick="event.stopPropagation();kartAksiyon(\'' + ticker + '\',\'' + b.tip + '\')" title="' + tooltip + '" style="padding:3px 8px;border-radius:6px;font-size:8px;font-weight:700;cursor:pointer;transition:all .2s;border:1px solid ' + renk[b.tip] + ';background:' + (secili?'rgba('+(b.tip==='izle'?'255,179,0':b.tip==='bekle'?'41,121,255':'255,61,61')+',0.15)':'transparent') + ';color:' + (secili?renk[b.tip]:'#555') + ';box-shadow:' + (secili?glow[b.tip]:'none') + '">' + b.etiket + '</div>';
   }
   html += '</div>';
