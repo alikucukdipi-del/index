@@ -1730,6 +1730,7 @@ function heatmapOlustur() {
     const upsideMin = h.hedefMin > 0 && h.fiyat > 0 ? ((h.hedefMin - h.fiyat) / h.fiyat * 100) : null;
     const alimBolgesi = h.rsi > 0 && h.rsi < 35 && upsideMin !== null && upsideMin > 0;
     const bars = miniBarHesapla(h);
+    if (h.degisim > 0 && h.destekKirildi) h.destekKirildi = false;
     const mikro = mikroAksiyonHesapla(h, bars.trendSkor, bars.momSkor, bars.hacimSkor);
     const defaultAk = defaultAksiyon(h, bars.trendSkor, bars.momSkor);
     const sinyaller = miniSinyalHesapla(h);
