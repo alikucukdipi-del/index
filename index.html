@@ -1925,7 +1925,8 @@ const zamanSebep = score >= 68 ? '3-7 gün — Momentum devam edebilir' : score 
   document.getElementById('vbanner').className = 'vbanner ' + aksiyonSonuc.vclass;
   document.getElementById('vticker').textContent = company.toUpperCase() + (ticker !== '—' ? ' · ' + tickerKisa(ticker) : '');
   document.getElementById('vword').textContent = aksiyonSonuc.label;
-  document.getElementById('vnudge').textContent = aksiyonSonuc.nudge;
+  document.getElementById('vnudge').textContent = aksiyonSonuc.goldenLine;
+  document.getElementById('vnudge').style.cssText = 'font-size:16px;font-weight:700;color:var(--gold);padding:10px 20px;background:rgba(201,168,76,0.1);border-radius:10px;border:1px solid rgba(201,168,76,0.4);display:inline-block;margin:10px 0;letter-spacing:1px';
   document.getElementById('vscore').textContent = score + ' / 100';
   document.getElementById('vsummary').textContent = score >= 75 ? company + ' çok güçlü bir yapıda. Momentum var, giriş planlanabilir.' : score >= 60 ? company + ' sağlıklı görünüyor. Girişi planla, stop loss koy.' : score >= 50 ? company + ' için orta sinyaller var. Kademeli giriş düşünülebilir.' : score >= 40 ? company + ' için karma sinyaller var. Kırılımı veya raporu bekle.' : company + ' şu an riskli. Düşen bıçağı tutma.';
   const sbar = document.getElementById('sbar');
@@ -1952,7 +1953,7 @@ const zamanSebep = score >= 68 ? '3-7 gün — Momentum devam edebilir' : score 
   document.getElementById('ep-t3-sub').textContent = '%' + profit + ' kar · son 1/3';
   document.getElementById('exit-note').innerHTML = '💡 <strong>Stop:</strong> €' + stop.toFixed(2) + '<br>📊 T1\'de %33, T2\'de %33, T3\'de son %33.' + (shares ? '<br>🏦 ' + shares + ' hisse × €' + ep.toFixed(2) + ' = €' + (shares * ep).toFixed(0) : '');
   const zamanYorum = score >= 68 ? '⏱️ Bekleme süresi: <strong>3-7 gün</strong> — Kısa vadeli trade için giriş noktası yakın.' : score >= 50 ? '⏱️ Bekleme süresi: <strong>1-3 hafta</strong> — Kırılım veya sinyal teyidini bekle.' : '⏱️ Bekleme süresi: <strong>Belirsiz</strong> — Yapı netleşene kadar kenarda kal.';
-  document.getElementById('zaman-tavsiye').innerHTML = zamanYorum;
+  document.getElementById('zaman-tavsiye').innerHTML = '⏱️ <strong>' + zamanSebep + '</strong><br><br>📌 <em style="color:var(--text3)">' + kararSebebiMetni + '</em>';
   adv.push('Stop loss her zaman koy!');
   if (score >= 68) adv.push('Giriş fiyatını sabırla bekle');
   document.getElementById('tavsiye').innerHTML = adv.map(a => sig(a, 'var(--blue)')).join('');
