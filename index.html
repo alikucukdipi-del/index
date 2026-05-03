@@ -993,7 +993,8 @@ function portfolioOzetGoster(el) {
     '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-bottom:8px"><span>0</span><span>' + isi.toFixed(0) + '/100</span><span>100</span></div>' +
     '<div style="font-size:11px;color:var(--text2);line-height:1.6">' + isiYorum + '</div>' +
     (temettuSkor > 0 ? '<div style="margin-top:8px;font-size:10px;color:var(--gold)">💰 Temettü gücü: ' + temettuSkor + ' puan</div>' : '') +
-    '</div>' +
+    '</div>';
+
     const karar = portfoyKararUret({ isi, toplamKarYuzde, zararliHisseSayisi: 0 });
     const modRenk = karar.mod === 'DEFANSİF' ? 'var(--red)' : karar.mod === 'KORUMA' ? '#ff6b6b' : karar.mod === 'ATAK' ? 'var(--green)' : 'var(--gold)';
     '<div style="font-size:11px;color:var(--text2);margin-top:8px;line-height:1.6">' +
