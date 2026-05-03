@@ -1038,7 +1038,7 @@ const portfoyMesaji = portfoyMesaj(sonuc);
 '<div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:4px">' + sonuc.durum + ' — ' + sonuc.mod + '</div>' +
 '<div style="font-size:11px;color:var(--text2);margin-bottom:4px">→ ' + sonuc.aksiyon + '</div>' +
 '<div style="font-size:10px;color:' + modRenk + ';margin-bottom:4px">' + portfoyMesaji + '</div>' +
-'<div style="font-size:10px;color:var(--text3)">Güven: %' + sonuc.skor + '</div>' +
+'<div style="font-size:10px;color:var(--text3)">Güven: %' + sonuc.skor + ' (' + guvenLabel(sonuc.skor) + ')</div>' +
     '</div>' +
     '</div>';
 }
