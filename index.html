@@ -1403,7 +1403,7 @@ function veriCek() {
       '<div style="font-size:11px;color:var(--text2);margin-top:4px">Şu an: <strong style="color:var(--gold)">€'+h.fiyat.toFixed(2)+'</strong> · Hedef: <strong>€'+h.hedef.toFixed(2)+'</strong></div>';
   } else { barEl.style.display='none'; }
   document.getElementById('fetch-status').innerHTML='✅ <strong>'+h.ticker+'</strong> — veriler yüklendi!';
-  setTimeout(()=>document.querySelector('.card').scrollIntoView({behavior:'smooth',block:'start'}),200);
+  setTimeout(()=>document.getElementById('analyst-bar').scrollIntoView({behavior:'smooth',block:'start'}),200);
 }
 
 function sektorKarsilastir(secili) {
