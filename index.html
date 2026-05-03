@@ -803,13 +803,16 @@ function calculateFinalScore(h) {
   return clamp(teknikSkor + temettuBonus, 0, 100);
 }
 
-function getActionFromScore(score) {
-  if (score >= 75) return { label: 'GÜÇLÜ AL', vclass: 'GUCLU_AL', nudge: 'Küçük pozisyon açılabilir, momentum güçlü.' };
-  if (score >= 60) return { label: 'AL', vclass: 'AL', nudge: 'Yapı sağlıklı, girişi planlayabilirsin.' };
-  if (score >= 50) return { label: 'TEMKİNLİ AL', vclass: 'TEMKINLI_AL', nudge: 'Orta güçte sinyal. Kademeli giriş düşünülebilir.' };
-  if (score >= 40) return { label: 'İZLE', vclass: 'IZLE', nudge: 'Yapı oluşuyor ama henüz sinyal tam değil.' };
-  if (score >= 30) return { label: 'BEKLE', vclass: 'BEKLE', nudge: 'Şu an karar anı değil. Fırsat oluşmasını bekle.' };
-  return { label: 'UZAK DUR', vclass: 'UZAK_DUR', nudge: 'Risk çok yüksek. Sermayeni koru.' };
+function getActionFromScore(score, degisim, rsi) {
+  const hacimArti = degisim !== undefined ? Math.abs(degisim) > 2 : false;
+  const volatiliteDusuk = degisim !== undefined ? Math.abs(degisim) < 1.5 : false;
+  if (score >= 75 && hacimArti) return { label: 'AGRESIF AL', vclass: 'GUCLU_AL', nudge: 'Agresif Al — Tam Pozisyon', goldenLine: '🔥 Şu an: Agresif Al — Tam Pozisyon' };
+  if (score >= 60 && volatiliteDusuk) return { label: 'TEMKİNLİ AL', vclass: 'TEMKINLI_AL', nudge: 'Temkinli Al — Küçük Pozisyon', goldenLine: '🔥 Şu an: Temkinli Al — Küçük Pozisyon' };
+  if (score >= 75) return { label: 'GÜÇLÜ AL', vclass: 'GUCLU_AL', nudge: 'Güçlü Al — Pozisyon Aç', goldenLine: '🔥 Şu an: Güçlü Al — Pozisyon Aç' };
+  if (score >= 60) return { label: 'AL', vclass: 'AL', nudge: 'Al — Kademeli Giriş', goldenLine: '🔥 Şu an: Al — Kademeli Giriş' };
+  if (score >= 40) return { label: 'İZLE', vclass: 'IZLE', nudge: 'İzle — Nakitte Kal', goldenLine: '🔥 Şu an: İzle — Nakitte Kal' };
+  if (score < 40 && rsi >= 70) return { label: 'KAR AL', vclass: 'BEKLE', nudge: 'Kar Al — Pozisyon Azalt', goldenLine: '🔥 Şu an: Kar Al — Pozisyon Azalt' };
+  return { label: 'UZAK DUR', vclass: 'UZAK_DUR', nudge: 'Uzak Dur — Sermayeni Koru', goldenLine: '🔥 Şu an: Uzak Dur — Sermayeni Koru' };
 }
 
 function getStrategy(h) {
@@ -1897,7 +1900,21 @@ function analiz() {
   if (pumpRisk >= 4) { neg.push('🚨 SAHTE YÜKSELİŞ RİSKİ!'); score -= 8; }
   else if (pumpRisk >= 2) adv.push('⚠️ Yükselişi sorgula');
   score = Math.max(8, Math.min(93, Math.round(score)));
-  const aksiyonSonuc = getActionFromScore(score);
+  const aksiyonSonuc = getActionFromScore(score, change1m, rsi);
+
+// Neden-Sonuç listesi
+const kararSebep = [];
+if (ma20 > 0 && ma200 > 0 && ma20 < ma200) kararSebep.push('Trend zayıf');
+if (rsi > 70) kararSebep.push('RSI aşırı alım');
+if (rsi < 30) kararSebep.push('RSI dip bölgesi');
+if (beta > 1.5) kararSebep.push('Yüksek volatilite');
+if (parseFloat(document.getElementById('rrval').textContent.split(':')[1] || '0') < 2) kararSebep.push('Risk/Ödül düşük');
+if (change1m > 2) kararSebep.push('Hacim artıyor');
+if (change1m < -2) kararSebep.push('Satış baskısı var');
+const kararSebebiMetni = kararSebep.length > 0 ? kararSebep.join(' · ') : 'Genel piyasa koşulları değerlendirildi';
+
+// Zaman tavsiyesi
+const zamanSebep = score >= 68 ? '3-7 gün — Momentum devam edebilir' : score >= 50 ? '1-3 hafta — Trend kırılımı bekleniyor' : 'Belirsiz — Sinyal netleşene kadar bekle';
   const ep = entry > 0 ? entry : price, stop = Math.floor(ep * 0.88 * 100) / 100;
   const t1 = (ep * (1 + profit * 0.004)).toFixed(2), t2 = (ep * (1 + profit * 0.0075)).toFixed(2), t3 = (ep * (1 + profit / 100)).toFixed(2);
   const shares = (amount > 0 && ep > 0) ? Math.floor(amount / ep) : null;
