@@ -1003,7 +1003,7 @@ function portfolioOzetGoster(el) {
     'Portföyün dengeli seyrediyor. İzlemeye devam.') +
     '</div>';
 
-const karar = portfoyKararUret({ isi, toplamKarYuzde, zararliHisseSayisi: 0 });
+
 const modRenk = karar.mod === 'DEFANSİF' ? 'var(--red)' : karar.mod === 'KORUMA' ? '#ff6b6b' : karar.mod === 'ATAK' ? 'var(--green)' : 'var(--gold)';
 el.innerHTML += '<div style="margin-top:12px;padding:12px 14px;background:var(--card);border-radius:10px;border:1px solid ' + modRenk + '">' +
   '<div style="font-size:9px;letter-spacing:2px;color:' + modRenk + ';font-weight:700;margin-bottom:6px">📊 PORTFÖY KARARI</div>' +
