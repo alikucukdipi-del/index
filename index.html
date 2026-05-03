@@ -903,12 +903,7 @@ function portfoyMesaj(sonuc) {
   if (sonuc.mod === 'DEFANSİF') return '🔴 Risk yüksek, pozisyon azalt';
   return '🟡 Piyasa kararsız, bekle';
 }
-  if (isi <= 30 && toplamKarYuzde < 0) return { durum: 'ZAYIF', aksiyon: 'Alım yapma, risk azalt', mod: 'KORUMA' };
-  if (isi <= 30 && trendSkor >= 6) return { durum: 'FIRSAT', aksiyon: 'Alım yapılabilir', mod: 'ATAK' };
-  if (isi >= 80 && toplamKarYuzde > 0) return { durum: 'AŞIRI ISINMIŞ', aksiyon: 'Kar al', mod: 'DEFANSİF' };
-  if (toplamKarYuzde <= -5) return { durum: 'ZARARDA', aksiyon: 'Pozisyon küçült', mod: 'KORUMA' };
-  return { durum: 'DENGELİ', aksiyon: 'Bekle', mod: 'NORMAL' };
-}
+  
 function portfolioIsiHesapla() {
   if (portfolio.length === 0) return 50;
   let toplamSkor = 0, toplamKarZarar = 0, toplamMaliyet = 0;
