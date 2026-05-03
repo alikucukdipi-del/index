@@ -32,7 +32,7 @@ body::before { content: ''; position: fixed; inset: 0; background-image: linear-
 .karsilama-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
 
 /* PORTFÖY PANELİ */
-.portfolio-btn { position: fixed; bottom: 84px; right: 24px; width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #2979ff, #1565c0); color: #fff; border: none; font-size: 20px; cursor: pointer; z-index: 1000; box-shadow: 0 4px 20px rgba(41,121,255,0.4); transition: all .2s; display: flex; align-items: center; justify-content: center; }
+.portfolio-btn { position: fixed; bottom: 84px; right: 24px; width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; border: none; font-size: 20px; cursor: pointer; z-index: 1000; box-shadow: 0 4px 20px rgba(201,168,76,0.4); transition: all .2s; display: flex; align-items: center; justify-content: center; }
 .portfolio-btn:hover { transform: scale(1.1); }
 .portfolio-btn.alarm { animation: portfolioAlarm 1s ease-in-out infinite; }
 @keyframes portfolioAlarm { 0%, 100% { box-shadow: 0 4px 20px rgba(255,61,61,0.4); } 50% { box-shadow: 0 4px 40px rgba(255,61,61,0.8); } }
