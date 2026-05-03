@@ -1168,10 +1168,11 @@ function miniBarHesapla(h) {
   const trendSkor = Math.round(trendPct / 10);
   const rsiG = Math.min(95, h.rsi);
   let momVC = '#666', momTip = '';
-  if (h.rsi > 75) { momVC = '#e0e0e0'; momTip = 'Momentum aşırı ısınmış — düzeltme ihtimali yüksek.'; }
-  else if (h.rsi > 60) { momVC = '#aaaaaa'; momTip = 'Momentum güçlü — aşırı alım bölgesine yaklaşıyor.'; }
-  else if (h.rsi > 40) { momVC = '#888888'; momTip = 'Momentum dengeli — sağlıklı bölge.'; }
-  else if (h.rsi > 0) { momVC = '#555555'; momTip = 'Momentum zayıf — aşırı satım, tepki izlenebilir.'; }
+  if (h.rsi >= 95) { momVC = '#ff0000'; momTip = nedenRsi(h.rsi, userLevel); }
+else if (h.rsi >= 88) { momVC = '#ff3d3d'; momTip = nedenRsi(h.rsi, userLevel); }
+else if (h.rsi >= 70) { momVC = '#ff9800'; momTip = nedenRsi(h.rsi, userLevel); }
+else if (h.rsi >= 40) { momVC = '#888888'; momTip = nedenRsi(h.rsi, userLevel); }
+else if (h.rsi > 0) { momVC = '#555555'; momTip = nedenRsi(h.rsi, userLevel); }
   const momSkor = Math.round(rsiG / 10);
   const hacimPct = Math.min(92, Math.max(12, Math.abs(h.degisim) * 8 + 30));
   let hacimVC = '#555', hacimTip = '';
