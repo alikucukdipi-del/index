@@ -1931,8 +1931,27 @@ if (rr) {
   document.getElementById('vticker').textContent = company.toUpperCase() + (ticker !== '—' ? ' · ' + tickerKisa(ticker) : '');
   document.getElementById('vword').textContent = aksiyonSonuc.label;
   document.getElementById('vnudge').textContent = aksiyonSonuc.goldenLine;
+  // Güven parçalama
+  const teknikGuven = Math.min(100, Math.round(score * 0.8 + (rsi > 0 && rsi < 70 ? 10 : 0) + (ma20 > 0 && ma200 > 0 && ma20 > ma200 ? 10 : 0)));
+  const temelGuven = Math.min(100, Math.round((pe > 0 && pe < 20 ? 30 : pe > 0 ? 15 : 20) + (margin > 0 ? Math.min(30, margin) : 20) + 30));
+  const riskGuven = Math.min(100, Math.round(100 - (beta > 0 ? Math.min(50, beta * 20) : 20) - (rsi > 70 ? 30 : 0)));
+  const toplamGuven = Math.round((teknikGuven * 0.5) + (temelGuven * 0.3) + (riskGuven * 0.2));
+  const guvenRenk = toplamGuven >= 70 ? 'var(--green)' : toplamGuven >= 50 ? 'var(--yellow)' : '#ff9800';
   document.getElementById('vnudge').style.cssText = 'font-size:16px;font-weight:700;color:var(--gold);padding:10px 20px;background:rgba(201,168,76,0.1);border-radius:10px;border:1px solid rgba(201,168,76,0.4);display:inline-block;margin:10px 0;letter-spacing:1px';
   document.getElementById('vscore').textContent = score + ' / 100';
+  document.getElementById('vscore').insertAdjacentHTML('afterend',
+  '<div style="margin-top:16px;padding:14px 18px;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.08);text-align:left">' +
+  '<div style="font-size:10px;letter-spacing:3px;color:var(--text2);margin-bottom:10px">KARAR GÜVENİ</div>' +
+  '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">' +
+  '<div style="flex:1;height:8px;background:var(--border);border-radius:100px;overflow:hidden"><div style="width:' + toplamGuven + '%;height:100%;background:' + guvenRenk + ';border-radius:100px;transition:width 1s ease"></div></div>' +
+  '<div style="font-size:13px;font-weight:700;color:' + guvenRenk + ';min-width:40px">%' + toplamGuven + '</div>' +
+  '</div>' +
+  '<div style="display:flex;flex-direction:column;gap:5px">' +
+  '<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">• Teknik</span><span style="color:' + guvenRenk + ';font-weight:600">%' + teknikGuven + '</span></div>' +
+  '<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">• Temel</span><span style="color:' + guvenRenk + ';font-weight:600">%' + temelGuven + '</span></div>' +
+  '<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">• Risk</span><span style="color:' + guvenRenk + ';font-weight:600">%' + riskGuven + '</span></div>' +
+  '</div></div>'
+);
   document.getElementById('vsummary').textContent = score >= 75 ? company + ' çok güçlü bir yapıda. Momentum var, giriş planlanabilir.' : score >= 60 ? company + ' sağlıklı görünüyor. Girişi planla, stop loss koy.' : score >= 50 ? company + ' için orta sinyaller var. Kademeli giriş düşünülebilir.' : score >= 40 ? company + ' için karma sinyaller var. Kırılımı veya raporu bekle.' : company + ' şu an riskli. Düşen bıçağı tutma.';
   const sbar = document.getElementById('sbar');
   sbar.style.background = score >= 68 ? 'var(--green)' : score >= 45 ? 'var(--yellow)' : 'var(--red)';
