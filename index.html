@@ -871,6 +871,18 @@ function portfolioHisseSil(ticker) {
   portfolioIcerikGuncelle();
 }
 
+  function portfoyKararUret({ isi, toplamKarYuzde, zararliHisseSayisi }) {
+  if (isi >= 80 && toplamKarYuzde > 0) {
+    return { durum: 'AŞIRI ISINMIŞ', aksiyon: 'Kar al, yeni alım yapma', mod: 'DEFANSİF' };
+  }
+  if (toplamKarYuzde <= -5) {
+    return { durum: 'ZARARDA', aksiyon: 'Zayıf hisseleri kes, nakite geç', mod: 'KORUMA' };
+  }
+  if (isi <= 40) {
+    return { durum: 'SOĞUK', aksiyon: 'Yeni fırsat ara, alım yapılabilir', mod: 'ATAK' };
+  }
+  return { durum: 'DENGELİ', aksiyon: 'Bekle ve izle', mod: 'NORMAL' };
+}
 function portfolioIsiHesapla() {
   if (portfolio.length === 0) return 50;
   let toplamSkor = 0, toplamKarZarar = 0, toplamMaliyet = 0;
