@@ -871,17 +871,12 @@ function portfolioHisseSil(ticker) {
   portfolioIcerikGuncelle();
 }
 
-  function portfoyKararUret({ isi, toplamKarYuzde, zararliHisseSayisi }) {
-  if (isi >= 80 && toplamKarYuzde > 0) {
-    return { durum: 'AŞIRI ISINMIŞ', aksiyon: 'Kar al, yeni alım yapma', mod: 'DEFANSİF' };
-  }
-  if (toplamKarYuzde <= -5) {
-    return { durum: 'ZARARDA', aksiyon: 'Zayıf hisseleri kes, nakite geç', mod: 'KORUMA' };
-  }
-  if (isi <= 40) {
-    return { durum: 'SOĞUK', aksiyon: 'Yeni fırsat ara, alım yapılabilir', mod: 'ATAK' };
-  }
-  return { durum: 'DENGELİ', aksiyon: 'Bekle ve izle', mod: 'NORMAL' };
+  function portfoyKararUret({ isi, toplamKarYuzde, zararliHisseSayisi, trendSkor }) {
+  if (isi <= 30 && toplamKarYuzde < 0) return { durum: 'ZAYIF', aksiyon: 'Alım yapma, risk azalt', mod: 'KORUMA' };
+  if (isi <= 30 && trendSkor >= 6) return { durum: 'FIRSAT', aksiyon: 'Alım yapılabilir', mod: 'ATAK' };
+  if (isi >= 80 && toplamKarYuzde > 0) return { durum: 'AŞIRI ISINMIŞ', aksiyon: 'Kar al', mod: 'DEFANSİF' };
+  if (toplamKarYuzde <= -5) return { durum: 'ZARARDA', aksiyon: 'Pozisyon küçült', mod: 'KORUMA' };
+  return { durum: 'DENGELİ', aksiyon: 'Bekle', mod: 'NORMAL' };
 }
 function portfolioIsiHesapla() {
   if (portfolio.length === 0) return 50;
@@ -981,7 +976,7 @@ function portfolioOzetGoster(el) {
   if (alarmlar && alarmlar.length > 0) {
     alarmHtml = '<div style="background:rgba(255,61,61,0.1);border:1px solid rgba(255,61,61,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:#ff6b6b">' + alarmlar[0] + '</div>';
   }
-  const karar = portfoyKararUret({ isi, toplamKarYuzde, zararliHisseSayisi: 0 });
+  const karar = portfoyKararUret({ isi, toplamKarYuzde, zararliHisseSayisi: 0, trendSkor: 5 });
   const modRenk = karar.mod === 'DEFANSİF' ? 'var(--red)' : karar.mod === 'KORUMA' ? '#ff6b6b' : karar.mod === 'ATAK' ? 'var(--green)' : 'var(--gold)';
   el.innerHTML = alarmHtml +
     '<div class="portfolio-ozet">' +
