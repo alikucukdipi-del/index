@@ -1921,7 +1921,12 @@ const zamanSebep = score >= 68 ? '3-7 gün — Momentum devam edebilir' : score 
   const risk = ep - stop, reward = parseFloat(t3) - ep, rr = risk > 0 ? (reward / risk).toFixed(1) : null;
   const rrw = rr ? Math.min(100, parseFloat(rr) / 5 * 100) : 0;
   let rrverd = '';
-  if (rr) { if (parseFloat(rr) >= 3) rrverd = '🟢 Mükemmel'; else if (parseFloat(rr) >= 2) rrverd = '🟡 İyi'; else rrverd = '🔴 Zayıf'; }
+if (rr) {
+  if (parseFloat(rr) >= 3) rrverd = '🔥 Çok İyi';
+  else if (parseFloat(rr) >= 2.5) rrverd = '🟢 İyi';
+  else if (parseFloat(rr) >= 2) rrverd = '🟡 Orta';
+  else rrverd = '🔴 Zayıf — Riski gözden geçir';
+}
   document.getElementById('vbanner').className = 'vbanner ' + aksiyonSonuc.vclass;
   document.getElementById('vticker').textContent = company.toUpperCase() + (ticker !== '—' ? ' · ' + tickerKisa(ticker) : '');
   document.getElementById('vword').textContent = aksiyonSonuc.label;
