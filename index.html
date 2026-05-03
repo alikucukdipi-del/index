@@ -1906,6 +1906,12 @@ function sifirla() {
 levelGuncelle();
 sheetsYukle();
 setInterval(() => sheetsYukle(), 5 * 60 * 1000);
+ setInterval(() => {
+  const alarmSonuc = portfolioAlarmKontrol();
+  if (alarmSonuc && alarmSonuc.length > 0) {
+    document.getElementById('portfolio-btn').classList.add('alarm');
+  }
+}, 30 * 1000); 
 </script>
 </body>
 </html>
