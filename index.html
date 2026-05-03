@@ -981,6 +981,8 @@ function portfolioOzetGoster(el) {
   if (alarmlar && alarmlar.length > 0) {
     alarmHtml = '<div style="background:rgba(255,61,61,0.1);border:1px solid rgba(255,61,61,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:#ff6b6b">' + alarmlar[0] + '</div>';
   }
+  const karar = portfoyKararUret({ isi, toplamKarYuzde, zararliHisseSayisi: 0 });
+  const modRenk = karar.mod === 'DEFANSİF' ? 'var(--red)' : karar.mod === 'KORUMA' ? '#ff6b6b' : karar.mod === 'ATAK' ? 'var(--green)' : 'var(--gold)';
   el.innerHTML = alarmHtml +
     '<div class="portfolio-ozet">' +
     '<div style="display:flex;justify-content:space-between;margin-bottom:8px">' +
@@ -993,23 +995,12 @@ function portfolioOzetGoster(el) {
     '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-bottom:8px"><span>0</span><span>' + isi.toFixed(0) + '/100</span><span>100</span></div>' +
     '<div style="font-size:11px;color:var(--text2);line-height:1.6">' + isiYorum + '</div>' +
     (temettuSkor > 0 ? '<div style="margin-top:8px;font-size:10px;color:var(--gold)">💰 Temettü gücü: ' + temettuSkor + ' puan</div>' : '') +
+    '<div style="margin-top:12px;padding:12px 14px;background:var(--card);border-radius:10px;border:1px solid ' + modRenk + '">' +
+    '<div style="font-size:9px;letter-spacing:2px;color:' + modRenk + ';font-weight:700;margin-bottom:6px">📊 PORTFÖY KARARI</div>' +
+    '<div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:4px">' + karar.durum + ' — ' + karar.mod + '</div>' +
+    '<div style="font-size:11px;color:var(--text2)">→ ' + karar.aksiyon + '</div>' +
+    '</div>' +
     '</div>';
-
-    const karar = portfoyKararUret({ isi, toplamKarYuzde, zararliHisseSayisi: 0 });
-    const modRenk = karar.mod === 'DEFANSİF' ? 'var(--red)' : karar.mod === 'KORUMA' ? '#ff6b6b' : karar.mod === 'ATAK' ? 'var(--green)' : 'var(--gold)';
-    '<div style="font-size:11px;color:var(--text2);margin-top:8px;line-height:1.6">' +
-    (toplamKarYuzde > 5 ? 'Portföyün şu an piyasa rüzgarını arkasına almış durumda. Seçtiğin stratejinin çalıştığını gösteriyor.' :
-    toplamKarYuzde < -5 ? 'Piyasada türbülans var ancak portföyün direnç noktalarını koruyor. Sabırlı kalman gereken bir evrede.' :
-    'Portföyün dengeli seyrediyor. İzlemeye devam.') +
-    '</div>';
-
-
-const modRenk = karar.mod === 'DEFANSİF' ? 'var(--red)' : karar.mod === 'KORUMA' ? '#ff6b6b' : karar.mod === 'ATAK' ? 'var(--green)' : 'var(--gold)';
-el.innerHTML += '<div style="margin-top:12px;padding:12px 14px;background:var(--card);border-radius:10px;border:1px solid ' + modRenk + '">' +
-  '<div style="font-size:9px;letter-spacing:2px;color:' + modRenk + ';font-weight:700;margin-bottom:6px">📊 PORTFÖY KARARI</div>' +
-  '<div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:4px">' + karar.durum + ' — ' + karar.mod + '</div>' +
-  '<div style="font-size:11px;color:var(--text2)">→ ' + karar.aksiyon + '</div>' +
-  '</div>';
 }
 
 function portfolioHisselerGoster(el) {
