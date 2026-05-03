@@ -871,7 +871,38 @@ function portfolioHisseSil(ticker) {
   portfolioIcerikGuncelle();
 }
 
-  function portfoyKararUret({ isi, toplamKarYuzde, zararliHisseSayisi, trendSkor }) {
+  function portfoyAnalizEt({ isi, toplamKarYuzde, trendSkor, riskSkor, temettuSkor }) {
+  let skor = 50;
+  if (isi <= 30) skor += 5;
+  if (isi >= 80) skor -= 10;
+  if (toplamKarYuzde > 5) skor += 10;
+  if (toplamKarYuzde < -5) skor -= 15;
+  if (trendSkor >= 7) skor += 15;
+  if (trendSkor <= 3) skor -= 10;
+  skor -= riskSkor * 2;
+  if (temettuSkor >= 30) skor += 5;
+  skor = Math.max(0, Math.min(100, skor));
+  let durum, aksiyon, mod;
+  if (skor >= 75) { durum = 'FIRSAT'; aksiyon = 'Alım yapılabilir'; mod = 'ATAK'; }
+  else if (skor >= 55) { durum = 'DENGELİ'; aksiyon = 'İzle / küçük alım'; mod = 'NORMAL'; }
+  else if (skor >= 35) { durum = 'ZAYIF'; aksiyon = 'Bekle'; mod = 'KORUMA'; }
+  else { durum = 'RİSKLİ'; aksiyon = 'Pozisyon azalt'; mod = 'DEFANSİF'; }
+  return { skor, durum, aksiyon, mod };
+}
+
+function kararRenk(mod) {
+  if (mod === 'ATAK') return 'var(--green)';
+  if (mod === 'NORMAL') return 'var(--gold)';
+  if (mod === 'KORUMA') return '#ff9800';
+  return 'var(--red)';
+}
+
+function portfoyMesaj(sonuc) {
+  if (sonuc.mod === 'ATAK') return '🟢 Fırsat var, piyasa destekliyor';
+  if (sonuc.mod === 'KORUMA') return '🟠 Piyasa zayıf, dikkatli ol';
+  if (sonuc.mod === 'DEFANSİF') return '🔴 Risk yüksek, pozisyon azalt';
+  return '🟡 Piyasa kararsız, bekle';
+}
   if (isi <= 30 && toplamKarYuzde < 0) return { durum: 'ZAYIF', aksiyon: 'Alım yapma, risk azalt', mod: 'KORUMA' };
   if (isi <= 30 && trendSkor >= 6) return { durum: 'FIRSAT', aksiyon: 'Alım yapılabilir', mod: 'ATAK' };
   if (isi >= 80 && toplamKarYuzde > 0) return { durum: 'AŞIRI ISINMIŞ', aksiyon: 'Kar al', mod: 'DEFANSİF' };
@@ -976,8 +1007,19 @@ function portfolioOzetGoster(el) {
   if (alarmlar && alarmlar.length > 0) {
     alarmHtml = '<div style="background:rgba(255,61,61,0.1);border:1px solid rgba(255,61,61,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:#ff6b6b">' + alarmlar[0] + '</div>';
   }
-  const karar = portfoyKararUret({ isi, toplamKarYuzde, zararliHisseSayisi: 0, trendSkor: 5 });
-  const modRenk = karar.mod === 'DEFANSİF' ? 'var(--red)' : karar.mod === 'KORUMA' ? '#ff6b6b' : karar.mod === 'ATAK' ? 'var(--green)' : 'var(--gold)';
+  const portfoyTrendSkor = portfolio.length > 0 ?
+  portfolio.reduce((acc, p) => {
+    const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
+    if (!h || !h.ma20 || !h.ma200) return acc;
+    return acc + (h.ma20 > h.ma200 ? 7 : 3);
+  }, 0) / portfolio.length : 5;
+const portfoyRiskSkor = portfolio.filter(p => {
+  const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
+  return h && h.beta > 1.5;
+}).length;
+const sonuc = portfoyAnalizEt({ isi, toplamKarYuzde, trendSkor: portfoyTrendSkor, riskSkor: portfoyRiskSkor, temettuSkor });
+const modRenk = kararRenk(sonuc.mod);
+const portfoyMesaji = portfoyMesaj(sonuc);
   el.innerHTML = alarmHtml +
     '<div class="portfolio-ozet">' +
     '<div style="display:flex;justify-content:space-between;margin-bottom:8px">' +
@@ -992,8 +1034,10 @@ function portfolioOzetGoster(el) {
     (temettuSkor > 0 ? '<div style="margin-top:8px;font-size:10px;color:var(--gold)">💰 Temettü gücü: ' + temettuSkor + ' puan</div>' : '') +
     '<div style="margin-top:12px;padding:12px 14px;background:var(--card);border-radius:10px;border:1px solid ' + modRenk + '">' +
     '<div style="font-size:9px;letter-spacing:2px;color:' + modRenk + ';font-weight:700;margin-bottom:6px">📊 PORTFÖY KARARI</div>' +
-    '<div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:4px">' + karar.durum + ' — ' + karar.mod + '</div>' +
-    '<div style="font-size:11px;color:var(--text2)">→ ' + karar.aksiyon + '</div>' +
+'<div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:4px">' + sonuc.durum + ' — ' + sonuc.mod + '</div>' +
+'<div style="font-size:11px;color:var(--text2);margin-bottom:4px">→ ' + sonuc.aksiyon + '</div>' +
+'<div style="font-size:10px;color:' + modRenk + ';margin-bottom:4px">' + portfoyMesaji + '</div>' +
+'<div style="font-size:10px;color:var(--text3)">Güven: %' + sonuc.skor + '</div>' +
     '</div>' +
     '</div>';
 }
