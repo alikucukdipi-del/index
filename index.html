@@ -1304,6 +1304,7 @@ async function sheetsYukle() {
       akimOzetGuncelle();
       karsilamaHisseleriDoldur();
       karsilamaGoster();
+      window.scrollTo(0, 0);
     }
   } catch(e) {
     document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Bağlantı hatası</div>';
