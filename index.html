@@ -910,7 +910,7 @@ function portfolioAlarmKontrol() {
   const isi = portfolioIsiHesapla();
   let alarmlar = [];
   if (isi >= 80) alarmlar.push(notifyUser('isinma'));
-  if (isi <= 30) alarmlar.push(notifyUser('soguma'));
+  if (isi <= 40) alarmlar.push(notifyUser('soguma'));
   let toplamMaliyet = 0, toplamDeger = 0, temettuSkor = 0;
   for (const p of portfolio) {
     const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
