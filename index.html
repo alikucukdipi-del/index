@@ -700,7 +700,7 @@ function karsilamaHisseleriDoldur() {
 function karsilamaKapat() {
   document.getElementById('karsilama-overlay').style.display = 'none';
   localStorage.setItem('humeyra_karsilama_son', Date.now().toString());
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  window.scrollTo(0, 0);
 }
 
 // ─── RSI RENK & ETİKET SİSTEMİ ───
