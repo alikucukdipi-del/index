@@ -1035,10 +1035,8 @@ const portfoyMesaji = portfoyMesaj(sonuc);
     (temettuSkor > 0 ? '<div style="margin-top:8px;font-size:10px;color:var(--gold)">💰 Temettü gücü: ' + temettuSkor + ' puan</div>' : '') +
     '<div style="margin-top:12px;padding:12px 14px;background:var(--card);border-radius:10px;border:1px solid ' + modRenk + '">' +
     '<div style="font-size:9px;letter-spacing:2px;color:' + modRenk + ';font-weight:700;margin-bottom:6px">📊 PORTFÖY KARARI</div>' +
-'<div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:4px">' + sonuc.durum + ' — ' + sonuc.mod + '</div>' +
+'<div style="font-size:13px;color:' + modRenk + ';font-weight:600;margin-bottom:4px">' + portfoyMesaji + '</div>' +
 '<div style="font-size:11px;color:var(--text2);margin-bottom:4px">→ ' + sonuc.aksiyon + '</div>' +
-'<div style="font-size:10px;color:' + modRenk + ';margin-bottom:4px">' + portfoyMesaji + '</div>' +
-'<div style="font-size:10px;color:var(--text3)">Güven: %' + sonuc.skor + ' (' + guvenLabel(sonuc.skor) + ')</div>' +
     '</div>' +
     '</div>';
 }
