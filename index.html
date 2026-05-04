@@ -36,27 +36,23 @@ body::before { content: ''; position: fixed; inset: 0; background-image: linear-
 .portfolio-btn:hover { transform: scale(1.1); }
 .portfolio-btn.alarm { animation: portfolioAlarm 1s ease-in-out infinite; }
 @keyframes portfolioAlarm { 0%, 100% { box-shadow: 0 4px 20px rgba(255,61,61,0.4); } 50% { box-shadow: 0 4px 40px rgba(255,61,61,0.8); } }
-.portfolio-panel { position: fixed; bottom: 144px; right: 24px; width: 380px; max-height: 75vh; background: #141414; border: 1px solid rgba(41,121,255,0.3); border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); z-index: 999; display: none; flex-direction: column; overflow: hidden; }
+.portfolio-panel { position: fixed; bottom: 144px; right: 24px; width: 380px; max-height: 75vh; background: #141414; border: 1px solid rgba(201,168,76,0.3); border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); z-index: 999; display: none; flex-direction: column; overflow: hidden; }
 .portfolio-panel.acik { display: flex; }
 .portfolio-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-.portfolio-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: #6fa3ff; }
+.portfolio-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: var(--gold); }
 .portfolio-kapat { background: none; border: none; color: var(--text2); cursor: pointer; font-size: 18px; }
 .portfolio-sekmeler { display: flex; gap: 4px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
 .portfolio-sekme { flex: 1; padding: 6px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text2); font-size: 10px; font-family: 'DM Sans', sans-serif; font-weight: 600; cursor: pointer; transition: all .2s; text-align: center; }
-.portfolio-sekme.aktif { background: rgba(41,121,255,0.15); border-color: rgba(41,121,255,0.4); color: #6fa3ff; }
+.portfolio-sekme.aktif { background: rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.4); color: var(--gold); }
 .portfolio-icerik { padding: 14px 18px; overflow-y: auto; flex: 1; }
-.portfolio-alarm-bar { padding: 10px 14px; border-radius: 10px; margin-bottom: 12px; font-size: 12px; font-weight: 600; display: none; }
-.portfolio-alarm-bar.isinma { background: rgba(255,61,61,0.1); border: 1px solid rgba(255,61,61,0.4); color: #ff6b6b; }
-.portfolio-alarm-bar.soguma { background: rgba(41,121,255,0.1); border: 1px solid rgba(41,121,255,0.4); color: #6fa3ff; }
-.portfolio-alarm-bar.zarar { background: rgba(255,61,61,0.1); border: 1px solid rgba(255,61,61,0.4); color: #ff6b6b; }
 .portfolio-ozet { background: var(--card2); border-radius: 12px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--border); }
 .portfolio-isi-bar { height: 6px; background: var(--border); border-radius: 100px; overflow: hidden; margin: 8px 0; }
 .portfolio-isi-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
 .portfolio-hisse-kart { background: var(--card2); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; border: 1px solid var(--border); }
 .portfolio-hisse-kart.kar { border-color: rgba(0,200,83,0.3); }
 .portfolio-hisse-kart.zarar { border-color: rgba(255,61,61,0.3); }
-.portfolio-ekle-btn { width: 100%; padding: 10px; background: rgba(41,121,255,0.1); border: 1px solid rgba(41,121,255,0.3); border-radius: 10px; color: #6fa3ff; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; margin-top: 8px; }
-.portfolio-ekle-btn:hover { background: rgba(41,121,255,0.2); }
+.portfolio-ekle-btn { width: 100%; padding: 10px; background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3); border-radius: 10px; color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; margin-top: 8px; }
+.portfolio-ekle-btn:hover { background: rgba(201,168,76,0.2); }
 
 /* PAKET MODAL */
 .paket-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1500; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
@@ -77,6 +73,13 @@ body::before { content: ''; position: fixed; inset: 0; background-image: linear-
 .senaryo-kart-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
 .senaryo-hisse-kart { background: var(--card); border: 1px solid rgba(41,121,255,0.2); border-radius: 12px; padding: 14px; cursor: pointer; transition: all .2s; }
 .senaryo-hisse-kart:hover { border-color: rgba(41,121,255,0.5); transform: translateY(-2px); }
+
+/* SABİT VERİ ÇEK BUTONU */
+.sabit-veri-cek { position: fixed; left: 24px; top: 50%; transform: translateY(-50%); z-index: 900; display: none; flex-direction: column; align-items: center; gap: 8px; }
+.sabit-veri-cek.gorунур { display: flex; }
+.sabit-veri-cek-btn { padding: 12px 10px; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; border: none; border-radius: 10px; font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 2px; cursor: pointer; transition: all .2s; writing-mode: vertical-rl; text-orientation: mixed; box-shadow: 0 4px 20px rgba(201,168,76,0.4); }
+.sabit-veri-cek-btn:hover { transform: translateY(-2px) scale(1.05); }
+.sabit-ticker { font-family: 'Bebas Neue', sans-serif; font-size: 11px; color: var(--gold); letter-spacing: 1px; text-align: center; max-width: 48px; word-break: break-all; }
 
 /* HEADER */
 .hdr { text-align: center; margin-bottom: 48px; }
@@ -184,8 +187,8 @@ select option { background: #181818; }
 
 /* ANALİZ SONUCU */
 .vbanner { border-radius: 16px; padding: 40px 32px; text-align: center; margin-bottom: 16px; border: 1px solid; }
-.vbanner.AL { background: radial-gradient(ellipse at center, rgba(0,200,83,0.12) 0%, transparent 70%); border-color: var(--green); }
 .vbanner.GUCLU_AL { background: radial-gradient(ellipse at center, rgba(0,200,83,0.18) 0%, transparent 70%); border-color: var(--green); }
+.vbanner.AL { background: radial-gradient(ellipse at center, rgba(0,200,83,0.12) 0%, transparent 70%); border-color: var(--green); }
 .vbanner.TEMKINLI_AL { background: radial-gradient(ellipse at center, rgba(0,200,83,0.08) 0%, transparent 70%); border-color: rgba(0,200,83,0.5); }
 .vbanner.IZLE { background: radial-gradient(ellipse at center, rgba(255,179,0,0.1) 0%, transparent 70%); border-color: var(--yellow); }
 .vbanner.BEKLE { background: radial-gradient(ellipse at center, rgba(41,121,255,0.1) 0%, transparent 70%); border-color: var(--blue); }
@@ -197,15 +200,26 @@ select option { background: #181818; }
 .IZLE .vword { color: var(--yellow); text-shadow: 0 0 60px rgba(255,179,0,0.5); }
 .BEKLE .vword { color: #6fa3ff; text-shadow: 0 0 60px rgba(41,121,255,0.5); }
 .ALMA .vword, .UZAK_DUR .vword { color: var(--red); text-shadow: 0 0 60px rgba(255,61,61,0.5); }
-.vnudge { font-size: 13px; color: var(--text2); margin-bottom: 8px; font-style: italic; }
-.vscore { display: inline-block; padding: 7px 20px; border-radius: 100px; background: rgba(255,255,255,0.05); font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: var(--text2); margin-bottom: 14px; }
+.vnudge { font-size: 16px; font-weight: 700; color: var(--gold); padding: 10px 20px; background: rgba(201,168,76,0.1); border-radius: 10px; border: 1px solid rgba(201,168,76,0.4); display: inline-block; margin: 10px 0; letter-spacing: 1px; }
+.vscore { display: inline-block; padding: 7px 20px; border-radius: 100px; background: rgba(255,255,255,0.05); font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: var(--text2); margin-bottom: 8px; }
 .vsummary { font-size: 13px; color: var(--text2); line-height: 1.8; max-width: 520px; margin: 0 auto; }
 
-/* ANALİZ GÜÇLÜ/RİSK BLOK */
+/* GÜVEN BLOĞU */
+.guven-blok { background: rgba(255,255,255,0.04); border-radius: 12px; padding: 16px 18px; margin: 12px 0; border: 1px solid rgba(255,255,255,0.08); text-align: left; }
+.guven-baslik { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.guven-label { font-size: 10px; letter-spacing: 3px; color: var(--text2); }
+.guven-seviye { font-size: 11px; font-weight: 700; }
+.guven-bar-bg { height: 8px; background: var(--border); border-radius: 100px; overflow: hidden; margin-bottom: 10px; }
+.guven-bar-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
+.guven-detay { display: flex; flex-direction: column; gap: 5px; }
+.guven-detay-item { display: flex; justify-content: space-between; font-size: 11px; }
+.guven-zayif { margin-top: 10px; padding: 8px 12px; border-radius: 8px; border-left: 3px solid; }
+.guven-neden { margin-top: 10px; padding: 10px 12px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); }
+
+/* ANALİZ GÜÇLÜ/RİSK */
 .analiz-blok { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 14px; }
 .analiz-blok-baslik { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; }
 .analiz-item { display: flex; gap: 8px; align-items: flex-start; padding: 4px 0; font-size: 12px; color: var(--text2); }
-
 .sbar-wrap { margin: 4px 0 16px; }
 .sbar-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text3); margin-bottom: 6px; }
 .sbar-bg { height: 5px; background: var(--border); border-radius: 100px; overflow: hidden; }
@@ -270,37 +284,23 @@ select option { background: #181818; }
 .heatmap-card.buyuk { grid-column: span 2; grid-row: span 2; }
 .heatmap-card.kucuk { opacity: 0.78; }
 .heatmap-card:hover { transform: translateY(-3px) scale(1.02) !important; opacity: 1 !important; z-index: 10; }
-
-/* ELEMENT TOOLTIP */
 .el-tooltip { position: relative; display: inline-block; cursor: help; }
 .el-tooltip-box { display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); width: 210px; background: #202020; border: 1px solid rgba(201,168,76,0.5); border-radius: 10px; padding: 10px 12px; font-size: 11px; color: #e0e0e0; line-height: 1.6; z-index: 300; text-align: left; box-shadow: 0 8px 32px rgba(0,0,0,0.8); pointer-events: none; }
 .el-tooltip:hover .el-tooltip-box { display: block; }
-
-/* KIRILIM BADGE */
 .kirilim-badge { position: absolute; top: 0; left: 0; right: 0; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; border-radius: 12px 12px 0 0; z-index: 5; }
 .kirilim-badge.pozitif { background: linear-gradient(135deg, rgba(0,200,83,0.5), rgba(0,230,118,0.35)); color: #00e676; }
 .kirilim-badge.negatif { background: linear-gradient(135deg, rgba(255,61,61,0.5), rgba(255,100,100,0.35)); color: #ff6b6b; }
-
-/* MİKRO AKSİYON */
 .mikro-aksiyon { margin-top: 8px; padding: 6px 10px; border-radius: 8px; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-align: center; border: 1px solid; cursor: help; }
 .mikro-aksiyon.pozitif { background: rgba(0,200,83,0.1); border-color: rgba(0,200,83,0.3); color: #00e676; }
 .mikro-aksiyon.negatif { background: rgba(255,61,61,0.1); border-color: rgba(255,61,61,0.3); color: #ff6b6b; }
 .mikro-aksiyon.notr { background: rgba(255,179,0,0.08); border-color: rgba(255,179,0,0.25); color: var(--yellow); }
 .mikro-aksiyon.mavi { background: rgba(41,121,255,0.1); border-color: rgba(41,121,255,0.3); color: #6fa3ff; }
-
-/* AKSİYON BUTONLARI */
 .aksiyon-wrap { display: flex; gap: 4px; margin-top: 8px; justify-content: center; }
-
-/* SETUP BADGE */
 .setup-badge-aplus { position: absolute; top: -1px; left: -1px; background: linear-gradient(135deg, #00c853, #4caf50); color: #000; font-size: 9px; font-weight: 900; padding: 4px 10px; border-radius: 12px 0 10px 0; letter-spacing: 1px; text-transform: uppercase; z-index: 6; cursor: help; }
 .setup-badge-a { position: absolute; top: -1px; left: -1px; background: linear-gradient(135deg, #ffb347, #ff9800); color: #000; font-size: 9px; font-weight: 900; padding: 4px 10px; border-radius: 12px 0 10px 0; letter-spacing: 1px; text-transform: uppercase; z-index: 6; cursor: help; }
-
-/* TOOLTIP */
 .tooltip-box { display: none; position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%); width: 250px; background: #202020; border: 1px solid rgba(201,168,76,0.5); border-radius: 12px; padding: 14px 16px; font-size: 12px; color: #e0e0e0; line-height: 1.75; z-index: 500; text-align: left; box-shadow: 0 12px 40px rgba(0,0,0,0.7); pointer-events: none; }
 .tooltip-box::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 7px solid transparent; border-top-color: rgba(201,168,76,0.5); }
 .heatmap-card:hover .tooltip-box { display: block; }
-
-/* MİNİ BARLAR */
 .mini-bars { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); }
 .mini-bar-row { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
 .mini-bar-label { font-size: 9px; color: #aaa; width: 58px; text-align: left; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
@@ -309,15 +309,19 @@ select option { background: #181818; }
 .mini-bar-val { font-size: 9px; width: 32px; text-align: right; font-weight: 700; }
 .zaman-etiketi { font-size: 9px; color: #666; margin-top: 6px; letter-spacing: 1px; }
 
-/* ANİMASYONLAR */
 @keyframes pulse-green { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 @keyframes pulse-aplus { 0%, 100% { box-shadow: 0 0 12px rgba(0,200,83,0.4), 0 0 4px rgba(0,200,83,0.6); transform: translateY(0px); } 50% { box-shadow: 0 0 35px rgba(0,200,83,0.8), 0 0 12px rgba(0,200,83,0.9); transform: translateY(-3px); } }
 @keyframes pulse-a { 0%, 100% { box-shadow: 0 0 12px rgba(255,179,71,0.4), 0 0 4px rgba(255,179,71,0.6); transform: translateY(0px); } 50% { box-shadow: 0 0 35px rgba(255,179,71,0.8), 0 0 12px rgba(255,179,71,0.9); transform: translateY(-3px); } }
-@keyframes guclu-sinyal { 0%, 100% { box-shadow: 0 0 6px rgba(0,200,83,0.3); } 50% { box-shadow: 0 0 18px rgba(0,200,83,0.7); } }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
+
+<!-- SABİT VERİ ÇEK -->
+<div class="sabit-veri-cek" id="sabit-veri-cek">
+  <button class="sabit-veri-cek-btn" onclick="veriCek()">VERİ ÇEK</button>
+  <div class="sabit-ticker" id="sabit-ticker"></div>
+</div>
 
 <!-- KARŞILAMA POPUP -->
 <div class="karsilama-overlay" id="karsilama-overlay" style="display:none">
@@ -373,7 +377,7 @@ select option { background: #181818; }
 </div>
 <button class="portfolio-btn" id="portfolio-btn" onclick="portfolioAc()" title="Portföyüm">💼</button>
 
-<!-- REHBER PANELİ -->
+<!-- REHBER -->
 <div class="rehber-panel" id="rehber-panel">
   <div class="rehber-header">
     <div class="rehber-header-title">📖 Terminal Rehberi</div>
@@ -390,13 +394,12 @@ select option { background: #181818; }
 
 <div class="wrap">
 <div class="hdr">
-  <div class="hdr-eyebrow">Humeyra Pro Analiz · v9.5</div>
+  <div class="hdr-eyebrow">Humeyra Pro Analiz · v10</div>
   <h1>HİSSE <em>ANALİZ</em></h1>
   <p>AEX · DAX · CAC40 · Mentor Terminal 🦷</p>
   <div id="level-badge" class="level-badge level-1" onclick="levelDegistir()">🌱 Başlangıç Seviyesi</div>
 </div>
 
-<!-- GÜNLÜK AKIM -->
 <div class="akim-ozet" id="akim-ozet" style="display:none">
   <div class="akim-kart yesil"><div class="akim-sayi" id="akim-direnc">0</div><div class="akim-label">🟢 Direnç Kırıldı</div></div>
   <div class="akim-kart kirmizi"><div class="akim-sayi" id="akim-destek">0</div><div class="akim-label">🔴 Destek Kırıldı</div></div>
@@ -404,34 +407,29 @@ select option { background: #181818; }
   <div class="akim-kart" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3)"><div class="akim-sayi" style="color:var(--gold)" id="akim-firsat">0</div><div class="akim-label">💎 A+ Setup</div></div>
 </div>
 
-<!-- ÜST BUTONLAR -->
 <div class="ust-butonlar">
   <button class="ust-btn altin" onclick="paketPanelAc()">📦 STRATEJİ PAKETLERİ</button>
   <button class="ust-btn mavi" onclick="senaryoPanelAc()">🎬 SENARYOLAR</button>
 </div>
 
-<!-- PAKET PANELİ -->
 <div id="paket-panel" style="display:none;margin-bottom:16px;background:var(--card);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:20px">
   <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gold);margin-bottom:16px">📦 STRATEJİ PAKETLERİ</div>
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px" id="paket-grid"></div>
   <button onclick="paketPanelKapat()" style="margin-top:14px;padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer">✕ Kapat</button>
 </div>
 
-<!-- SENARYO PANELİ -->
 <div id="senaryo-panel" style="display:none;margin-bottom:16px;background:var(--card);border:1px solid rgba(41,121,255,0.3);border-radius:16px;padding:20px">
   <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#6fa3ff;margin-bottom:16px">🎬 BUGÜNÜN SENARYOLARI</div>
   <div id="senaryo-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px"></div>
   <button onclick="senaryoPanelKapat()" style="margin-top:14px;padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer">✕ Kapat</button>
 </div>
 
-<!-- SEKME -->
 <div class="sekme-wrap">
   <button class="sekme-btn aktif" onclick="sekmeGec('aksiyon', this)">🔥 AKSİYON</button>
   <button class="sekme-btn" onclick="sekmeGec('tumhisseler', this)">📊 TÜM HİSSELER</button>
   <button class="sekme-btn" onclick="sekmeGec('favoriler', this)">⭐ FAVORİLER</button>
 </div>
 
-<!-- HISSE SEC -->
 <div class="hisse-sec">
   <span class="sec-label">📡 Canlı Veri — Google Sheets</span>
   <div class="sec-title">Hisse Seç & Veri Çek</div>
@@ -445,7 +443,6 @@ select option { background: #181818; }
   <div id="analyst-bar" style="display:none;margin-top:12px;padding:14px 18px;background:var(--card2);border:1px solid rgba(201,168,76,0.2);border-radius:10px"></div>
 </div>
 
-<!-- ISI HARİTASI -->
 <div class="card" style="border-color:rgba(201,168,76,0.3);overflow:visible">
   <span class="sec-label">🗺️ Portföy Isı Haritası</span>
   <div class="sec-title" id="heatmap-baslik">Tüm Hisseler — Bir Bakışta</div>
@@ -454,7 +451,6 @@ select option { background: #181818; }
 
 <div class="card" id="karsilastir" style="display:none;border-color:rgba(41,121,255,0.2)"></div>
 
-<!-- ANALİZ FORMU -->
 <div class="card" id="analiz-formu">
   <span class="sec-label">📋 Temel Bilgiler</span>
   <div class="sec-title">Şirket & Fiyat</div>
@@ -462,20 +458,10 @@ select option { background: #181818; }
     <div class="field"><label>Şirket Adı</label><input type="text" id="company" placeholder="Otomatik gelecek"></div>
     <div class="field"><label>Ticker</label><input type="text" id="ticker" placeholder="Otomatik gelecek"></div>
     <div class="field"><label>Sektör</label>
-      <select id="sector">
-        <option value="">Seç...</option>
-        <option value="gida">🍦 Gıda</option><option value="teknoloji">💻 Teknoloji</option>
-        <option value="finans">🏦 Finans</option><option value="enerji">⚡ Enerji</option>
-        <option value="saglik">💊 Sağlık</option><option value="tuketim">🛒 Tüketim</option>
-        <option value="sanayi">🏭 Sanayi</option><option value="havacilik">✈️ Havacılık</option>
-        <option value="diger">📦 Diğer</option>
-      </select>
+      <select id="sector"><option value="">Seç...</option><option value="gida">🍦 Gıda</option><option value="teknoloji">💻 Teknoloji</option><option value="finans">🏦 Finans</option><option value="enerji">⚡ Enerji</option><option value="saglik">💊 Sağlık</option><option value="tuketim">🛒 Tüketim</option><option value="sanayi">🏭 Sanayi</option><option value="havacilik">✈️ Havacılık</option><option value="diger">📦 Diğer</option></select>
     </div>
     <div class="field"><label>Borsa</label>
-      <select id="exchange">
-        <option>AEX 🇳🇱</option><option>NYSE 🇺🇸</option><option>NASDAQ 🇺🇸</option>
-        <option>DAX 🇩🇪</option><option>CAC40 🇫🇷</option><option>Euronext 🇪🇺</option>
-      </select>
+      <select id="exchange"><option>AEX 🇳🇱</option><option>NYSE 🇺🇸</option><option>NASDAQ 🇺🇸</option><option>DAX 🇩🇪</option><option>CAC40 🇫🇷</option><option>Euronext 🇪🇺</option></select>
     </div>
   </div>
   <div class="g2">
@@ -488,12 +474,7 @@ select option { background: #181818; }
     <div class="g3">
       <div class="field"><label>Giriş Fiyatı</label><input type="number" id="entry" placeholder="örn. 11.50" step="0.01"></div>
       <div class="field"><label>Yatırım (€)</label><input type="number" id="amount" placeholder="örn. 1000"></div>
-      <div class="field"><label>Kar Hedefi</label>
-        <select id="profit">
-          <option value="10">%10</option><option value="20" selected>%20</option>
-          <option value="30">%30</option><option value="50">%50</option>
-        </select>
-      </div>
+      <div class="field"><label>Kar Hedefi</label><select id="profit"><option value="10">%10</option><option value="20" selected>%20</option><option value="30">%30</option><option value="50">%50</option></select></div>
     </div>
   </div>
 </div>
@@ -509,30 +490,10 @@ select option { background: #181818; }
     <div class="field"><label>Değişim %</label><input type="number" id="change1m" placeholder="Otomatik"></div>
   </div>
   <div class="g2" style="margin-bottom:14px">
-    <div class="field"><label>MACD</label>
-      <div class="tgrp" id="macd">
-        <button class="tbtn" onclick="T(this,'macd','tg')" data-v="pozitif">🟢 Al</button>
-        <button class="tbtn" onclick="T(this,'macd','tr')" data-v="negatif">🔴 Sat</button>
-        <button class="tbtn" onclick="T(this,'macd','ty')" data-v="notr">⚪ Nötr</button>
-      </div>
-    </div>
-    <div class="field"><label>Hacim</label>
-      <div class="tgrp" id="hacim">
-        <button class="tbtn" onclick="T(this,'hacim','tg')" data-v="artiyor">📈 Artıyor</button>
-        <button class="tbtn" onclick="T(this,'hacim','ty')" data-v="normal">➡️ Normal</button>
-        <button class="tbtn" onclick="T(this,'hacim','tr')" data-v="dususyor">📉 Düşüyor</button>
-      </div>
-    </div>
+    <div class="field"><label>MACD</label><div class="tgrp" id="macd"><button class="tbtn" onclick="T(this,'macd','tg')" data-v="pozitif">🟢 Al</button><button class="tbtn" onclick="T(this,'macd','tr')" data-v="negatif">🔴 Sat</button><button class="tbtn" onclick="T(this,'macd','ty')" data-v="notr">⚪ Nötr</button></div></div>
+    <div class="field"><label>Hacim</label><div class="tgrp" id="hacim"><button class="tbtn" onclick="T(this,'hacim','tg')" data-v="artiyor">📈 Artıyor</button><button class="tbtn" onclick="T(this,'hacim','ty')" data-v="normal">➡️ Normal</button><button class="tbtn" onclick="T(this,'hacim','tr')" data-v="dususyor">📉 Düşüyor</button></div></div>
   </div>
-  <div class="field"><label>Trend</label>
-    <div class="tgrp" id="trend">
-      <button class="tbtn" onclick="T(this,'trend','tg')" data-v="guclu-yukari">🚀 Güçlü ↑</button>
-      <button class="tbtn" onclick="T(this,'trend','tg')" data-v="yukari">⬆️ Yukarı</button>
-      <button class="tbtn" onclick="T(this,'trend','ty')" data-v="yatay">➡️ Yatay</button>
-      <button class="tbtn" onclick="T(this,'trend','tr')" data-v="asagi">⬇️ Aşağı</button>
-      <button class="tbtn" onclick="T(this,'trend','tr')" data-v="guclu-asagi">💥 Güçlü ↓</button>
-    </div>
-  </div>
+  <div class="field"><label>Trend</label><div class="tgrp" id="trend"><button class="tbtn" onclick="T(this,'trend','tg')" data-v="guclu-yukari">🚀 Güçlü ↑</button><button class="tbtn" onclick="T(this,'trend','tg')" data-v="yukari">⬆️ Yukarı</button><button class="tbtn" onclick="T(this,'trend','ty')" data-v="yatay">➡️ Yatay</button><button class="tbtn" onclick="T(this,'trend','tr')" data-v="asagi">⬇️ Aşağı</button><button class="tbtn" onclick="T(this,'trend','tr')" data-v="guclu-asagi">💥 Güçlü ↓</button></div></div>
 </div>
 
 <div class="card">
@@ -543,84 +504,27 @@ select option { background: #181818; }
     <div class="field"><label>F/K Oranı</label><input type="number" id="pe" placeholder="Otomatik" step="0.1"></div>
   </div>
   <div class="g2" style="margin-bottom:14px">
-    <div class="field"><label>Borç</label>
-      <div class="tgrp" id="borc">
-        <button class="tbtn" onclick="T(this,'borc','tg')" data-v="dusuk">✅ Düşük</button>
-        <button class="tbtn" onclick="T(this,'borc','ty')" data-v="orta">⚡ Orta</button>
-        <button class="tbtn" onclick="T(this,'borc','tr')" data-v="yuksek">⚠️ Yüksek</button>
-        <button class="tbtn" onclick="T(this,'borc','tr')" data-v="kritik">🚨 Kritik</button>
-      </div>
-    </div>
-    <div class="field"><label>Nakit</label>
-      <div class="tgrp" id="nakit">
-        <button class="tbtn" onclick="T(this,'nakit','tg')" data-v="guclu">💧 Güçlü</button>
-        <button class="tbtn" onclick="T(this,'nakit','tg')" data-v="pozitif">✅ Pozitif</button>
-        <button class="tbtn" onclick="T(this,'nakit','tr')" data-v="negatif">🚨 Negatif</button>
-        <button class="tbtn" onclick="T(this,'nakit','ty')" data-v="belirsiz">❓ Bilmiyorum</button>
-      </div>
-    </div>
+    <div class="field"><label>Borç</label><div class="tgrp" id="borc"><button class="tbtn" onclick="T(this,'borc','tg')" data-v="dusuk">✅ Düşük</button><button class="tbtn" onclick="T(this,'borc','ty')" data-v="orta">⚡ Orta</button><button class="tbtn" onclick="T(this,'borc','tr')" data-v="yuksek">⚠️ Yüksek</button><button class="tbtn" onclick="T(this,'borc','tr')" data-v="kritik">🚨 Kritik</button></div></div>
+    <div class="field"><label>Nakit</label><div class="tgrp" id="nakit"><button class="tbtn" onclick="T(this,'nakit','tg')" data-v="guclu">💧 Güçlü</button><button class="tbtn" onclick="T(this,'nakit','tg')" data-v="pozitif">✅ Pozitif</button><button class="tbtn" onclick="T(this,'nakit','tr')" data-v="negatif">🚨 Negatif</button><button class="tbtn" onclick="T(this,'nakit','ty')" data-v="belirsiz">❓ Bilmiyorum</button></div></div>
   </div>
-  <div class="field"><label>Temettü</label>
-    <div class="tgrp" id="temettu">
-      <button class="tbtn" onclick="T(this,'temettu','tg')" data-v="artarak">📈 Artıyor</button>
-      <button class="tbtn" onclick="T(this,'temettu','tg')" data-v="var">💰 Ödüyor</button>
-      <button class="tbtn" onclick="T(this,'temettu','ty')" data-v="yok">— Yok</button>
-      <button class="tbtn" onclick="T(this,'temettu','tr')" data-v="kesildi">✂️ Kesildi</button>
-    </div>
-  </div>
+  <div class="field"><label>Temettü</label><div class="tgrp" id="temettu"><button class="tbtn" onclick="T(this,'temettu','tg')" data-v="artarak">📈 Artıyor</button><button class="tbtn" onclick="T(this,'temettu','tg')" data-v="var">💰 Ödüyor</button><button class="tbtn" onclick="T(this,'temettu','ty')" data-v="yok">— Yok</button><button class="tbtn" onclick="T(this,'temettu','tr')" data-v="kesildi">✂️ Kesildi</button></div></div>
 </div>
 
 <div class="card">
   <span class="sec-label">🚨 Sahte Yükseliş Testi</span>
   <div class="sec-title">GameStop Koruması</div>
   <div class="g2" style="margin-bottom:14px">
-    <div class="field"><label>Short Interest</label>
-      <select id="short">
-        <option value="dusuk">Düşük (%5 altı)</option><option value="orta">Orta (%5-15)</option>
-        <option value="yuksek">Yüksek (%15-30)</option><option value="cok-yuksek">Çok Yüksek (%30+)</option>
-        <option value="bilinmiyor">Bilmiyorum</option>
-      </select>
-    </div>
+    <div class="field"><label>Short Interest</label><select id="short"><option value="dusuk">Düşük (%5 altı)</option><option value="orta">Orta (%5-15)</option><option value="yuksek">Yüksek (%15-30)</option><option value="cok-yuksek">Çok Yüksek (%30+)</option><option value="bilinmiyor">Bilmiyorum</option></select></div>
   </div>
-  <div class="field" style="margin-bottom:14px"><label>Yükseliş Sebebi</label>
-    <div class="tgrp" id="sebep">
-      <button class="tbtn" onclick="T(this,'sebep','tg')" data-v="gercek-kazanc">📊 Gerçek</button>
-      <button class="tbtn" onclick="T(this,'sebep','tg')" data-v="haber">📰 İyi haber</button>
-      <button class="tbtn" onclick="T(this,'sebep','ty')" data-v="analist">🎯 Analist</button>
-      <button class="tbtn" onclick="T(this,'sebep','tr')" data-v="sosyal">📱 Sosyal</button>
-      <button class="tbtn" onclick="T(this,'sebep','tr')" data-v="sebepsiz">❓ Sebepsiz</button>
-    </div>
-  </div>
-  <div class="field"><label>Katalizör</label>
-    <div class="tgrp" id="katalizor">
-      <button class="tbtn" onclick="T(this,'katalizor','tg')" data-v="iyi-rapor">📈 İyi rapor</button>
-      <button class="tbtn" onclick="T(this,'katalizor','tg')" data-v="satin-alma">🤝 Satın alma</button>
-      <button class="tbtn" onclick="T(this,'katalizor','ty')" data-v="yok">— Yok</button>
-      <button class="tbtn" onclick="T(this,'katalizor','tr')" data-v="kotu">📉 Kötü</button>
-    </div>
-  </div>
+  <div class="field" style="margin-bottom:14px"><label>Yükseliş Sebebi</label><div class="tgrp" id="sebep"><button class="tbtn" onclick="T(this,'sebep','tg')" data-v="gercek-kazanc">📊 Gerçek</button><button class="tbtn" onclick="T(this,'sebep','tg')" data-v="haber">📰 İyi haber</button><button class="tbtn" onclick="T(this,'sebep','ty')" data-v="analist">🎯 Analist</button><button class="tbtn" onclick="T(this,'sebep','tr')" data-v="sosyal">📱 Sosyal</button><button class="tbtn" onclick="T(this,'sebep','tr')" data-v="sebepsiz">❓ Sebepsiz</button></div></div>
+  <div class="field"><label>Katalizör</label><div class="tgrp" id="katalizor"><button class="tbtn" onclick="T(this,'katalizor','tg')" data-v="iyi-rapor">📈 İyi rapor</button><button class="tbtn" onclick="T(this,'katalizor','tg')" data-v="satin-alma">🤝 Satın alma</button><button class="tbtn" onclick="T(this,'katalizor','ty')" data-v="yok">— Yok</button><button class="tbtn" onclick="T(this,'katalizor','tr')" data-v="kotu">📉 Kötü</button></div></div>
 </div>
 
 <div class="card">
   <span class="sec-label">📰 Piyasa Algısı</span>
   <div class="sec-title">Haberler & Beklentiler</div>
-  <div class="field" style="margin-bottom:14px"><label>Son Haberler</label>
-    <div class="tgrp" id="haber">
-      <button class="tbtn" onclick="T(this,'haber','tg')" data-v="cok-iyi">🟢 Çok iyi</button>
-      <button class="tbtn" onclick="T(this,'haber','tg')" data-v="iyi">📗 İyi</button>
-      <button class="tbtn" onclick="T(this,'haber','ty')" data-v="karisik">📙 Karışık</button>
-      <button class="tbtn" onclick="T(this,'haber','tr')" data-v="kotu">📕 Kötü</button>
-      <button class="tbtn" onclick="T(this,'haber','ty')" data-v="yok">🔇 Yok</button>
-    </div>
-  </div>
-  <div class="field"><label>Büyüme</label>
-    <div class="tgrp" id="buyume">
-      <button class="tbtn" onclick="T(this,'buyume','tg')" data-v="guclu">🚀 Güçlü</button>
-      <button class="tbtn" onclick="T(this,'buyume','tg')" data-v="var">📈 Var</button>
-      <button class="tbtn" onclick="T(this,'buyume','ty')" data-v="belirsiz">❓ Belirsiz</button>
-      <button class="tbtn" onclick="T(this,'buyume','tr')" data-v="yok">📉 Yok</button>
-    </div>
-  </div>
+  <div class="field" style="margin-bottom:14px"><label>Son Haberler</label><div class="tgrp" id="haber"><button class="tbtn" onclick="T(this,'haber','tg')" data-v="cok-iyi">🟢 Çok iyi</button><button class="tbtn" onclick="T(this,'haber','tg')" data-v="iyi">📗 İyi</button><button class="tbtn" onclick="T(this,'haber','ty')" data-v="karisik">📙 Karışık</button><button class="tbtn" onclick="T(this,'haber','tr')" data-v="kotu">📕 Kötü</button><button class="tbtn" onclick="T(this,'haber','ty')" data-v="yok">🔇 Yok</button></div></div>
+  <div class="field"><label>Büyüme</label><div class="tgrp" id="buyume"><button class="tbtn" onclick="T(this,'buyume','tg')" data-v="guclu">🚀 Güçlü</button><button class="tbtn" onclick="T(this,'buyume','tg')" data-v="var">📈 Var</button><button class="tbtn" onclick="T(this,'buyume','ty')" data-v="belirsiz">❓ Belirsiz</button><button class="tbtn" onclick="T(this,'buyume','tr')" data-v="yok">📉 Yok</button></div></div>
 </div>
 
 <button class="abtn" onclick="analiz()">🔍 ANALİZİ YAP</button>
@@ -631,27 +535,14 @@ select option { background: #181818; }
     <div class="vword" id="vword"></div>
     <div class="vnudge" id="vnudge"></div>
     <div class="vscore" id="vscore"></div>
+    <div id="guven-blok-container"></div>
     <div class="vsummary" id="vsummary"></div>
   </div>
-
-  <!-- GÜÇLÜ YÖNLER & RİSKLER -->
   <div class="sgrid" style="margin-bottom:14px">
-    <div class="analiz-blok" style="border-color:rgba(0,200,83,0.2)">
-      <div class="analiz-blok-baslik" style="color:var(--green)">✅ Güçlü Yönler</div>
-      <div id="guclu-yonler"></div>
-    </div>
-    <div class="analiz-blok" style="border-color:rgba(255,61,61,0.2)">
-      <div class="analiz-blok-baslik" style="color:var(--red)">⚠️ Riskler</div>
-      <div id="riskler"></div>
-    </div>
+    <div class="analiz-blok" style="border-color:rgba(0,200,83,0.2)"><div class="analiz-blok-baslik" style="color:var(--green)">✅ Güçlü Yönler</div><div id="guclu-yonler"></div></div>
+    <div class="analiz-blok" style="border-color:rgba(255,61,61,0.2)"><div class="analiz-blok-baslik" style="color:var(--red)">⚠️ Riskler</div><div id="riskler"></div></div>
   </div>
-
-  <div class="card" style="margin-bottom:14px">
-    <div class="sbar-wrap">
-      <div class="sbar-labels"><span>Sağlık Skoru</span><span id="sbar-pct"></span></div>
-      <div class="sbar-bg"><div class="sbar-fill" id="sbar"></div></div>
-    </div>
-  </div>
+  <div class="card" style="margin-bottom:14px"><div class="sbar-wrap"><div class="sbar-labels"><span>Sağlık Skoru</span><span id="sbar-pct"></span></div><div class="sbar-bg"><div class="sbar-fill" id="sbar"></div></div></div></div>
   <div class="sgrid">
     <div class="scard good"><div class="scard-title">✅ Olumlu</div><div id="pos"></div></div>
     <div class="scard bad"><div class="scard-title">⚠️ Olumsuz</div><div id="neg"></div></div>
@@ -673,17 +564,8 @@ select option { background: #181818; }
     </div>
     <div class="exit-note" id="exit-note"></div>
   </div>
-
-  <!-- BEKLEME SÜRESİ -->
-  <div class="analiz-blok" style="margin-bottom:14px;border-color:rgba(201,168,76,0.2)">
-    <div class="analiz-blok-baslik" style="color:var(--gold)">⏱️ Zaman Tavsiyesi</div>
-    <div id="zaman-tavsiye" style="font-size:13px;color:var(--text2);line-height:1.8"></div>
-  </div>
-
-  <div class="scard info" style="margin-bottom:14px">
-    <div class="scard-title">💡 Tavsiye</div>
-    <div id="tavsiye"></div>
-  </div>
+  <div class="analiz-blok" style="margin-bottom:14px;border-color:rgba(201,168,76,0.2)"><div class="analiz-blok-baslik" style="color:var(--gold)">⏱️ Zaman Tavsiyesi</div><div id="zaman-tavsiye" style="font-size:13px;color:var(--text2);line-height:1.8"></div></div>
+  <div class="scard info" style="margin-bottom:14px"><div class="scard-title">💡 Tavsiye</div><div id="tavsiye"></div></div>
   <button class="rbtn" onclick="sifirla()">↩️ Yeni Analiz</button>
   <div class="disc">⚠️ Eğitim amaçlıdır, yatırım tavsiyesi değildir. 🦷</div>
 </div>
@@ -707,7 +589,7 @@ function levelDegistir() {
   rehberIcerikDoldur('semboller');
 }
 
-// ─── KARŞILAMA POPUP (6 saatte bir) ───
+// ─── KARŞILAMA ───
 function karsilamaGoster() {
   const son = parseInt(localStorage.getItem('humeyra_karsilama_son') || '0');
   if (Date.now() - son < 6 * 60 * 60 * 1000) return;
@@ -761,7 +643,7 @@ function karsilamaKapat() {
   window.scrollTo(0, 0);
 }
 
-// ─── RSI SİSTEMİ ───
+// ─── RSI ───
 function rsiRenkHesapla(rsi) {
   if (rsi >= 95) return '#ff0000';
   if (rsi >= 91) return '#ff3d3d';
@@ -783,325 +665,112 @@ function rsiEtiket(rsi) {
   return '';
 }
 
-// ─── COPILOT SKOR MOTORU ───
+// ─── YENİ ANALİZ MOTORU (Copilot + Gemini) ───
 function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
 
-function calculateScore(h) {
-  const momentum = clamp(((100 - h.rsi) + clamp(h.degisim * 10, -20, 20)) / 2, 0, 100);
-  const trend = h.ma20 > 0 && h.ma200 > 0 ? clamp(((h.ma20 - h.ma200) / h.ma200) * 100 + 50, 0, 100) : 50;
-  const volume = clamp(Math.abs(h.degisim) * 10, 0, 100);
-  let score = momentum * 0.4 + trend * 0.4 + volume * 0.2;
-  if (h.direncKirildi) score += 10;
-  if (h.destekKirildi) score -= 5;
-  if (h.hedef > 0 && h.fiyat > 0 && h.fiyat < h.hedef) score += 5;
-  return clamp(Math.round(score), 0, 100);
+function teknikSkorHesapla(h) {
+  let skor = 0;
+  if (h.rsi < 30) skor += 25;
+  else if (h.rsi < 50) skor += 15;
+  else if (h.rsi < 70) skor += 5;
+  else skor -= 10;
+  const trendV = gv('trend');
+  if (trendV === 'guclu-yukari') skor += 25;
+  else if (trendV === 'yukari') skor += 15;
+  else if (trendV === 'yatay') skor += 0;
+  else if (trendV === 'asagi') skor -= 10;
+  else if (trendV === 'guclu-asagi') skor -= 20;
+  else if (h.ma20 > 0 && h.ma200 > 0) skor += (h.ma20 > h.ma200 ? 15 : -10);
+  const hacimV = gv('hacim');
+  if (hacimV === 'artiyor') skor += 15;
+  else if (hacimV === 'dususyor') skor -= 10;
+  const macdV = gv('macd');
+  if (macdV === 'pozitif') skor += 10;
+  else if (macdV === 'negatif') skor -= 10;
+  return Math.max(0, Math.min(100, Math.round(skor)));
 }
 
-function calculateFinalScore(h) {
-  const teknikSkor = calculateScore(h);
-  const temettuBonus = h.temettu ? 15 : 0;
-  return clamp(teknikSkor + temettuBonus, 0, 100);
-}
-
-function getActionFromScore(score, degisim, rsi) {
-  const hacimArti = degisim !== undefined ? Math.abs(degisim) > 2 : false;
-  const volatiliteDusuk = degisim !== undefined ? Math.abs(degisim) < 1.5 : false;
-  if (score >= 75 && hacimArti) return { label: 'AGRESIF AL', vclass: 'GUCLU_AL', nudge: 'Agresif Al — Tam Pozisyon', goldenLine: '🔥 Şu an: Agresif Al — Tam Pozisyon' };
-  if (score >= 60 && volatiliteDusuk) return { label: 'TEMKİNLİ AL', vclass: 'TEMKINLI_AL', nudge: 'Temkinli Al — Küçük Pozisyon', goldenLine: '🔥 Şu an: Temkinli Al — Küçük Pozisyon' };
-  if (score >= 75) return { label: 'GÜÇLÜ AL', vclass: 'GUCLU_AL', nudge: 'Güçlü Al — Pozisyon Aç', goldenLine: '🔥 Şu an: Güçlü Al — Pozisyon Aç' };
-  if (score >= 60) return { label: 'AL', vclass: 'AL', nudge: 'Al — Kademeli Giriş', goldenLine: '🔥 Şu an: Al — Kademeli Giriş' };
-  if (score >= 40) return { label: 'İZLE', vclass: 'IZLE', nudge: 'İzle — Nakitte Kal', goldenLine: '🔥 Şu an: İzle — Nakitte Kal' };
-  if (score < 40 && rsi >= 70) return { label: 'KAR AL', vclass: 'BEKLE', nudge: 'Kar Al — Pozisyon Azalt', goldenLine: '🔥 Şu an: Kar Al — Pozisyon Azalt' };
-  return { label: 'UZAK DUR', vclass: 'UZAK_DUR', nudge: 'Uzak Dur — Sermayeni Koru', goldenLine: '🔥 Şu an: Uzak Dur — Sermayeni Koru' };
-}
-
-function getStrategy(h) {
-  if (h.rsi < 35 && h.fiyat < h.hedef) return 'Dipten Toparlanma';
-  if (h.ma20 > h.ma200) return 'Trend Takip';
-  if (h.degisim > 3) return 'Momentum Trade';
-  if (h.direncKirildi) return 'Kırılım';
-  return 'Nötr Bekleme';
-}
-
-function getAction(durum) {
-  if (durum.includes('TOPLUYOR') || durum.includes('TREND BAŞLIYOR')) return 'İzle';
-  if (durum.includes('MOMENTUM')) return 'İncele';
-  if (durum.includes('SAKİN') || durum.includes('İZLENME')) return 'Bekle';
-  if (durum.includes('ISINMIŞ') || durum.includes('ZİRVE') || durum.includes('DÜZELTME')) return 'Riskli';
-  return 'Bekle';
-}
-
-// ─── PORTFÖY SİSTEMİ ───
-let portfolio = JSON.parse(localStorage.getItem('humeyra_portfolio') || '[]');
-let aktifPortfolioSekme = 'ozet';
-
-function portfolioAc() {
-  const panel = document.getElementById('portfolio-panel');
-  panel.classList.toggle('acik');
-  if (panel.classList.contains('acik')) portfolioIcerikGuncelle();
-}
-
-function portfolioKapat() {
-  document.getElementById('portfolio-panel').classList.remove('acik');
-}
-
-function portfolioSekme(sekme, btn) {
-  aktifPortfolioSekme = sekme;
-  document.querySelectorAll('.portfolio-sekme').forEach(b => b.classList.remove('aktif'));
-  btn.classList.add('aktif');
-  portfolioIcerikGuncelle();
-}
-
-function portfolioKaydet() {
-  localStorage.setItem('humeyra_portfolio', JSON.stringify(portfolio));
-  portfolioAlarmKontrol();
-}
-
-function portfolioHisseEkle(ticker, fiyat, adet) {
-  const mevcut = portfolio.findIndex(p => p.ticker === ticker);
-  if (mevcut >= 0) {
-    portfolio[mevcut].adet += adet;
-  } else {
-    portfolio.push({ ticker, alisFiyati: fiyat, adet, eklenmeTarihi: new Date().toISOString().split('T')[0] });
+function temelSkorHesapla(h, pe, margin) {
+  let skor = 0;
+  if (pe > 0 && pe < 20) skor += 20;
+  else if (pe > 0 && pe < 40) skor += 10;
+  else if (pe > 40) skor -= 5;
+  if (margin > 0) {
+    if (margin >= 25) skor += 25;
+    else if (margin >= 15) skor += 15;
+    else if (margin >= 8) skor += 8;
   }
-  portfolioKaydet();
-  portfolioIcerikGuncelle();
+  const borcV = gv('borc');
+  if (borcV === 'dusuk') skor += 20;
+  else if (borcV === 'orta') skor += 10;
+  else if (borcV === 'yuksek') skor -= 10;
+  else if (borcV === 'kritik') skor -= 20;
+  const nakitV = gv('nakit');
+  if (nakitV === 'guclu') skor += 20;
+  else if (nakitV === 'pozitif') skor += 10;
+  else if (nakitV === 'negatif') skor -= 15;
+  if (h.temettu) skor += 15;
+  const upside = h.hedef > 0 && h.fiyat > 0 ? ((h.hedef - h.fiyat) / h.fiyat * 100) : 0;
+  if (upside > 15) skor += 15;
+  else if (upside > 5) skor += 7;
+  return Math.max(0, Math.min(100, Math.round(skor)));
 }
 
-function portfolioHisseSil(ticker) {
-  portfolio = portfolio.filter(p => p.ticker !== ticker);
-  portfolioKaydet();
-  portfolioIcerikGuncelle();
+function riskSkorHesapla(h, pe) {
+  let risk = 100;
+  if (h.rsi > 70) risk -= 20;
+  if (h.beta > 1.5) risk -= 20;
+  if (pe > 50) risk -= 20;
+  const sh = document.getElementById('short') ? document.getElementById('short').value : 'dusuk';
+  if (sh === 'cok-yuksek') risk -= 30;
+  else if (sh === 'yuksek') risk -= 15;
+  if (h.destekKirildi) risk -= 15;
+  const seb = gv('sebep');
+  if (seb === 'sosyal') risk -= 20;
+  else if (seb === 'sebepsiz') risk -= 10;
+  return Math.max(0, Math.min(100, Math.round(risk)));
 }
 
-  function portfoyAnalizEt({ isi, toplamKarYuzde, trendSkor, riskSkor, temettuSkor }) {
-  let skor = 50;
-  if (isi <= 30) skor += 5;
-  if (isi >= 80) skor -= 10;
-  if (toplamKarYuzde > 5) skor += 10;
-  if (toplamKarYuzde < -5) skor -= 15;
-  if (trendSkor >= 7) skor += 15;
-  if (trendSkor <= 3) skor -= 10;
-  skor -= riskSkor * 2;
-  if (temettuSkor >= 30) skor += 5;
-  skor = Math.max(0, Math.min(100, skor));
-  let durum, aksiyon, mod;
-  if (skor >= 75) { durum = 'FIRSAT'; aksiyon = 'Alım yapılabilir'; mod = 'ATAK'; }
-  else if (skor >= 55) { durum = 'DENGELİ'; aksiyon = 'İzle / küçük alım'; mod = 'NORMAL'; }
-  else if (skor >= 35) { durum = 'ZAYIF'; aksiyon = 'Bekle'; mod = 'KORUMA'; }
-  else { durum = 'RİSKLİ'; aksiyon = 'Pozisyon azalt'; mod = 'DEFANSİF'; }
-  return { skor, durum, aksiyon, mod };
+function guvenSkorHesapla(teknik, temel, risk) {
+  const fark = Math.max(Math.abs(teknik - temel), Math.abs(teknik - risk), Math.abs(temel - risk));
+  return Math.max(0, Math.min(100, Math.round(100 - fark)));
 }
 
-function kararRenk(mod) {
-  if (mod === 'ATAK') return 'var(--green)';
-  if (mod === 'NORMAL') return 'var(--gold)';
-  if (mod === 'KORUMA') return '#ff9800';
-  return 'var(--red)';
+function zayifNoktaBul(teknik, temel, risk) {
+  const minVal = Math.min(teknik, temel, risk);
+  if (minVal === teknik) return { ad: 'Teknik', deger: teknik };
+  if (minVal === temel) return { ad: 'Temel', deger: temel };
+  return { ad: 'Risk', deger: risk };
+}
+
+function toplamSkorHesapla(teknik, temel, risk) {
+  return Math.round(teknik * 0.4 + temel * 0.35 + risk * 0.25);
+}
+
+// ─── GOLDEN LINE ───
+function getActionFromScore(score, degisim, rsi) {
+  const hacimArti = Math.abs(degisim) > 2;
+  const volatiliteDusuk = Math.abs(degisim) < 1.5;
+  if (score >= 75 && hacimArti) return { label: 'GÜÇLÜ AL', vclass: 'GUCLU_AL', goldenLine: '🔥 Şu an: Agresif Al — Tam Pozisyon' };
+  if (score >= 60 && volatiliteDusuk) return { label: 'TEMKİNLİ AL', vclass: 'TEMKINLI_AL', goldenLine: '🔥 Şu an: Temkinli Al — Küçük Pozisyon' };
+  if (score >= 75) return { label: 'GÜÇLÜ AL', vclass: 'GUCLU_AL', goldenLine: '🔥 Şu an: Güçlü Al — Pozisyon Aç' };
+  if (score >= 60) return { label: 'AL', vclass: 'AL', goldenLine: '🔥 Şu an: Al — Kademeli Giriş' };
+  if (score >= 45) return { label: 'İZLE', vclass: 'IZLE', goldenLine: '🔥 Şu an: İzle — Nakitte Kal' };
+  if (score < 40 && rsi >= 70) return { label: 'KAR AL', vclass: 'BEKLE', goldenLine: '🔥 Şu an: Kar Al — Pozisyon Azalt' };
+  if (score >= 35) return { label: 'BEKLE', vclass: 'BEKLE', goldenLine: '🔥 Şu an: Bekle — Sinyal Yok' };
+  return { label: 'UZAK DUR', vclass: 'UZAK_DUR', goldenLine: '🔥 Şu an: Uzak Dur — Sermayeni Koru' };
 }
 
 function guvenLabel(skor) {
-  if (skor >= 70) return 'yüksek';
-  if (skor >= 50) return 'orta';
-  return 'düşük';
+  if (skor >= 70) return '✅ Yüksek Güven';
+  if (skor >= 50) return '🟡 Temkinli Güven';
+  return '🔴 Düşük Güven';
 }
 
-function portfoyMesaj(sonuc) {
-  if (sonuc.mod === 'ATAK') return '🟢 Fırsat var, piyasa destekliyor';
-  if (sonuc.mod === 'KORUMA') return '❄️ Piyasa zayıf, satış baskısı var';
-  if (sonuc.mod === 'DEFANSİF') return '🔴 Risk yüksek, kayıplar artıyor';
-  return '🟡 Piyasa kararsız, net sinyal yok';
-}
-  
-function portfolioIsiHesapla() {
-  if (portfolio.length === 0) return 50;
-  let toplamSkor = 0, toplamKarZarar = 0, toplamMaliyet = 0;
-  for (const p of portfolio) {
-    const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
-    if (!h) continue;
-    const maliyet = p.alisFiyati * p.adet;
-    const piyasaDegeri = h.fiyat * p.adet;
-    toplamKarZarar += piyasaDegeri - maliyet;
-    toplamMaliyet += maliyet;
-    toplamSkor += calculateFinalScore(h);
-  }
-  const ortalamaFinalSkor = portfolio.length > 0 ? toplamSkor / portfolio.length : 50;
-  const karZararYuzde = toplamMaliyet > 0 ? (toplamKarZarar / toplamMaliyet) * 100 : 0;
-  return clamp((karZararYuzde * 0.5) + (ortalamaFinalSkor * 0.5), 0, 100);
-}
-
-function notifyUser(type) {
-  const btn = document.getElementById('portfolio-btn');
-  const mesajlar = {
-    isinma: '🚨 Portföyün çok ısındı! Bazı hisseler aşırı alım bölgesinde, kâr realizasyonu için kontrol et.',
-    soguma: '❄️ Portföyün soğuyor. Hisseler baskı altında, stratejini gözden geçir.',
-    hisseBuyukZarar: '⚠️ Dikkat! Bir hissende ciddi kayıp var. Duygusal değil, stratejik karar verme zamanı.',
-    portfoyBuyukZarar: '📉 Portföyünde genel kayıp artıyor. Pozisyonlarını gözden geçir.',
-    temettuGucu: '💰 Portföyünde güçlü temettü veren hisseler var. Pasif gelir akışın sağlıklı.',
-    temettuZayif: '⚡ Portföyünde temettü veren hisse yok. Defansif denge için değerlendirilebilir.'
-  };
-  if (btn && (type === 'isinma' || type === 'hisseBuyukZarar' || type === 'portfoyBuyukZarar')) {
-    btn.classList.add('alarm');
-    setTimeout(() => btn.classList.remove('alarm'), 10000);
-  }
-  return mesajlar[type] || '';
-}
-
-function portfolioAlarmKontrol() {
-  if (portfolio.length === 0) return;
-  const isi = portfolioIsiHesapla();
-  let alarmlar = [];
-  if (isi >= 80) alarmlar.push(notifyUser('isinma'));
-  if (isi <= 40) alarmlar.push(notifyUser('soguma'));
-  let toplamMaliyet = 0, toplamDeger = 0, temettuSkor = 0;
-  for (const p of portfolio) {
-    const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
-    if (!h) continue;
-    const maliyet = p.alisFiyati * p.adet;
-    const deger = h.fiyat * p.adet;
-    toplamMaliyet += maliyet;
-    toplamDeger += deger;
-    if (h.temettu) temettuSkor += 15;
-    const karYuzde = ((h.fiyat - p.alisFiyati) / p.alisFiyati) * 100;
-    if (karYuzde <= -10) alarmlar.push(notifyUser('hisseBuyukZarar'));
-  }
-  const toplamKarYuzde = toplamMaliyet > 0 ? ((toplamDeger - toplamMaliyet) / toplamMaliyet) * 100 : 0;
-  if (toplamKarYuzde <= -5) alarmlar.push(notifyUser('portfoyBuyukZarar'));
-  if (temettuSkor >= 30) alarmlar.push(notifyUser('temettuGucu'));
-  if (temettuSkor === 0 && portfolio.length > 0) alarmlar.push(notifyUser('temettuZayif'));
-  return alarmlar.filter(Boolean);
-}
-
-function portfolioIcerikGuncelle() {
-  const el = document.getElementById('portfolio-icerik');
-  if (!el) return;
-  if (aktifPortfolioSekme === 'ozet') {
-    portfolioOzetGoster(el);
-  } else if (aktifPortfolioSekme === 'hisseler') {
-    portfolioHisselerGoster(el);
-  } else {
-    portfolioEkleGoster(el);
-  }
-}
-
-function portfolioOzetGoster(el) {
-  if (portfolio.length === 0) {
-    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text2)"><div style="font-size:32px;margin-bottom:12px">💼</div><div style="font-size:13px">Henüz portföyünde hisse yok.</div><div style="font-size:11px;margin-top:8px;color:var(--text3)">Hisse seç → VERİ ÇEK → Portföye Ekle</div></div>';
-    return;
-  }
-  let toplamMaliyet = 0, toplamDeger = 0, temettuSkor = 0;
-  for (const p of portfolio) {
-    const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
-    if (!h) continue;
-    toplamMaliyet += p.alisFiyati * p.adet;
-    toplamDeger += h.fiyat * p.adet;
-    if (h.temettu) temettuSkor += 15;
-  }
-  const toplamKarZarar = toplamDeger - toplamMaliyet;
-  const toplamKarYuzde = toplamMaliyet > 0 ? (toplamKarZarar / toplamMaliyet) * 100 : 0;
-  const isi = portfolioIsiHesapla();
-  const isiRenk = isi >= 70 ? 'var(--green)' : isi >= 40 ? 'var(--yellow)' : 'var(--red)';
-  const isiYorum = isi >= 80 ? 'Portföyün çok ısındı, kâr realizasyonu düşünülebilir.' :
-    isi >= 60 ? 'Portföyün güçlü bölgede, momentum devam ediyor.' :
-    isi >= 40 ? 'Portföyün nötr bölgede, izlemeye devam.' :
-    isi >= 30 ? 'Portföyün soğuyor, strateji gözden geçir.' :
-    'Portföyün kritik bölgede, acil revizyon gerekebilir.';
-  const alarmlar = portfolioAlarmKontrol();
-  let alarmHtml = '';
-  if (alarmlar && alarmlar.length > 0) {
-    alarmHtml = '<div style="background:rgba(255,61,61,0.1);border:1px solid rgba(255,61,61,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:#ff6b6b">' + alarmlar[0] + '</div>';
-  }
-  const portfoyTrendSkor = portfolio.length > 0 ?
-  portfolio.reduce((acc, p) => {
-    const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
-    if (!h || !h.ma20 || !h.ma200) return acc;
-    return acc + (h.ma20 > h.ma200 ? 7 : 3);
-  }, 0) / portfolio.length : 5;
-const portfoyRiskSkor = portfolio.filter(p => {
-  const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
-  return h && h.beta > 1.5;
-}).length;
-const sonuc = portfoyAnalizEt({ isi, toplamKarYuzde, trendSkor: portfoyTrendSkor, riskSkor: portfoyRiskSkor, temettuSkor });
-const modRenk = kararRenk(sonuc.mod);
-const portfoyMesaji = portfoyMesaj(sonuc);
-  el.innerHTML = alarmHtml +
-    '<div class="portfolio-ozet">' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:8px">' +
-    '<div><div style="font-size:10px;color:var(--text2);margin-bottom:2px">TOPLAM DEĞER</div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--text)">€' + toplamDeger.toFixed(2) + '</div></div>' +
-    '<div style="text-align:right"><div style="font-size:10px;color:var(--text2);margin-bottom:2px">KAR/ZARAR</div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:' + (toplamKarZarar >= 0 ? 'var(--green)' : 'var(--red)') + '">' + (toplamKarZarar >= 0 ? '+' : '') + '€' + toplamKarZarar.toFixed(2) + '</div></div>' +
-    '</div>' +
-    '<div style="font-size:11px;color:' + (toplamKarYuzde >= 0 ? 'var(--green)' : 'var(--red)') + ';margin-bottom:10px">' + (toplamKarYuzde >= 0 ? '+' : '') + toplamKarYuzde.toFixed(2) + '% toplam getiri</div>' +
-    '<div style="font-size:9px;color:var(--text2);margin-bottom:4px;letter-spacing:2px">PORTFÖY ISISI</div>' +
-    '<div class="portfolio-isi-bar"><div class="portfolio-isi-fill" style="width:' + isi + '%;background:' + isiRenk + '"></div></div>' +
-    '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-bottom:8px"><span>0</span><span>' + isi.toFixed(0) + '/100</span><span>100</span></div>' +
-    '<div style="font-size:11px;color:var(--text2);line-height:1.6">' + isiYorum + '</div>' +
-    (temettuSkor > 0 ? '<div style="margin-top:8px;font-size:10px;color:var(--gold)">💰 Temettü gücü: ' + temettuSkor + ' puan</div>' : '') +
-    '<div style="margin-top:12px;padding:12px 14px;background:var(--card);border-radius:10px;border:1px solid ' + modRenk + '">' +
-    '<div style="font-size:9px;letter-spacing:2px;color:' + modRenk + ';font-weight:700;margin-bottom:6px">📊 PORTFÖY KARARI</div>' +
-'<div style="font-size:13px;color:' + modRenk + ';font-weight:600;margin-bottom:4px">' + portfoyMesaji + '</div>' +
-'<div style="font-size:11px;color:var(--text2);margin-bottom:4px">→ ' + sonuc.aksiyon + '</div>' +
-    '</div>' +
-    '</div>';
-}
-
-function portfolioHisselerGoster(el) {
-  if (portfolio.length === 0) {
-    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text2);font-size:12px">Henüz hisse eklenmedi.</div>';
-    return;
-  }
-  let html = '';
-  for (const p of portfolio) {
-    const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
-    if (!h) {
-      html += '<div class="portfolio-hisse-kart"><div style="font-family:Bebas Neue,sans-serif;font-size:16px;color:var(--text2)">' + p.ticker + '</div><div style="font-size:10px;color:var(--text3)">Veri bulunamadı</div><button onclick="portfolioHisseSil(\'' + p.ticker + '\')" style="margin-top:6px;padding:3px 8px;background:transparent;border:1px solid rgba(255,61,61,0.3);border-radius:6px;color:#ff6b6b;font-size:10px;cursor:pointer">Çıkar</button></div>';
-      continue;
-    }
-    const maliyet = p.alisFiyati * p.adet;
-    const piyasaDegeri = h.fiyat * p.adet;
-    const karZarar = piyasaDegeri - maliyet;
-    const karYuzde = ((h.fiyat - p.alisFiyati) / p.alisFiyati) * 100;
-    const karRenk = karZarar >= 0 ? 'var(--green)' : 'var(--red)';
-    const durum = durumHesapla(h);
-    const tavsiye = karYuzde > 5 ? 'Bu pozisyon meyvelerini vermeye başladı. Momentum hala güçlü.' :
-      karYuzde < -10 ? 'Fiyat alış maliyetinin altında. Maliyet düşürmek için stratejik bir noktada olabiliriz.' :
-      'Pozisyon izleniyor. ' + durum.etiket + ' sinyali veriyor.';
-    html += '<div class="portfolio-hisse-kart ' + (karZarar >= 0 ? 'kar' : 'zarar') + '">' +
-      '<div style="display:flex;justify-content:space-between;margin-bottom:6px">' +
-      '<div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--gold)">' + p.ticker + '</div>' +
-      (h.temettu ? '<span title="Temettü veriyor — kârını seninle paylaşıyor!" style="font-size:10px;padding:2px 6px;border-radius:100px;background:rgba(201,168,76,0.15);color:var(--gold);cursor:help">💰 DIV</span>' : '') +
-      '</div>' +
-      '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px">' +
-      '<span>Alış: €' + p.alisFiyati.toFixed(2) + ' × ' + p.adet + '</span>' +
-      '<span>Şu an: €' + h.fiyat.toFixed(2) + '</span>' +
-      '</div>' +
-      '<div style="display:flex;justify-content:space-between;margin-bottom:6px">' +
-      '<div style="font-size:13px;font-weight:700;color:var(--text)">€' + piyasaDegeri.toFixed(2) + '</div>' +
-      '<div style="font-size:13px;font-weight:700;color:' + karRenk + '">' + (karZarar >= 0 ? '+' : '') + '€' + karZarar.toFixed(2) + ' (' + (karYuzde >= 0 ? '+' : '') + karYuzde.toFixed(1) + '%)</div>' +
-      '</div>' +
-      '<div style="font-size:10px;color:var(--text2);line-height:1.5;margin-bottom:8px">' + tavsiye + '</div>' +
-      '<button onclick="portfolioHisseSil(\'' + p.ticker + '\')" style="padding:4px 10px;background:transparent;border:1px solid rgba(255,61,61,0.3);border-radius:6px;color:#ff6b6b;font-size:10px;cursor:pointer;font-family:DM Sans,sans-serif">✕ Çıkar</button>' +
-      '</div>';
-  }
-  el.innerHTML = html;
-}
-
-function portfolioEkleGoster(el) {
-  const ticker = seciliHisse ? tickerKisa(seciliHisse.ticker) : '';
-  const fiyat = seciliHisse ? seciliHisse.fiyat.toFixed(2) : '';
-  el.innerHTML = '<div style="font-size:12px;color:var(--text2);margin-bottom:12px">Önce bir hisse seç, sonra buradan portföyüne ekle.</div>' +
-    '<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">Ticker</div><input type="text" id="p-ticker" value="' + ticker + '" placeholder="INGA" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:DM Sans,sans-serif;font-size:13px"></div>' +
-    '<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">Alış Fiyatı (€)</div><input type="number" id="p-fiyat" value="' + fiyat + '" placeholder="0.00" step="0.01" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:DM Sans,sans-serif;font-size:13px"></div>' +
-    '<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">Adet</div><input type="number" id="p-adet" value="1" min="1" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:DM Sans,sans-serif;font-size:13px"></div>' +
-    '<button onclick="portfolioEkleOnayla()" class="portfolio-ekle-btn">💼 Portföye Ekle</button>';
-}
-
-function portfolioEkleOnayla() {
-  const ticker = document.getElementById('p-ticker').value.trim().toUpperCase();
-  const fiyat = parseFloat(document.getElementById('p-fiyat').value);
-  const adet = parseInt(document.getElementById('p-adet').value);
-  if (!ticker || !fiyat || !adet || fiyat <= 0 || adet <= 0) { alert('Lütfen tüm alanları doldur!'); return; }
-  portfolioHisseEkle(ticker, fiyat, adet);
-  document.querySelectorAll('.portfolio-sekme')[1].click();
+function guvenRenkHesapla(skor) {
+  if (skor >= 70) return 'var(--green)';
+  if (skor >= 50) return 'var(--yellow)';
+  return '#ff9800';
 }
 
 // ─── DURUM SİSTEMİ ───
@@ -1111,10 +780,10 @@ const DURUM_TOOLTIP = {
   'TREND BAŞLIYOR': { 1: 'Yön artık yukarı; rüzgar arkamıza geçti, hareket hızlanıyor.', 2: 'Kısa vadeli ortalamalar uzun vadelileri yukarı kesti; yükseliş trendi teyit edildi.', 3: 'Bullish trend konformasyonu. Higher High yapısı için fiyat keşfi süreci başladı.' },
   'İZLENME BÖLGESİ': { 1: 'Karar anı yaklaşıyor; girmek için henüz erken ama gözden kaçırılmamalı.', 2: 'Kritik destek/direnç eşiğinde; kırılım yönü henüz netleşmedi, takip şart.', 3: 'Pivot seviyeleri test ediliyor. Likidite bölgelerindeki fiyat tepkisine göre pozisyon ayarlanmalı.' },
   'MOMENTUM GÜÇLÜ': { 1: 'Motor devrini aldı; hisse çok canlı ve kararlı bir şekilde ilerliyor.', 2: 'Fiyat hareket hızı ortalamaların üzerinde; RSI ve hacim artışı hareketi destekliyor.', 3: 'Pozitif ivmelenme (ROC) yüksek seviyede. Trend gücü (ADX) baskın yükselişi konfirme ediyor.' },
-  'AŞIRI ISINMIŞ': { 1: 'Çok hızlı koştu, nefes nefese kaldı; her an bir düzeltme gelebilir.', 2: 'RSI ve diğer osilatörler ekstrem seviyelerde; kâr satışları için riskli bölgeye girildi.', 3: 'Aşırı alım limitleri zorlanıyor. Ortalamaya dönüş (mean reversion) riski %80+ seviyesinde.' },
-  'ZİRVE BASKISI': { 1: 'Tavanı yumrukluyor ama geçmekte zorlanıyor; satıcılar burada çok güçlü.', 2: 'Önemli bir direnç seviyesinde yoğun satış emirleri var; fiyat yukarı çıkmakta zorlanıyor.', 3: 'Supply bölgesinde doygunluk. Red (rejection) mumları oluşuyor; satış baskısı hacimle artıyor.' },
-  'DÜZELTME RİSKİ': { 1: 'Bir miktar geri çekilme yaşanabilir; kârları realize etmek isteyenler artıyor.', 2: 'Trend içinde sağlıklı bir geri çekilme (pullback) sinyali; desteklerin testi bekleniyor.', 3: 'Teknik realizasyon evresi. Fibonacci seviyelerine doğru kontrollü geri çekilme öngörülüyor.' },
-  'TREND ZAYIFLIYOR': { 1: 'Yükselişin eski tadı yok; yakıt bitmek üzere, dikkatli olma zamanı.', 2: 'Fiyat yükselirken momentumun düşmesi (negatif uyumsuzluk) trendin sonuna gelindiğini gösteriyor.', 3: 'Bearish Divergence aktif. Market Structure bozulma sinyalleri veriyor.' },
+  'AŞIRI ISINMIŞ': { 1: 'Çok hızlı koştu, nefes nefese kaldı; her an bir düzeltme gelebilir.', 2: 'RSI ve diğer osilatörler ekstrem seviyelerde; kâr satışları için riskli bölgeye girildi.', 3: 'Aşırı alım limitleri zorlanıyor. Ortalamaya dönüş riski %80+ seviyesinde.' },
+  'ZİRVE BASKISI': { 1: 'Tavanı yumrukluyor ama geçmekte zorlanıyor; satıcılar burada çok güçlü.', 2: 'Önemli bir direnç seviyesinde yoğun satış emirleri var.', 3: 'Supply bölgesinde doygunluk. Rejection mumları oluşuyor.' },
+  'DÜZELTME RİSKİ': { 1: 'Bir miktar geri çekilme yaşanabilir; kârları realize etmek isteyenler artıyor.', 2: 'Trend içinde sağlıklı bir geri çekilme sinyali; desteklerin testi bekleniyor.', 3: 'Teknik realizasyon evresi. Fibonacci seviyelerine doğru kontrollü geri çekilme öngörülüyor.' },
+  'TREND ZAYIFLIYOR': { 1: 'Yükselişin eski tadı yok; yakıt bitmek üzere, dikkatli olma zamanı.', 2: 'Fiyat yükselirken momentumun düşmesi trendin sonuna gelindiğini gösteriyor.', 3: 'Bearish Divergence aktif. Market Structure bozulma sinyalleri veriyor.' },
   'SAKİN SULAR': { 1: 'Volatilite düşük, risk az. Portföyün defansif kanadı.', 2: 'Düşük volatilite ortamında fiyat dengede. Konsolidasyon devam ediyor.', 3: 'Implied volatility düşük. Pozisyon açmak için momentum teyidi beklenmeli.' }
 };
 
@@ -1143,18 +812,18 @@ const NEDEN = {
     zirve: { 1: 'Hisse çok hızlı koştu. Düzeltme gelebilir.', 2: 'Aşırı alım sınırında. Kâr realizasyonları için riskli bölge.', 3: 'Momentum doygunluk noktasında. Teknik düzeltme ihtimali yüksek.' }
   },
   setup: {
-    aplus: { 1: 'Piyasa dalgalıyken bu hisse hem ucuz hem güçlü hem onaylanmış!', 2: 'Fiyat MA200 üzerinde, RSI sağlıklı, analist iskontosu yüksek. Üçü bir arada nadir.', 3: 'Trend + RSI + analist koridor uyumu maksimum. Birincil giriş sinyali.' },
+    aplus: { 1: 'Piyasa dalgalıyken bu hisse hem ucuz hem güçlü hem onaylanmış!', 2: 'Fiyat MA200 üzerinde, RSI sağlıklı, analist iskontosu yüksek.', 3: 'Trend + RSI + analist koridor uyumu maksimum. Birincil giriş sinyali.' },
     a: { 1: 'Güzel bir hikaye başlıyor ama henüz sahne tam hazır değil.', 2: 'Teknik yapı pozitif ama momentum kırılım onayı vermedi.', 3: 'Yapı pozitif fakat risk-ödül dengesi için konfirmasyon beklenmeli.' }
   },
   aksiyon: {
-    izle: { 1: 'Güzel görünüyor ama tam sinyal yok. Takipte kal, acele etme.', 2: 'Teknik pozitif ama momentum kırılım onayı vermedi. İzlemeye devam.', 3: 'Yapı olumlu ancak entry için teyit sinyali eksik.' },
-    bekle: { 1: 'Şu an net bir giriş yok. Fırsat oluşması beklenmeli.', 2: 'Piyasa koşulları net değil. Daha iyi risk-ödül için bekle.', 3: 'Momentum nötr, trend belirsiz. Pozisyon için yeterli konfirmasyon yok.' },
-    riskli: { 1: 'Yapı zayıf, dikkatli ol. Acele pozisyon alma.', 2: 'Teknik göstergeler olumsuz sinyal veriyor. Sermaye koruması öncelikli.', 3: 'Risk parametreleri kritik seviyede.' }
+    izle: { 1: 'Güzel görünüyor ama tam sinyal yok. Takipte kal.', 2: 'Teknik pozitif ama momentum kırılım onayı vermedi.', 3: 'Yapı olumlu ancak entry için teyit sinyali eksik.' },
+    bekle: { 1: 'Şu an net bir giriş yok. Fırsat oluşması beklenmeli.', 2: 'Piyasa koşulları net değil. Daha iyi risk-ödül için bekle.', 3: 'Momentum nötr, trend belirsiz. Yeterli konfirmasyon yok.' },
+    riskli: { 1: 'Yapı zayıf, dikkatli ol. Acele pozisyon alma.', 2: 'Teknik göstergeler olumsuz sinyal veriyor.', 3: 'Risk parametreleri kritik seviyede.' }
   },
   fiyat: {
-    altin: { 1: 'Bu elmas henüz fark edilmemiş. Uzmanların değer biçtiği yerin çok altında!', 2: 'Cari fiyat analist ortalamalarının altında. Yukarı potansiyel masada.', 3: 'İskontolu fiyatlama. Konsensüs hedef fiyatına göre marj yüksek.' },
+    altin: { 1: 'Bu elmas henüz fark edilmemiş. Uzmanların değer biçtiği yerin çok altında!', 2: 'Cari fiyat analist ortalamalarının altında.', 3: 'İskontolu fiyatlama. Konsensüs hedef fiyatına göre marj yüksek.' },
     normal: { 1: 'Fiyat uzmanların beklediği aralıkta.', 2: 'Analist koridor içinde. Risk-ödül dengeli.', 3: 'Fiyat konsensüs aralığında.' },
-    pahali: { 1: 'Uzmanların öngördüğünden daha pahalı. Dikkatli ol.', 2: 'Fiyat analist hedeflerinin üzerinde. Yeni alım için yüksek risk.', 3: 'Premium fiyatlama. Fundamentaller bu seviyeyi desteklemiyor olabilir.' }
+    pahali: { 1: 'Uzmanların öngördüğünden daha pahalı. Dikkatli ol.', 2: 'Fiyat analist hedeflerinin üzerinde. Yeni alım için yüksek risk.', 3: 'Premium fiyatlama.' }
   }
 };
 
@@ -1170,47 +839,33 @@ function nedenFiyat(h, lv) {
   return NEDEN.fiyat[zone][lv] || '';
 }
 
-// ─── REHBER SÖZLÜK ───
+// ─── REHBER ───
 const REHBER_DATA = {
   semboller: [
-    { icon: '💎', baslik: 'A+ Setup', aciklama: { 1: 'En güçlü yapı. Hem ucuz hem güçlü hem onaylanmış.', 2: 'Fiyat MA200 üzerinde, RSI sağlıklı, analist iskontosu yüksek.', 3: 'Trend + RSI + analist koridor uyumu maksimum. Birincil giriş sinyali.' } },
-    { icon: '⭐', baslik: 'A Setup', aciklama: { 1: 'İyi yapı, izlenebilir. Bir-iki sinyal daha güçlenirse harekete geçilebilir.', 2: 'Teknik yapı pozitif ama momentum onayı eksik.', 3: 'Yapı pozitif fakat risk-ödül için konfirmasyon beklenmeli.' } },
-    { icon: '⚠️', baslik: 'Riskli', aciklama: { 1: 'Dikkatli ol, acele pozisyon alma.', 2: 'Teknik dengeler bozulmuş. Sermaye koruması öncelikli.', 3: 'Risk parametreleri kritik seviyede. Pozisyon azaltılabilir.' } },
-    { icon: '🟢', baslik: 'KIRILIM ↑', aciklama: { 1: '12 haftalık en yüksek fiyat aşıldı. Yukarı kırılım gerçekleşti.', 2: 'Orta vadeli direnç kırıldı. Hacim teyidi trend devamı için kritik.', 3: '12H yüksek direnci kırıldı. Hacim onaylarsa güçlü trend devamı beklenir.' } },
-    { icon: '🔴', baslik: 'DESTEK ↓', aciklama: { 1: '12 haftalık en düşük fiyatın altına inildi.', 2: 'Orta vadeli destek kırıldı. Düşüş devam edebilir.', 3: '12H düşük desteği kırıldı. Momentum negatife dönmüş olabilir.' } },
-    { icon: '💰', baslik: 'DIV — Temettü', aciklama: { 1: 'Bu şirket kârını seninle paylaşıyor. Ekstra nakit akışı sağlar.', 2: 'Düzenli temettü ödemesi, şirketin finansal sağlığının kanıtıdır.', 3: 'Yüksek temettü verimi, piyasa oynaklığına karşı portföyde defansif kalkan oluşturur.' } },
-    { icon: '⚡', baslik: 'Güç Topluyor', aciklama: { 1: 'Fiyat yatay ama hacim birikiyor. Yakında büyük hareket gelebilir.', 2: 'Konsolidasyon fazında. Hacim artışı kırılım habercisi olabilir.', 3: 'Akümülasyon fazı devam ediyor. Kurumsal girişler izleniyor.' } },
-    { icon: '🎯', baslik: 'Alım Bölgesi', aciklama: { 1: 'RSI düşük + fiyat ucuz. Stratejik giriş bölgesi.', 2: 'RSI aşırı satım + analist koridoru altı. Risk-ödül alıcı lehine.', 3: 'RSI dip + analist iskontosu + momentum dönüş sinyali. Optimal giriş.' } },
+    { icon: '💎', baslik: 'A+ Setup', aciklama: { 1: 'En güçlü yapı. Hem ucuz hem güçlü hem onaylanmış.', 2: 'Fiyat MA200 üzerinde, RSI sağlıklı, analist iskontosu yüksek.', 3: 'Trend + RSI + analist koridor uyumu maksimum.' } },
+    { icon: '⭐', baslik: 'A Setup', aciklama: { 1: 'İyi yapı, izlenebilir.', 2: 'Teknik yapı pozitif ama momentum onayı eksik.', 3: 'Yapı pozitif fakat risk-ödül için konfirmasyon beklenmeli.' } },
+    { icon: '💰', baslik: 'DIV — Temettü', aciklama: { 1: 'Bu şirket kârını seninle paylaşıyor.', 2: 'Düzenli temettü ödemesi finansal sağlığın kanıtıdır.', 3: 'Yüksek temettü verimi portföyde defansif kalkan oluşturur.' } },
+    { icon: '🟢', baslik: 'KIRILIM ↑', aciklama: { 1: '12 haftalık en yüksek fiyat aşıldı.', 2: 'Orta vadeli direnç kırıldı. Hacim teyidi kritik.', 3: '12H yüksek direnci kırıldı. Hacim onaylarsa güçlü trend devamı.' } },
+    { icon: '🔴', baslik: 'DESTEK ↓', aciklama: { 1: '12 haftalık en düşük fiyatın altına inildi.', 2: 'Orta vadeli destek kırıldı. Düşüş devam edebilir.', 3: '12H düşük desteği kırıldı. Momentum negatife dönmüş.' } },
+    { icon: '🎯', baslik: 'Alım Bölgesi', aciklama: { 1: 'RSI düşük + fiyat ucuz. Stratejik giriş bölgesi.', 2: 'RSI aşırı satım + analist koridoru altı.', 3: 'RSI dip + analist iskontosu + momentum dönüş sinyali.' } },
   ],
   terimler: [
-    { icon: '📈', baslik: 'Trend', aciklama: { 1: 'Fiyatın genel gidişatı. Yukarı veya aşağı yönlü yolculuk.', 2: 'Fiyatın belirli bir periyotta izlediği yön. MA200 üstü = yükseliş trendi.', 3: 'Higher High/Higher Low yapısı: yükseliş trendi.' } },
-    { icon: '⚡', baslik: 'Momentum', aciklama: { 1: 'Fiyat hareketinin hızı. Hız yüksekse hareket güçlüdür.', 2: 'Fiyat değişim hızını ölçer. RSI ve MACD ile takip edilir.', 3: 'Rate of Change (ROC) ile ölçülen ivme.' } },
-    { icon: '📊', baslik: 'Hacim', aciklama: { 1: 'Yapılan toplam işlem. Hareketin gerçek mi sahte mi olduğunu söyler.', 2: 'İşlem adedi. Hacimli kırılımlar kurumsal girişi işaret eder.', 3: 'Volume Profile analizi. Yüksek hacim bölgeleri güçlü destek/direnç oluşturur.' } },
-    { icon: '🛡️', baslik: 'Destek', aciklama: { 1: 'Fiyatın düşerken tutunduğu bölge.', 2: 'Tarihsel alım bölgesi. Kırılırsa daha aşağı seviyelere düşüş hızlanır.', 3: 'Kurumsal emir bloklarının yoğunlaştığı likidite bölgesi.' } },
-    { icon: '🚧', baslik: 'Direnç', aciklama: { 1: 'Fiyatın yükselirken zorlandığı tavan.', 2: 'Tarihsel satış bölgesi. Kırılırsa yükseliş ivmelenir.', 3: 'Arz yoğunluğunun arttığı seviye. Hacimli kırılım MSB oluşturur.' } },
-    { icon: '🛑', baslik: 'Stop Loss', aciklama: { 1: 'Zararı önceden belirlenen noktada kesen emir.', 2: 'Risk yönetiminin temelidir. Genelde giriş fiyatının %8-12 altına konur.', 3: 'ATR bazlı dinamik stop loss. Volatiliteye göre ayarlanır.' } },
+    { icon: '📈', baslik: 'Trend', aciklama: { 1: 'Fiyatın genel gidişatı.', 2: 'MA200 üstü = yükseliş trendi.', 3: 'Higher High/Higher Low yapısı: yükseliş trendi.' } },
+    { icon: '⚡', baslik: 'Momentum', aciklama: { 1: 'Fiyat hareketinin hızı.', 2: 'RSI ve MACD ile takip edilir.', 3: 'Rate of Change (ROC) ile ölçülen ivme.' } },
+    { icon: '🛡️', baslik: 'Destek', aciklama: { 1: 'Fiyatın düşerken tutunduğu bölge.', 2: 'Tarihsel alım bölgesi. Kırılırsa düşüş hızlanır.', 3: 'Kurumsal emir bloklarının yoğunlaştığı likidite bölgesi.' } },
+    { icon: '🛑', baslik: 'Stop Loss', aciklama: { 1: 'Zararı önceden belirlenen noktada kesen emir.', 2: 'Genelde giriş fiyatının %8-12 altına konur.', 3: 'ATR bazlı dinamik stop loss.' } },
   ],
   gostergeler: [
-    { icon: '📉', baslik: 'RSI', aciklama: { 1: 'Hissenin yorgunluk seviyesi. 30 altı fırsat, 70 üstü dikkat.', 2: 'Momentum osilatörü. 30/70 eşik değerleri kritik.', 3: '14 periyotluk relative strength index. Divergence analizi kritik.' } },
-    { icon: '💰', baslik: 'F/K (P/E)', aciklama: { 1: 'Ödediğin paranın karşılığı. Düşük = ucuz, yüksek = pahalı.', 2: 'Fiyat / kazanç oranı. Sektör ortalamasıyla kıyaslanmalı.', 3: 'Trailing/Forward P/E ayrımı önemli. PEG ratio büyüme potansiyelini daha iyi ölçer.' } },
-    { icon: '🎢', baslik: 'Beta', aciklama: { 1: 'Piyasa sallandığında bu hissenin ne kadar sarsılacağı.', 2: 'Sistematik risk katsayısı. Portföy çeşitlendirmesinde hedge aracı.', 3: 'Piyasaya göre kovaryans.' } },
-    { icon: '📏', baslik: 'MA20', aciklama: { 1: 'Son 20 günlük ortalama fiyat. Kısa vadeli trendin pusulası.', 2: 'Kısa vadeli trend göstergesi.', 3: '20 günlük SMA. MA20 > MA200 golden cross.' } },
-    { icon: '🏔️', baslik: 'MA200', aciklama: { 1: 'Son 200 günlük ortalama. Üstü güvenli, altı riskli bölge.', 2: 'Uzun vadeli trend belirleyici. Kurumsal yatırımcıların ana referansı.', 3: '200 günlük SMA. Mean reversion stratejilerinin temel indikatörü.' } },
-    { icon: '📅', baslik: '12H Yüksek/Düşük', aciklama: { 1: 'Son 3 aydaki en uç fiyatlar. Mikro trendin sınırları.', 2: 'Orta vadeli destek/direnç seviyeleri.', 3: '12 haftalık fiyat kanalı.' } },
+    { icon: '📉', baslik: 'RSI', aciklama: { 1: 'Hissenin yorgunluk seviyesi. 30 altı fırsat, 70 üstü dikkat.', 2: 'Momentum osilatörü. 30/70 eşik değerleri kritik.', 3: '14 periyotluk relative strength index.' } },
+    { icon: '💰', baslik: 'F/K (P/E)', aciklama: { 1: 'Ödediğin paranın karşılığı. Düşük = ucuz.', 2: 'Sektör ortalamasıyla kıyaslanmalı.', 3: 'Trailing/Forward P/E ayrımı önemli.' } },
+    { icon: '🎢', baslik: 'Beta', aciklama: { 1: 'Piyasa sallandığında bu hissenin ne kadar sarsılacağı.', 2: 'Sistematik risk katsayısı.', 3: 'Piyasaya göre kovaryans.' } },
+    { icon: '📏', baslik: 'MA20 / MA200', aciklama: { 1: 'Kısa ve uzun vadeli ortalama fiyat.', 2: 'MA20 > MA200 = golden cross, pozitif sinyal.', 3: 'Mean reversion stratejilerinin temel indikatörü.' } },
   ]
 };
 
-function rehberAc() {
-  const panel = document.getElementById('rehber-panel');
-  panel.classList.toggle('acik');
-  if (panel.classList.contains('acik')) rehberIcerikDoldur('semboller');
-}
+function rehberAc() { const p = document.getElementById('rehber-panel'); p.classList.toggle('acik'); if (p.classList.contains('acik')) rehberIcerikDoldur('semboller'); }
 function rehberKapat() { document.getElementById('rehber-panel').classList.remove('acik'); }
-function rehberSekme(sekme, btn) {
-  document.querySelectorAll('.rehber-sekme').forEach(b => b.classList.remove('aktif'));
-  btn.classList.add('aktif');
-  rehberIcerikDoldur(sekme);
-}
+function rehberSekme(sekme, btn) { document.querySelectorAll('.rehber-sekme').forEach(b => b.classList.remove('aktif')); btn.classList.add('aktif'); rehberIcerikDoldur(sekme); }
 function rehberIcerikDoldur(sekme) {
   const icerik = document.getElementById('rehber-icerik');
   const lv = userLevel;
@@ -1222,10 +877,10 @@ function rehberIcerikDoldur(sekme) {
 
 // ─── PAKET SİSTEMİ ───
 const PAKETLER = [
-  { id: 'temkinli', icon: '💎', baslik: 'Temkinli Yatırımcı', aciklama: 'Düşük beta, dengeli RSI, stabil yapı. Temettü öncelikli.', karar: 'Beta < 1.2 · RSI 35-65 · Temettü bonus', filtre: h => h.beta > 0 && h.beta < 1.2 && h.rsi > 35 && h.rsi < 65, renk: 'rgba(201,168,76,0.3)', glow: 'rgba(201,168,76,0.15)', vc: 'var(--gold)' },
-  { id: 'buyume', icon: '🚀', baslik: 'Büyüme Avcısı', aciklama: 'Trend güçlü, yüksek potansiyel, momentum artıyor.', karar: 'MA200 üstü · RSI 40-70 · %15+ upside', filtre: h => h.fiyat > h.ma200 && h.rsi > 40 && h.rsi < 70 && h.hedef > h.fiyat * 1.15, renk: 'rgba(0,200,83,0.3)', glow: 'rgba(0,200,83,0.1)', vc: 'var(--green)' },
-  { id: 'firsat', icon: '🎯', baslik: 'Fırsat Avcısı', aciklama: 'RSI düşük, analist koridoru altında, dip bölgesi.', karar: 'RSI < 40 · Analist min altı', filtre: h => h.rsi > 0 && h.rsi < 40 && h.hedefMin > 0 && h.fiyat < h.hedefMin, renk: 'rgba(41,121,255,0.3)', glow: 'rgba(41,121,255,0.1)', vc: '#6fa3ff' },
-  { id: 'dikkat', icon: '⚠️', baslik: 'Dikkat Listesi', aciklama: 'RSI yüksek veya destek kırıldı. Riskli bölge.', karar: 'RSI > 70 veya destek kırıldı', filtre: h => h.rsi > 70 || h.destekKirildi, renk: 'rgba(255,61,61,0.3)', glow: 'rgba(255,61,61,0.1)', vc: 'var(--red)' }
+  { id: 'temkinli', icon: '💎', baslik: 'Temkinli Yatırımcı', aciklama: 'Düşük beta, dengeli RSI, temettü öncelikli.', karar: 'Beta < 1.2 · RSI 35-65', filtre: h => h.beta > 0 && h.beta < 1.2 && h.rsi > 35 && h.rsi < 65, renk: 'rgba(201,168,76,0.3)', glow: 'rgba(201,168,76,0.15)', vc: 'var(--gold)' },
+  { id: 'buyume', icon: '🚀', baslik: 'Büyüme Avcısı', aciklama: 'Trend güçlü, yüksek potansiyel.', karar: 'MA200 üstü · RSI 40-70 · %15+ upside', filtre: h => h.fiyat > h.ma200 && h.rsi > 40 && h.rsi < 70 && h.hedef > h.fiyat * 1.15, renk: 'rgba(0,200,83,0.3)', glow: 'rgba(0,200,83,0.1)', vc: 'var(--green)' },
+  { id: 'firsat', icon: '🎯', baslik: 'Fırsat Avcısı', aciklama: 'RSI düşük, analist koridoru altında.', karar: 'RSI < 40 · Analist min altı', filtre: h => h.rsi > 0 && h.rsi < 40 && h.hedefMin > 0 && h.fiyat < h.hedefMin, renk: 'rgba(41,121,255,0.3)', glow: 'rgba(41,121,255,0.1)', vc: '#6fa3ff' },
+  { id: 'dikkat', icon: '⚠️', baslik: 'Dikkat Listesi', aciklama: 'RSI yüksek veya destek kırıldı.', karar: 'RSI > 70 veya destek kırıldı', filtre: h => h.rsi > 70 || h.destekKirildi, renk: 'rgba(255,61,61,0.3)', glow: 'rgba(255,61,61,0.1)', vc: 'var(--red)' }
 ];
 
 let aktifPaket = null;
@@ -1239,8 +894,7 @@ function paketPanelAc() {
   for (let i = 0; i < PAKETLER.length; i++) {
     const p = PAKETLER[i];
     const eslesen = hisseler.filter(p.filtre).sort((a, b) => calculateFinalScore(b) - calculateFinalScore(a));
-    const secili = aktifPaket === p.id;
-    html += '<div onclick="paketModalAc(\'' + p.id + '\')" style="padding:16px;background:' + (secili ? p.glow : 'var(--card2)') + ';border:1px solid ' + (secili ? p.renk : 'var(--border)') + ';border-radius:12px;cursor:pointer;transition:all .2s">';
+    html += '<div onclick="paketModalAc(\'' + p.id + '\')" style="padding:16px;background:var(--card2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor=\'' + p.renk + '\'" onmouseout="this.style.borderColor=\'var(--border)\'">';
     html += '<div style="font-size:18px;margin-bottom:6px">' + p.icon + '</div>';
     html += '<div style="font-family:Bebas Neue,sans-serif;font-size:16px;color:var(--text);margin-bottom:4px">' + p.baslik + '</div>';
     html += '<div style="font-size:10px;color:var(--text2);margin-bottom:6px;line-height:1.5">' + p.aciklama + '</div>';
@@ -1265,19 +919,16 @@ function paketModalAc(paketId) {
     const durum = durumHesapla(h);
     const rsiRenk = rsiRenkHesapla(h.rsi);
     const skor = calculateFinalScore(h);
-    const strateji = getStrategy(h);
     const upside = h.hedef > 0 && h.fiyat > 0 ? ((h.hedef - h.fiyat) / h.fiyat * 100).toFixed(1) : null;
     kartlar += '<div class="paket-hisse-kart" onclick="hisseGriddenSec(\'' + h.ticker + '\');paketModalKapat()">';
-    kartlar += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">';
+    kartlar += '<div style="display:flex;justify-content:space-between;margin-bottom:6px">';
     kartlar += '<div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--gold)">' + tickerKisa(h.ticker) + '</div>';
-    kartlar += '<div style="display:flex;gap:4px;align-items:center">';
-    if (h.temettu) kartlar += '<span title="Temettü veriyor!" style="font-size:9px;padding:1px 5px;border-radius:100px;background:rgba(201,168,76,0.15);color:var(--gold)">💰</span>';
-    kartlar += '<div style="font-size:10px;padding:2px 7px;border-radius:100px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);color:#6fa3ff">' + skor + '</div></div></div>';
+    kartlar += '<div style="display:flex;gap:4px">' + (h.temettu ? '<span style="font-size:9px;padding:1px 5px;border-radius:100px;background:rgba(201,168,76,0.15);color:var(--gold)">💰</span>' : '') + '<span style="font-size:10px;padding:2px 7px;border-radius:100px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);color:#6fa3ff">' + skor + '</span></div>';
+    kartlar += '</div>';
     kartlar += '<div style="font-size:9px;color:var(--text2);margin-bottom:6px">' + (h.sirket.length > 18 ? h.sirket.substring(0, 18) + '…' : h.sirket) + '</div>';
     kartlar += '<div style="font-size:16px;font-weight:700;color:var(--text)">€' + h.fiyat.toFixed(2) + '</div>';
     kartlar += '<div style="font-size:10px;color:' + rsiRenk + ';font-weight:700;margin:4px 0">RSI ' + h.rsi.toFixed(0) + (rsiEtiket(h.rsi) ? ' · ' + rsiEtiket(h.rsi) : '') + '</div>';
-    kartlar += '<div style="font-size:9px;padding:2px 7px;border-radius:6px;background:rgba(255,255,255,0.05);display:inline-block;margin-top:3px;color:var(--text2)">' + durum.etiket + '</div>';
-    kartlar += '<div style="font-size:9px;color:var(--text3);margin-top:4px">' + strateji + '</div>';
+    kartlar += '<div style="font-size:9px;color:var(--text2)">' + durum.etiket + '</div>';
     if (upside) kartlar += '<div style="font-size:10px;color:' + (parseFloat(upside) > 0 ? 'var(--green)' : 'var(--red)') + ';margin-top:4px;font-weight:600">+%' + upside + '</div>';
     kartlar += '</div>';
   });
@@ -1294,8 +945,6 @@ const SENARYOLAR = [
   { icon: '💥', baslik: 'Patlamaya Yakın', aciklama: 'RSI güçleniyor, trend yukarı. Kırılım gelebilir.', sinyaller: ['🚀 Momentum artıyor', '📈 MA200 üstü', '💥 Direnç yakın'], filtre: h => h.rsi > 50 && h.rsi < 68 && h.fiyat > h.ma200 && !h.direncKirildi }
 ];
 
-let aktifSenaryo = null;
-
 function senaryoPanelAc() {
   const panel = document.getElementById('senaryo-panel');
   const grid = document.getElementById('senaryo-grid');
@@ -1305,10 +954,7 @@ function senaryoPanelAc() {
   for (let i = 0; i < SENARYOLAR.length; i++) {
     const s = SENARYOLAR[i];
     const eslesen = hisseler.filter(s.filtre);
-    let sinyalHtml = '';
-    for (let j = 0; j < s.sinyaller.length; j++) {
-      sinyalHtml += '<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);color:#6fa3ff">' + s.sinyaller[j] + '</span>';
-    }
+    let sinyalHtml = s.sinyaller.map(sin => '<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);color:#6fa3ff">' + sin + '</span>').join('');
     html += '<div onclick="senaryoModalAc(' + i + ')" style="padding:16px;background:var(--card2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor=\'rgba(41,121,255,0.4)\'" onmouseout="this.style.borderColor=\'var(--border)\'">';
     html += '<div style="font-size:24px;margin-bottom:8px">' + s.icon + '</div>';
     html += '<div style="font-family:Bebas Neue,sans-serif;font-size:16px;color:var(--text);margin-bottom:6px">' + s.baslik + '</div>';
@@ -1327,11 +973,7 @@ function senaryoModalAc(idx) {
   const eslesen = hisseler.filter(s.filtre).sort((a, b) => calculateFinalScore(b) - calculateFinalScore(a));
   document.getElementById('senaryo-modal-baslik-text').textContent = s.icon + ' ' + s.baslik;
   document.getElementById('senaryo-modal-aciklama').textContent = s.aciklama;
-  let sinyalHtml = '';
-  for (let j = 0; j < s.sinyaller.length; j++) {
-    sinyalHtml += '<span style="font-size:10px;padding:4px 10px;border-radius:100px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);color:#6fa3ff">' + s.sinyaller[j] + '</span>';
-  }
-  document.getElementById('senaryo-modal-sinyaller').innerHTML = sinyalHtml;
+  document.getElementById('senaryo-modal-sinyaller').innerHTML = s.sinyaller.map(sin => '<span style="font-size:10px;padding:4px 10px;border-radius:100px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);color:#6fa3ff">' + sin + '</span>').join('');
   let kartlar = '';
   eslesen.forEach(h => {
     const durum = durumHesapla(h);
@@ -1339,14 +981,12 @@ function senaryoModalAc(idx) {
     const skor = calculateFinalScore(h);
     const upside = h.hedef > 0 && h.fiyat > 0 ? ((h.hedef - h.fiyat) / h.fiyat * 100).toFixed(1) : null;
     kartlar += '<div class="senaryo-hisse-kart" onclick="hisseGriddenSec(\'' + h.ticker + '\');senaryoModalKapat()">';
-    kartlar += '<div style="display:flex;justify-content:space-between;margin-bottom:6px">';
-    kartlar += '<div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--gold)">' + tickerKisa(h.ticker) + '</div>';
-    kartlar += '<div style="display:flex;gap:4px">' + (h.temettu ? '<span style="font-size:9px;padding:1px 5px;border-radius:100px;background:rgba(201,168,76,0.15);color:var(--gold)">💰</span>' : '') + '<div style="font-size:10px;padding:2px 7px;border-radius:100px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);color:#6fa3ff">' + skor + '</div></div>';
-    kartlar += '</div>';
+    kartlar += '<div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--gold)">' + tickerKisa(h.ticker) + '</div>';
+    kartlar += '<span style="font-size:10px;padding:2px 7px;border-radius:100px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);color:#6fa3ff">' + skor + '</span></div>';
     kartlar += '<div style="font-size:9px;color:var(--text2);margin-bottom:6px">' + (h.sirket.length > 18 ? h.sirket.substring(0, 18) + '…' : h.sirket) + '</div>';
     kartlar += '<div style="font-size:16px;font-weight:700;color:var(--text)">€' + h.fiyat.toFixed(2) + '</div>';
     kartlar += '<div style="font-size:10px;color:' + rsiRenk + ';font-weight:700;margin:4px 0">RSI ' + h.rsi.toFixed(0) + (rsiEtiket(h.rsi) ? ' · ' + rsiEtiket(h.rsi) : '') + '</div>';
-    kartlar += '<div style="font-size:9px;padding:2px 7px;border-radius:6px;background:rgba(255,255,255,0.05);display:inline-block;margin-top:3px;color:var(--text2)">' + durum.etiket + '</div>';
+    kartlar += '<div style="font-size:9px;color:var(--text2)">' + durum.etiket + '</div>';
     if (upside) kartlar += '<div style="font-size:10px;color:' + (parseFloat(upside) > 0 ? 'var(--green)' : 'var(--red)') + ';margin-top:4px;font-weight:600">+%' + upside + '</div>';
     kartlar += '</div>';
   });
@@ -1355,6 +995,205 @@ function senaryoModalAc(idx) {
 }
 
 function senaryoModalKapat() { document.getElementById('senaryo-overlay').classList.remove('acik'); }
+
+// ─── PORTFÖY SİSTEMİ ───
+let portfolio = JSON.parse(localStorage.getItem('humeyra_portfolio') || '[]');
+let aktifPortfolioSekme = 'ozet';
+
+function portfolioAc() { const p = document.getElementById('portfolio-panel'); p.classList.toggle('acik'); if (p.classList.contains('acik')) portfolioIcerikGuncelle(); }
+function portfolioKapat() { document.getElementById('portfolio-panel').classList.remove('acik'); }
+function portfolioSekme(sekme, btn) { aktifPortfolioSekme = sekme; document.querySelectorAll('.portfolio-sekme').forEach(b => b.classList.remove('aktif')); btn.classList.add('aktif'); portfolioIcerikGuncelle(); }
+function portfolioKaydet() { localStorage.setItem('humeyra_portfolio', JSON.stringify(portfolio)); portfolioAlarmKontrol(); }
+
+function portfolioHisseEkle(ticker, fiyat, adet) {
+  const mevcut = portfolio.findIndex(p => p.ticker === ticker);
+  if (mevcut >= 0) portfolio[mevcut].adet += adet;
+  else portfolio.push({ ticker, alisFiyati: fiyat, adet, eklenmeTarihi: new Date().toISOString().split('T')[0] });
+  portfolioKaydet();
+  portfolioIcerikGuncelle();
+}
+
+function portfolioHisseSil(ticker) { portfolio = portfolio.filter(p => p.ticker !== ticker); portfolioKaydet(); portfolioIcerikGuncelle(); }
+
+function portfolioIsiHesapla() {
+  if (portfolio.length === 0) return 50;
+  let toplamSkor = 0, toplamKarZarar = 0, toplamMaliyet = 0;
+  for (const p of portfolio) {
+    const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
+    if (!h) continue;
+    toplamKarZarar += (h.fiyat - p.alisFiyati) * p.adet;
+    toplamMaliyet += p.alisFiyati * p.adet;
+    toplamSkor += calculateFinalScore(h);
+  }
+  const ortalamaFinalSkor = portfolio.length > 0 ? toplamSkor / portfolio.length : 50;
+  const karZararYuzde = toplamMaliyet > 0 ? (toplamKarZarar / toplamMaliyet) * 100 : 0;
+  return clamp((karZararYuzde * 0.5) + (ortalamaFinalSkor * 0.5), 0, 100);
+}
+
+function portfoyAnalizEt({ isi, toplamKarYuzde, trendSkor, riskSkor, temettuSkor }) {
+  let skor = 50;
+  if (isi <= 30) skor += 5;
+  if (isi >= 80) skor -= 10;
+  if (toplamKarYuzde > 5) skor += 10;
+  if (toplamKarYuzde < -5) skor -= 15;
+  if (trendSkor >= 7) skor += 15;
+  if (trendSkor <= 3) skor -= 10;
+  skor -= riskSkor * 2;
+  if (temettuSkor >= 30) skor += 5;
+  skor = Math.max(0, Math.min(100, skor));
+  let durum, aksiyon, mod;
+  if (skor >= 75) { durum = 'FIRSAT'; aksiyon = 'Alım yapılabilir'; mod = 'ATAK'; }
+  else if (skor >= 55) { durum = 'DENGELİ'; aksiyon = 'İzle / küçük alım'; mod = 'NORMAL'; }
+  else if (skor >= 35) { durum = 'ZAYIF'; aksiyon = 'Bekle'; mod = 'KORUMA'; }
+  else { durum = 'RİSKLİ'; aksiyon = 'Pozisyon azalt'; mod = 'DEFANSİF'; }
+  return { skor, durum, aksiyon, mod };
+}
+
+function guvenLabelPortfoy(skor) {
+  if (skor >= 70) return 'yüksek';
+  if (skor >= 50) return 'orta';
+  return 'düşük';
+}
+
+function portfoyMesaj(sonuc) {
+  if (sonuc.mod === 'ATAK') return '🟢 Fırsat var, piyasa destekliyor';
+  if (sonuc.mod === 'KORUMA') return '❄️ Piyasa zayıf, satış baskısı var';
+  if (sonuc.mod === 'DEFANSİF') return '🔴 Risk yüksek, kayıplar artıyor';
+  return '🟡 Piyasa kararsız, net sinyal yok';
+}
+
+function kararRenk(mod) {
+  if (mod === 'ATAK') return 'var(--green)';
+  if (mod === 'NORMAL') return 'var(--gold)';
+  if (mod === 'KORUMA') return '#ff9800';
+  return 'var(--red)';
+}
+
+function notifyUser(type) {
+  const btn = document.getElementById('portfolio-btn');
+  const mesajlar = {
+    isinma: '🚨 Portföyün çok ısındı! Kâr realizasyonu için kontrol et.',
+    soguma: '❄️ Portföyün soğuyor. Stratejini gözden geçir.',
+    hisseBuyukZarar: '⚠️ Bir hissende ciddi kayıp var. Stratejik karar verme zamanı.',
+    portfoyBuyukZarar: '📉 Portföyünde genel kayıp artıyor.',
+    temettuGucu: '💰 Portföyünde güçlü temettü veren hisseler var.',
+    temettuZayif: '⚡ Portföyünde temettü veren hisse yok.'
+  };
+  if (btn && (type === 'isinma' || type === 'hisseBuyukZarar' || type === 'portfoyBuyukZarar')) { btn.classList.add('alarm'); setTimeout(() => btn.classList.remove('alarm'), 10000); }
+  return mesajlar[type] || '';
+}
+
+function portfolioAlarmKontrol() {
+  if (portfolio.length === 0) return [];
+  const isi = portfolioIsiHesapla();
+  let alarmlar = [];
+  if (isi >= 80) alarmlar.push(notifyUser('isinma'));
+  if (isi <= 40) alarmlar.push(notifyUser('soguma'));
+  let toplamMaliyet = 0, toplamDeger = 0, temettuSkor = 0;
+  for (const p of portfolio) {
+    const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
+    if (!h) continue;
+    const maliyet = p.alisFiyati * p.adet;
+    const deger = h.fiyat * p.adet;
+    toplamMaliyet += maliyet; toplamDeger += deger;
+    if (h.temettu) temettuSkor += 15;
+    const karYuzde = ((h.fiyat - p.alisFiyati) / p.alisFiyati) * 100;
+    if (karYuzde <= -10) alarmlar.push(notifyUser('hisseBuyukZarar'));
+  }
+  const toplamKarYuzde = toplamMaliyet > 0 ? ((toplamDeger - toplamMaliyet) / toplamMaliyet) * 100 : 0;
+  if (toplamKarYuzde <= -5) alarmlar.push(notifyUser('portfoyBuyukZarar'));
+  if (temettuSkor >= 30) alarmlar.push(notifyUser('temettuGucu'));
+  if (temettuSkor === 0 && portfolio.length > 0) alarmlar.push(notifyUser('temettuZayif'));
+  return alarmlar.filter(Boolean);
+}
+
+function portfolioIcerikGuncelle() {
+  const el = document.getElementById('portfolio-icerik');
+  if (!el) return;
+  if (aktifPortfolioSekme === 'ozet') portfolioOzetGoster(el);
+  else if (aktifPortfolioSekme === 'hisseler') portfolioHisselerGoster(el);
+  else portfolioEkleGoster(el);
+}
+
+function portfolioOzetGoster(el) {
+  if (portfolio.length === 0) { el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text2)"><div style="font-size:32px;margin-bottom:12px">💼</div><div style="font-size:13px">Henüz portföyünde hisse yok.</div><div style="font-size:11px;margin-top:8px;color:var(--text3)">Hisse seç → VERİ ÇEK → Portföye Ekle</div></div>'; return; }
+  let toplamMaliyet = 0, toplamDeger = 0, temettuSkor = 0;
+  for (const p of portfolio) {
+    const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
+    if (!h) continue;
+    toplamMaliyet += p.alisFiyati * p.adet;
+    toplamDeger += h.fiyat * p.adet;
+    if (h.temettu) temettuSkor += 15;
+  }
+  const toplamKarZarar = toplamDeger - toplamMaliyet;
+  const toplamKarYuzde = toplamMaliyet > 0 ? (toplamKarZarar / toplamMaliyet) * 100 : 0;
+  const isi = portfolioIsiHesapla();
+  const isiRenk = isi >= 70 ? 'var(--green)' : isi >= 40 ? 'var(--yellow)' : 'var(--red)';
+  const portfoyTrendSkor = portfolio.length > 0 ? portfolio.reduce((acc, p) => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); if (!h) return acc; return acc + (h.ma20 > h.ma200 ? 7 : 3); }, 0) / portfolio.length : 5;
+  const portfoyRiskSkor = portfolio.filter(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); return h && h.beta > 1.5; }).length;
+  const sonuc = portfoyAnalizEt({ isi, toplamKarYuzde, trendSkor: portfoyTrendSkor, riskSkor: portfoyRiskSkor, temettuSkor });
+  const modRenk = kararRenk(sonuc.mod);
+  const portfoyMesaji = portfoyMesaj(sonuc);
+  const alarmlar = portfolioAlarmKontrol();
+  let alarmHtml = '';
+  if (alarmlar && alarmlar.length > 0) alarmHtml = '<div style="background:rgba(255,61,61,0.1);border:1px solid rgba(255,61,61,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:#ff6b6b">' + alarmlar[0] + '</div>';
+  el.innerHTML = alarmHtml +
+    '<div class="portfolio-ozet">' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:8px"><div><div style="font-size:10px;color:var(--text2);margin-bottom:2px">TOPLAM DEĞER</div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--text)">€' + toplamDeger.toFixed(2) + '</div></div>' +
+    '<div style="text-align:right"><div style="font-size:10px;color:var(--text2);margin-bottom:2px">KAR/ZARAR</div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:' + (toplamKarZarar >= 0 ? 'var(--green)' : 'var(--red)') + '">' + (toplamKarZarar >= 0 ? '+' : '') + '€' + toplamKarZarar.toFixed(2) + '</div></div></div>' +
+    '<div style="font-size:11px;color:' + (toplamKarYuzde >= 0 ? 'var(--green)' : 'var(--red)') + ';margin-bottom:10px">' + (toplamKarYuzde >= 0 ? '+' : '') + toplamKarYuzde.toFixed(2) + '% toplam getiri</div>' +
+    '<div style="font-size:9px;color:var(--text2);margin-bottom:4px;letter-spacing:2px">PORTFÖY ISISI</div>' +
+    '<div class="portfolio-isi-bar"><div class="portfolio-isi-fill" style="width:' + isi + '%;background:' + isiRenk + '"></div></div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-bottom:8px"><span>0</span><span>' + isi.toFixed(0) + '/100</span><span>100</span></div>' +
+    '<div style="margin-top:12px;padding:12px 14px;background:var(--card);border-radius:10px;border:1px solid ' + modRenk + '">' +
+    '<div style="font-size:9px;letter-spacing:2px;color:' + modRenk + ';font-weight:700;margin-bottom:6px">📊 PORTFÖY KARARI</div>' +
+    '<div style="font-size:13px;color:' + modRenk + ';font-weight:600;margin-bottom:4px">' + portfoyMesaji + '</div>' +
+    '<div style="font-size:11px;color:var(--text2);margin-bottom:4px">→ ' + sonuc.aksiyon + '</div>' +
+    '<div style="font-size:10px;color:var(--text3)">Güven: %' + sonuc.skor + ' (' + guvenLabelPortfoy(sonuc.skor) + ')</div>' +
+    (temettuSkor > 0 ? '<div style="margin-top:6px;font-size:10px;color:var(--gold)">💰 Temettü gücü: ' + temettuSkor + ' puan</div>' : '') +
+    '</div></div>';
+}
+
+function portfolioHisselerGoster(el) {
+  if (portfolio.length === 0) { el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text2);font-size:12px">Henüz hisse eklenmedi.</div>'; return; }
+  let html = '';
+  for (const p of portfolio) {
+    const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
+    if (!h) { html += '<div class="portfolio-hisse-kart"><div style="font-family:Bebas Neue,sans-serif;font-size:16px;color:var(--text2)">' + p.ticker + '</div><div style="font-size:10px;color:var(--text3)">Veri bulunamadı</div><button onclick="portfolioHisseSil(\'' + p.ticker + '\')" style="margin-top:6px;padding:3px 8px;background:transparent;border:1px solid rgba(255,61,61,0.3);border-radius:6px;color:#ff6b6b;font-size:10px;cursor:pointer">Çıkar</button></div>'; continue; }
+    const karZarar = (h.fiyat - p.alisFiyati) * p.adet;
+    const karYuzde = ((h.fiyat - p.alisFiyati) / p.alisFiyati) * 100;
+    const karRenk = karZarar >= 0 ? 'var(--green)' : 'var(--red)';
+    const durum = durumHesapla(h);
+    const tavsiye = karYuzde > 5 ? 'Bu pozisyon meyvelerini vermeye başladı. Momentum hala güçlü.' : karYuzde < -10 ? 'Fiyat alış maliyetinin altında. Maliyet düşürmek için stratejik bir noktada olabiliriz.' : 'Pozisyon izleniyor. ' + durum.etiket + ' sinyali veriyor.';
+    html += '<div class="portfolio-hisse-kart ' + (karZarar >= 0 ? 'kar' : 'zarar') + '">';
+    html += '<div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--gold)">' + p.ticker + '</div>' + (h.temettu ? '<span style="font-size:10px;padding:2px 6px;border-radius:100px;background:rgba(201,168,76,0.15);color:var(--gold);cursor:help" title="Temettü veriyor!">💰 DIV</span>' : '') + '</div>';
+    html += '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px"><span>Alış: €' + p.alisFiyati.toFixed(2) + ' × ' + p.adet + '</span><span>Şu an: €' + h.fiyat.toFixed(2) + '</span></div>';
+    html += '<div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-size:13px;font-weight:700;color:var(--text)">€' + (h.fiyat * p.adet).toFixed(2) + '</div><div style="font-size:13px;font-weight:700;color:' + karRenk + '">' + (karZarar >= 0 ? '+' : '') + '€' + karZarar.toFixed(2) + ' (' + (karYuzde >= 0 ? '+' : '') + karYuzde.toFixed(1) + '%)</div></div>';
+    html += '<div style="font-size:10px;color:var(--text2);line-height:1.5;margin-bottom:8px">' + tavsiye + '</div>';
+    html += '<button onclick="portfolioHisseSil(\'' + p.ticker + '\')" style="padding:4px 10px;background:transparent;border:1px solid rgba(255,61,61,0.3);border-radius:6px;color:#ff6b6b;font-size:10px;cursor:pointer;font-family:DM Sans,sans-serif">✕ Çıkar</button>';
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function portfolioEkleGoster(el) {
+  const ticker = seciliHisse ? tickerKisa(seciliHisse.ticker) : '';
+  const fiyat = seciliHisse ? seciliHisse.fiyat.toFixed(2) : '';
+  el.innerHTML = '<div style="font-size:12px;color:var(--text2);margin-bottom:12px">Önce bir hisse seç, sonra buradan portföyüne ekle.</div>' +
+    '<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">Ticker</div><input type="text" id="p-ticker" value="' + ticker + '" placeholder="INGA" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:DM Sans,sans-serif;font-size:13px"></div>' +
+    '<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">Alış Fiyatı (€)</div><input type="number" id="p-fiyat" value="' + fiyat + '" placeholder="0.00" step="0.01" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:DM Sans,sans-serif;font-size:13px"></div>' +
+    '<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">Adet</div><input type="number" id="p-adet" value="1" min="1" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:DM Sans,sans-serif;font-size:13px"></div>' +
+    '<button onclick="portfolioEkleOnayla()" class="portfolio-ekle-btn">💼 Portföye Ekle</button>';
+}
+
+function portfolioEkleOnayla() {
+  const ticker = document.getElementById('p-ticker').value.trim().toUpperCase();
+  const fiyat = parseFloat(document.getElementById('p-fiyat').value);
+  const adet = parseInt(document.getElementById('p-adet').value);
+  if (!ticker || !fiyat || !adet || fiyat <= 0 || adet <= 0) { alert('Lütfen tüm alanları doldur!'); return; }
+  portfolioHisseEkle(ticker, fiyat, adet);
+  document.querySelectorAll('.portfolio-sekme')[1].click();
+}
 
 // ─── AKSİYON MOTORU ───
 let kartAksiyonlar = JSON.parse(localStorage.getItem('humeyra_aksiyonlar') || '{}');
@@ -1391,7 +1230,6 @@ function aksiyonButonlari(ticker, defaultTip, neden, lv) {
   return html;
 }
 
-// ─── MİKRO AKSİYON ───
 function mikroAksiyonHesapla(h, trendSkor, momSkor, hacimSkor) {
   if (h.direncKirildi) {
     if (trendSkor > 6 && hacimSkor > 6) return { etiket: '📈 HACİMLİ KOPUŞ', renk: 'pozitif', aciklama: 'Kırılım güçlü hacimle geldi.' };
@@ -1406,7 +1244,6 @@ function mikroAksiyonHesapla(h, trendSkor, momSkor, hacimSkor) {
   return { etiket: durum.etiket, renk: durum.renk, aciklama: durum.aciklama };
 }
 
-// ─── SETUP SEVİYESİ ───
 function setupSeviyesi(h) {
   let p = 0;
   if (h.fiyat > 0 && h.ma200 > 0 && h.fiyat > h.ma200) p += 2;
@@ -1427,17 +1264,30 @@ function setupSeviyesi(h) {
   return 'normal';
 }
 
-// ─── MİNİ BARLAR ───
+function calculateScore(h) {
+  const momentum = clamp(((100 - h.rsi) + clamp(h.degisim * 10, -20, 20)) / 2, 0, 100);
+  const trend = h.ma20 > 0 && h.ma200 > 0 ? clamp(((h.ma20 - h.ma200) / h.ma200) * 100 + 50, 0, 100) : 50;
+  const volume = clamp(Math.abs(h.degisim) * 10, 0, 100);
+  let score = momentum * 0.4 + trend * 0.4 + volume * 0.2;
+  if (h.direncKirildi) score += 10;
+  if (h.destekKirildi) score -= 5;
+  if (h.hedef > 0 && h.fiyat > 0 && h.fiyat < h.hedef) score += 5;
+  return clamp(Math.round(score), 0, 100);
+}
+
+function calculateFinalScore(h) {
+  return clamp(calculateScore(h) + (h.temettu ? 15 : 0), 0, 100);
+}
+
 function miniBarHesapla(h) {
   const GRI = 'linear-gradient(90deg,#1a1a1a,#e0e0e0)';
-  let trendPct = 50, trendV = '—', trendVC = '#666', trendTip = '';
+  let trendPct = 50, trendVC = '#666', trendTip = '';
   if (h.fiyat > 0 && h.ma200 > 0) {
     const r = h.fiyat / h.ma200;
     trendPct = Math.min(95, Math.max(10, Math.round((r - 0.7) / 0.6 * 100)));
-    if (r > 1.05) { trendV = '↑'; trendVC = '#e0e0e0'; trendTip = 'Trend güçlü — fiyat uzun vadeli ortalamanın belirgin üzerinde.'; }
-    else if (r > 1) { trendV = '↑'; trendVC = '#aaaaaa'; trendTip = 'Trend pozitif ama ortalamaya yakın, dikkat.'; }
-    else if (r > 0.97) { trendV = '→'; trendVC = '#666666'; trendTip = 'Trend zayıf — fiyat kritik ortalamanın altında.'; }
-    else { trendV = '↓'; trendVC = '#444444'; trendTip = 'Trend olumsuz — fiyat uzun vadeli ortalamanın belirgin altında.'; }
+    if (r > 1.05) { trendVC = '#e0e0e0'; trendTip = 'Trend güçlü — fiyat uzun vadeli ortalamanın belirgin üzerinde.'; }
+    else if (r > 1) { trendVC = '#aaaaaa'; trendTip = 'Trend pozitif ama ortalamaya yakın.'; }
+    else { trendVC = '#444444'; trendTip = 'Trend olumsuz — fiyat uzun vadeli ortalamanın altında.'; }
   }
   const trendSkor = Math.round(trendPct / 10);
   const rsiG = Math.min(95, h.rsi);
@@ -1451,11 +1301,10 @@ function miniBarHesapla(h) {
   const hacimPct = Math.min(92, Math.max(12, Math.abs(h.degisim) * 8 + 30));
   let hacimVC = '#555', hacimTip = '';
   if (Math.abs(h.degisim) > 3) { hacimVC = '#e0e0e0'; hacimTip = 'Hacim güçlü — hareket destekleniyor.'; }
-  else if (Math.abs(h.degisim) > 1) { hacimVC = '#888888'; hacimTip = 'Hacim orta — güçlü katılım yok.'; }
+  else if (Math.abs(h.degisim) > 1) { hacimVC = '#888888'; hacimTip = 'Hacim orta.'; }
   else { hacimTip = 'Hacim düşük — hareket güvenilir olmayabilir.'; }
   const hacimSkor = Math.round(hacimPct / 10);
-  const gucluSinyal = trendSkor > 6 && hacimSkor > 6;
-  return { trendPct, trendG: GRI, trendV, trendVC, trendTip, trendSkor, rsiG, momG: GRI, momVC, momTip, momSkor, hacimPct, hacimG: GRI, hacimVC, hacimTip, hacimSkor, gucluSinyal };
+  return { trendPct, trendG: GRI, trendVC, trendTip, trendSkor, rsiG, momG: GRI, momVC, momTip, momSkor, hacimPct, hacimG: GRI, hacimVC, hacimTip, hacimSkor };
 }
 
 function miniBarlarHtml(bars) {
@@ -1463,7 +1312,6 @@ function miniBarlarHtml(bars) {
   return '<div class="mini-bars">' + bar('Trend', bars.trendPct, bars.trendG, bars.trendTip, bars.trendSkor, bars.trendVC) + bar('Momentum', bars.rsiG, bars.momG, bars.momTip, bars.momSkor, bars.momVC) + bar('Hacim', bars.hacimPct, bars.hacimG, bars.hacimTip, bars.hacimSkor, bars.hacimVC) + '</div>';
 }
 
-// ─── MİNİ SİNYALLER ───
 function miniSinyalHesapla(h) {
   let trendIkon = '🟡', trendAciklama = 'Trend nötr';
   if (h.ma20 > 0 && h.ma200 > 0) {
@@ -1481,7 +1329,6 @@ function miniSinyalHesapla(h) {
   return { trendIkon, trendAciklama, momIkon, momAciklama, hacimIkon, hacimAciklama };
 }
 
-// ─── ZAMAN ETİKETİ ───
 function zamanEtiketi() {
   const s = new Date().getHours();
   const gun = new Date().getDay();
@@ -1492,7 +1339,6 @@ function zamanEtiketi() {
   return '🔔 Kapanışa yakın';
 }
 
-// ─── SEKME ───
 let aktifSekme = 'aksiyon';
 let favoriler = JSON.parse(localStorage.getItem('humeyra_favoriler') || '[]');
 
@@ -1513,18 +1359,12 @@ function favoriToggle(ticker) {
 
 // ─── SHEETS ───
 const SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUQy_GNOXQTJLcSmekXQ-SuR_aQ0Smx4jypXIorUQ5p7quYVIAF2LKM8INQXp6BCgwrTMgCZjwTuHb/pub?output=csv';
-const COL = { sirket:0,ticker:1,fiyat:2,fk:3,yuksek:4,dusuk:5,degisim:6,ma20:7,ma200:8,sektor:10,hedef:15,beta:16,rsi:17,hedefMin:18,hedefMax:19,not:20,kazancTarihi:23,high12:24,low12:25,direncKirildi:26,destekKirildi:27,temettu:22 };
+const COL = { sirket:0,ticker:1,fiyat:2,fk:3,yuksek:4,dusuk:5,degisim:6,ma20:7,ma200:8,sektor:10,hedef:15,beta:16,rsi:17,hedefMin:18,hedefMax:19,not:20,temettu:22,kazancTarihi:23,high12:24,low12:25,direncKirildi:26,destekKirildi:27 };
 const VERI_BASLANGIC_SATIRI = 5;
 const SEKTOR_MAP = { 'Gıda':'gida','Çelik':'sanayi','Finans':'finans','Havacılık':'havacilik','Bankacılık':'finans' };
 const S = {};
 
-function rsiSinif(rsi) {
-  if (rsi <= 0) return '';
-  if (rsi < 35) return 'rsi-firsat';
-  if (rsi > 88) return 'rsi-risk';
-  if (rsi >= 70) return 'rsi-dikkat';
-  return '';
-}
+function rsiSinif(rsi) { if (rsi <= 0) return ''; if (rsi < 35) return 'rsi-firsat'; if (rsi > 88) return 'rsi-risk'; if (rsi >= 70) return 'rsi-dikkat'; return ''; }
 function haberLink(t, s) { return 'https://www.google.com/search?q=' + encodeURIComponent(s + ' ' + t) + '&tbm=nws'; }
 function tarihParcala(t) { if (!t) return null; const p = t.split('/'); if (p.length !== 3) return null; return new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0])); }
 function tickerKisa(t) { return t ? t.split(':').pop() : ''; }
@@ -1557,17 +1397,17 @@ async function sheetsYukle() {
       const h = {
         sirket: temizle(cols[COL.sirket]), ticker: temizle(cols[COL.ticker]),
         fiyat: sayi(cols[COL.fiyat]), fk: sayi(cols[COL.fk]),
-        yuksek: sayi(cols[COL.yuksek]), dusuk: sayi(cols[COL.dusuk]),
         degisim: sayi(cols[COL.degisim]), ma20: sayi(cols[COL.ma20]),
         ma200: sayi(cols[COL.ma200]), sektor: temizle(cols[COL.sektor]),
         hedef: sayi(cols[COL.hedef]), beta: sayi(cols[COL.beta]),
         rsi: Math.min(95, sayi(cols[COL.rsi])),
         hedefMin: sayi(cols[COL.hedefMin]), hedefMax: sayi(cols[COL.hedefMax]),
-        not: temizle(cols[COL.not]), kazancTarihi: temizle(cols[COL.kazancTarihi]),
+        not: temizle(cols[COL.not]),
+        temettu: bool(cols[COL.temettu]),
+        kazancTarihi: temizle(cols[COL.kazancTarihi]),
         high12: sayi(cols[COL.high12]), low12: sayi(cols[COL.low12]),
         direncKirildi: bool(cols[COL.direncKirildi]),
-        destekKirildi: bool(cols[COL.destekKirildi]),
-        temettu: bool(cols[COL.temettu])
+        destekKirildi: bool(cols[COL.destekKirildi])
       };
       if (h.ticker && h.fiyat > 0) hisseler.push(h);
     }
@@ -1577,11 +1417,9 @@ async function sheetsYukle() {
       akimOzetGuncelle();
       karsilamaHisseleriDoldur();
       karsilamaGoster();
-const alarmSonuc = portfolioAlarmKontrol();
-if (alarmSonuc && alarmSonuc.length > 0) {
-  document.getElementById('portfolio-btn').classList.add('alarm');
-}
-window.scrollTo(0, 0);
+      const alarmSonuc = portfolioAlarmKontrol();
+      if (alarmSonuc && alarmSonuc.length > 0) document.getElementById('portfolio-btn').classList.add('alarm');
+      window.scrollTo(0, 0);
     }
   } catch (e) {
     document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Bağlantı hatası</div>';
@@ -1617,7 +1455,7 @@ function gridOlustur() {
     let extra = '';
     if (h.direncKirildi) extra = '<div style="font-size:8px;color:#00e676;font-weight:900;margin-top:2px">🟢 KIRILIM</div>';
     else if (h.destekKirildi) extra = '<div style="font-size:8px;color:#ff6b6b;font-weight:900;margin-top:2px">🔴 DESTEK</div>';
-   btn.innerHTML = '<div class="hisse-ticker">' + tickerKisa(h.ticker) + '</div>' +
+    btn.innerHTML = '<div class="hisse-ticker">' + tickerKisa(h.ticker) + '</div>' +
       '<div class="hisse-name">' + (h.sirket.length > 16 ? h.sirket.substring(0, 16) + '…' : h.sirket) + '</div>' +
       '<div class="hisse-price">€' + h.fiyat.toFixed(2) + '</div>' +
       '<div class="hisse-change ' + (h.degisim >= 0 ? 'up' : 'down') + '">' + deg + '</div>' +
@@ -1628,11 +1466,16 @@ function gridOlustur() {
   });
   document.getElementById('fetch-status').textContent = hisseler.length + ' hisse yüklendi — birini seç';
 }
-  function hisseAktif(idx, btn) {
+
+function hisseAktif(idx, btn) {
   document.querySelectorAll('.hisse-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   seciliHisse = hisseler[idx];
   document.getElementById('fetch-status').textContent = seciliHisse.ticker + ' seçildi — VERİ ÇEK butonuna bas';
+  const sabitDiv = document.getElementById('sabit-veri-cek');
+  const sabitTicker = document.getElementById('sabit-ticker');
+  if (sabitDiv) { sabitDiv.style.display = 'flex'; }
+  if (sabitTicker) sabitTicker.textContent = tickerKisa(seciliHisse.ticker);
 }
 
 function veriCek() {
@@ -1642,8 +1485,8 @@ function veriCek() {
   document.getElementById('ticker').value = h.ticker;
   document.getElementById('price').value = h.fiyat > 0 ? h.fiyat.toFixed(2) : '';
   document.getElementById('pe').value = h.fk > 0 ? h.fk.toFixed(1) : '';
-  document.getElementById('ma20').value = h.ma20 > 0 ? h.ma20.toFixed(2) : '';
-  document.getElementById('ma200').value = h.ma200 > 0 ? h.ma200.toFixed(2) : '';
+  if (h.ma20 > 0) document.getElementById('ma20').value = h.ma20.toFixed(2);
+  if (h.ma200 > 0) document.getElementById('ma200').value = h.ma200.toFixed(2);
   document.getElementById('change1m').value = h.degisim !== 0 ? h.degisim.toFixed(2) : '';
   document.getElementById('target').value = h.hedef > 0 ? h.hedef.toFixed(2) : '';
   document.getElementById('beta').value = h.beta > 0 ? h.beta.toFixed(2) : '';
@@ -1684,8 +1527,7 @@ function veriCek() {
   sektorKarsilastir(h);
   document.getElementById('fetch-status').innerHTML = '✅ <strong>' + h.ticker + '</strong> — veriler yüklendi!';
   setTimeout(() => {
-    const hedef = document.getElementById('karsilastir').style.display !== 'none' ?
-      document.getElementById('karsilastir') : document.getElementById('analiz-formu');
+    const hedef = document.getElementById('karsilastir').style.display !== 'none' ? document.getElementById('karsilastir') : document.getElementById('analiz-formu');
     hedef.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 200);
 }
@@ -1762,18 +1604,12 @@ function heatmapOlustur() {
     const rsiTooltip = nedenRsi(h.rsi, lv);
     const fiyatTooltip = nedenFiyat(h, lv);
     const durumTooltipMetni = durum.aciklama || '';
-    const temettuBadge = h.temettu && buyuk ? '<div style="font-size:9px;color:var(--gold);margin-top:4px" title="Bu şirket kârını seninle paylaşıyor. Uzun vadeli güven puanı daha yüksek.">💰 Temettü veriyor</div>' : (h.temettu ? '<div style="font-size:8px;color:var(--gold)">💰</div>' : '');
-    const sinyalHtml = buyuk ? '<div style="display:flex;gap:4px;justify-content:center;margin-top:6px">' +
-      '<span title="' + sinyaller.trendAciklama + '" style="font-size:12px;cursor:help">' + sinyaller.trendIkon + '</span>' +
-      '<span title="' + sinyaller.momAciklama + '" style="font-size:12px;cursor:help">' + sinyaller.momIkon + '</span>' +
-      '<span title="' + sinyaller.hacimAciklama + '" style="font-size:12px;cursor:help">' + sinyaller.hacimIkon + '</span>' +
-      '</div>' : '';
+    const temettuBadge = h.temettu && buyuk ? '<div style="font-size:9px;color:var(--gold);margin-top:4px" title="Bu şirket kârını seninle paylaşıyor!">💰 Temettü veriyor</div>' : (h.temettu ? '<div style="font-size:8px;color:var(--gold)">💰</div>' : '');
+    const sinyalHtml = buyuk ? '<div style="display:flex;gap:4px;justify-content:center;margin-top:6px"><span title="' + sinyaller.trendAciklama + '" style="font-size:12px;cursor:help">' + sinyaller.trendIkon + '</span><span title="' + sinyaller.momAciklama + '" style="font-size:12px;cursor:help">' + sinyaller.momIkon + '</span><span title="' + sinyaller.hacimAciklama + '" style="font-size:12px;cursor:help">' + sinyaller.hacimIkon + '</span></div>' : '';
     const div = document.createElement('div');
     div.className = 'heatmap-card' + (buyuk ? ' buyuk' : ' kucuk');
     div.setAttribute('style', 'background:' + bgGradient + ';border:2px solid ' + borderColor + ';padding:' + (buyuk ? '16px 12px' : '10px 8px') + ';' + animStyle);
-    div.innerHTML = kirilimBadge +
-      (!h.direncKirildi && !h.destekKirildi ? setupBadgeHtml : '') +
-      alimEtiket + raporEtiket + favoriBtn +
+    div.innerHTML = kirilimBadge + (!h.direncKirildi && !h.destekKirildi ? setupBadgeHtml : '') + alimEtiket + raporEtiket + favoriBtn +
       '<div style="margin-top:' + kartMT + '">' +
       '<div style="font-family:Bebas Neue,sans-serif;font-size:' + (buyuk ? '22px' : '16px') + ';letter-spacing:2px;color:' + labelColor + '">' + tickerKisa(h.ticker) + '</div>' +
       '<div style="font-size:' + (buyuk ? '10px' : '9px') + ';color:#999;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (h.sirket.length > 14 ? h.sirket.substring(0, 14) + '…' : h.sirket) + '</div>' +
@@ -1806,6 +1642,16 @@ function analiz() {
   const price = gn('price'), target = gn('target'), entry = gn('entry') || price, amount = gn('amount'), profit = gn('profit') || 20;
   const ma200 = gn('ma200'), ma20 = gn('ma20'), rsi = gn('rsi'), beta = gn('beta'), margin = gn('margin'), pe = gn('pe'), change1m = gn('change1m');
   const company = gs('company') || 'Şirket', ticker = gs('ticker') || '—';
+
+  const hisseObj = { rsi, ma20, ma200, degisim: change1m, beta, fiyat: price, hedef: target, hedefMin: 0, hedefMax: 0, temettu: gv('temettu') === 'var' || gv('temettu') === 'artarak', direncKirildi: false, destekKirildi: false };
+  const teknikG = teknikSkorHesapla(hisseObj);
+  const temelG = temelSkorHesapla(hisseObj, pe, margin);
+  const riskG = riskSkorHesapla(hisseObj, pe);
+  const toplamG = toplamSkorHesapla(teknikG, temelG, riskG);
+  const guvenG = guvenSkorHesapla(teknikG, temelG, riskG);
+  const zayif = zayifNoktaBul(teknikG, temelG, riskG);
+  const guvenRenk = guvenRenkHesapla(guvenG);
+
   let score = 50, pos = [], neg = [], adv = [], guclu = [], riskler = [];
   if (price > 0 && ma200 > 0) {
     if (price > ma200 * 1.05) { score += 9; pos.push('Fiyat MA200 belirgin üzerinde'); guclu.push('MA200 üstünde — uzun vadeli trend yukarı'); }
@@ -1818,9 +1664,9 @@ function analiz() {
     else { score -= 5; neg.push('Fiyat MA20 altında'); riskler.push('MA20 altında — kısa vadeli baskı var'); }
   }
   if (rsi > 0) {
-    if (rsi > 75) { score -= 10; neg.push('RSI ' + rsi + ' — aşırı alım!'); riskler.push('RSI ' + rsi + ' — aşırı ısınmış, düzeltme riski yüksek'); }
-    else if (rsi > 65) { score -= 4; neg.push('RSI ' + rsi + ' — dikkat'); riskler.push('RSI ' + rsi + ' — ısınıyor, dikkatli ol'); }
-    else if (rsi < 30) { score += 8; pos.push('RSI ' + rsi + ' — toparlanma fırsatı'); guclu.push('RSI ' + rsi + ' — dip bölgesi, tepki ihtimali yüksek'); }
+    if (rsi > 75) { score -= 10; neg.push('RSI ' + rsi + ' — aşırı alım!'); riskler.push('RSI ' + rsi + ' — aşırı ısınmış'); }
+    else if (rsi > 65) { score -= 4; neg.push('RSI ' + rsi + ' — dikkat'); riskler.push('RSI ' + rsi + ' — ısınıyor'); }
+    else if (rsi < 30) { score += 8; pos.push('RSI ' + rsi + ' — toparlanma fırsatı'); guclu.push('RSI ' + rsi + ' — dip bölgesi'); }
     else if (rsi < 45) { score += 4; pos.push('RSI ' + rsi + ' — sağlıklı'); guclu.push('RSI ' + rsi + ' — sağlıklı aralık'); }
     else { score += 2; pos.push('RSI ' + rsi + ' — normal'); }
   }
@@ -1848,12 +1694,12 @@ function analiz() {
   else if (trend === 'yukari') { score += 6; pos.push('Yukarı trend'); guclu.push('Yukarı trend devam ediyor'); }
   else if (trend === 'yatay') adv.push('Trend yatay — kırılım bekleniyor');
   else if (trend === 'asagi') { score -= 6; neg.push('Aşağı trend'); riskler.push('Aşağı trend — yön olumsuz'); }
-  else if (trend === 'guclu-asagi') { score -= 12; neg.push('Güçlü aşağı trend!'); riskler.push('Güçlü düşüş trendi — çok riskli'); }
+  else if (trend === 'guclu-asagi') { score -= 12; neg.push('Güçlü aşağı trend!'); riskler.push('Güçlü düşüş trendi'); }
   if (margin > 0) {
-    if (margin >= 25) { score += 10; pos.push('Kar marjı %' + margin + ' — mükemmel!'); guclu.push('%' + margin + ' kar marjı — çok güçlü'); }
-    else if (margin >= 15) { score += 7; pos.push('Kar marjı %' + margin); guclu.push('%' + margin + ' kar marjı — sağlıklı'); }
-    else if (margin >= 8) { score += 3; pos.push('Kar marjı %' + margin); }
-    else { score -= 5; neg.push('Kar marjı %' + margin + ' — düşük'); riskler.push('%' + margin + ' kar marjı — düşük'); }
+    if (margin >= 25) { score += 10; pos.push('Kâr marjı %' + margin + ' — mükemmel!'); guclu.push('%' + margin + ' kar marjı — çok güçlü'); }
+    else if (margin >= 15) { score += 7; pos.push('Kâr marjı %' + margin); guclu.push('%' + margin + ' kar marjı — sağlıklı'); }
+    else if (margin >= 8) { score += 3; pos.push('Kâr marjı %' + margin); }
+    else { score -= 5; neg.push('Kâr marjı %' + margin + ' — düşük'); riskler.push('%' + margin + ' kar marjı — düşük'); }
   }
   if (pe > 0) {
     if (pe < 10) { score += 8; pos.push('F/K ' + pe + ' — ucuz'); guclu.push('F/K ' + pe + ' — değerinin altında'); }
@@ -1865,23 +1711,23 @@ function analiz() {
   if (borc === 'dusuk') { score += 8; pos.push('Borç düşük'); guclu.push('Düşük borç — finansal esneklik yüksek'); }
   else if (borc === 'orta') { score += 2; }
   else if (borc === 'yuksek') { score -= 8; neg.push('Yüksek borç'); riskler.push('Yüksek borç — faiz riski var'); }
-  else if (borc === 'kritik') { score -= 15; neg.push('KRİTİK BORÇ!'); riskler.push('Kritik borç seviyesi — ciddi risk'); }
+  else if (borc === 'kritik') { score -= 15; neg.push('KRİTİK BORÇ!'); riskler.push('Kritik borç seviyesi'); }
   const nakit = gv('nakit');
   if (nakit === 'guclu') { score += 10; pos.push('Güçlü nakit akışı'); guclu.push('Güçlü nakit akışı — sağlam temel'); }
   else if (nakit === 'pozitif') { score += 6; pos.push('Nakit pozitif'); guclu.push('Pozitif nakit akışı'); }
-  else if (nakit === 'negatif') { score -= 12; neg.push('Nakit negatif!'); riskler.push('Negatif nakit akışı — sürdürülebilirlik riski'); }
+  else if (nakit === 'negatif') { score -= 12; neg.push('Nakit negatif!'); riskler.push('Negatif nakit akışı'); }
   const tem = gv('temettu');
-  if (tem === 'artarak') { score += 8; pos.push('Temettü artıyor'); guclu.push('Büyüyen temettü — yönetim güveni ve nakit gücü'); }
-  else if (tem === 'var') { score += 4; pos.push('Temettü ödüyor'); guclu.push('Temettü veriyor — ortaklık getirisi var'); }
-  else if (tem === 'kesildi') { score -= 8; neg.push('Temettü kesildi!'); riskler.push('Temettü kesildi — finansal baskı sinyali'); }
+  if (tem === 'artarak') { score += 8; pos.push('Temettü artıyor'); guclu.push('Büyüyen temettü — yönetim güveni'); }
+  else if (tem === 'var') { score += 4; pos.push('Temettü ödüyor'); guclu.push('Temettü veriyor — ortaklık getirisi'); }
+  else if (tem === 'kesildi') { score -= 8; neg.push('Temettü kesildi!'); riskler.push('Temettü kesildi — finansal baskı'); }
   const haber = gv('haber');
-  if (haber === 'cok-iyi') { score += 9; pos.push('Haberler çok olumlu'); guclu.push('Çok olumlu haberler — katalizör var'); }
-  else if (haber === 'iyi') { score += 5; pos.push('Haberler olumlu'); guclu.push('Olumlu haberler'); }
-  else if (haber === 'kotu') { score -= 7; neg.push('Haberler olumsuz'); riskler.push('Olumsuz haberler — sentiment negatif'); }
+  if (haber === 'cok-iyi') { score += 9; pos.push('Haberler çok olumlu'); guclu.push('Çok olumlu haberler'); }
+  else if (haber === 'iyi') { score += 5; pos.push('Haberler olumlu'); }
+  else if (haber === 'kotu') { score -= 7; neg.push('Haberler olumsuz'); riskler.push('Olumsuz haberler'); }
   const buyume = gv('buyume');
   if (buyume === 'guclu') { score += 9; pos.push('Güçlü büyüme'); guclu.push('Güçlü büyüme motoru'); }
-  else if (buyume === 'var') { score += 5; pos.push('Büyüme var'); guclu.push('Büyüme devam ediyor'); }
-  else if (buyume === 'yok') { score -= 8; neg.push('Büyüme yok'); riskler.push('Büyüme durdu — değerleme baskısı'); }
+  else if (buyume === 'var') { score += 5; pos.push('Büyüme var'); }
+  else if (buyume === 'yok') { score -= 8; neg.push('Büyüme yok'); riskler.push('Büyüme durdu'); }
   let pumpRisk = 0;
   const pumps = [];
   if (rsi > 70) { pumps.push({ t: '⚠️ RSI Aşırı Alım', c: 'warn' }); pumpRisk++; }
@@ -1895,81 +1741,66 @@ function analiz() {
   else if (sh === 'dusuk') pumps.push({ t: '✅ Short Interest Düşük', c: 'safe' });
   const seb = gv('sebep');
   if (seb === 'sosyal') { pumps.push({ t: '🚨 Sosyal Medya!', c: 'danger' }); pumpRisk += 2; score -= 10; riskler.push('Sosyal medya kaynaklı yükseliş — dikkat!'); }
-  else if (seb === 'sebepsiz') { pumps.push({ t: '⚠️ Sebepsiz Yükseliş', c: 'warn' }); pumpRisk++; score -= 5; riskler.push('Sebepsiz yükseliş — fundamentaller desteklemiyor'); }
+  else if (seb === 'sebepsiz') { pumps.push({ t: '⚠️ Sebepsiz Yükseliş', c: 'warn' }); pumpRisk++; score -= 5; }
   else if (seb === 'gercek-kazanc') pumps.push({ t: '✅ Gerçek Kazanç', c: 'safe' });
   if (pumpRisk >= 4) { neg.push('🚨 SAHTE YÜKSELİŞ RİSKİ!'); score -= 8; }
   else if (pumpRisk >= 2) adv.push('⚠️ Yükselişi sorgula');
   score = Math.max(8, Math.min(93, Math.round(score)));
   const aksiyonSonuc = getActionFromScore(score, change1m, rsi);
 
-// Neden-Sonuç listesi
-const kararSebep = [];
-if (ma20 > 0 && ma200 > 0 && ma20 < ma200) kararSebep.push('Trend zayıf');
-if (rsi > 70) kararSebep.push('RSI aşırı alım');
-if (rsi < 30) kararSebep.push('RSI dip bölgesi');
-if (beta > 1.5) kararSebep.push('Yüksek volatilite');
-if (parseFloat(document.getElementById('rrval').textContent.split(':')[1] || '0') < 2) kararSebep.push('Risk/Ödül düşük');
-if (change1m > 2) kararSebep.push('Hacim artıyor');
-if (change1m < -2) kararSebep.push('Satış baskısı var');
-const kararSebebiMetni = kararSebep.length > 0 ? kararSebep.join(' · ') : 'Genel piyasa koşulları değerlendirildi';
+  const kararSebep = [];
+  if (ma20 > 0 && ma200 > 0 && ma20 < ma200) kararSebep.push('Trend zayıf');
+  if (rsi > 70) kararSebep.push('RSI aşırı alım');
+  if (rsi < 30) kararSebep.push('RSI dip bölgesi');
+  if (beta > 1.5) kararSebep.push('Yüksek volatilite');
+  if (change1m > 2) kararSebep.push('Hacim artıyor');
+  if (change1m < -2) kararSebep.push('Satış baskısı var');
+  const kararSebebiMetni = kararSebep.length > 0 ? kararSebep.join(' · ') : 'Genel piyasa koşulları değerlendirildi';
+  const zamanSebep = score >= 68 ? '3-7 gün — Momentum devam edebilir' : score >= 50 ? '1-3 hafta — Trend kırılımı bekleniyor' : 'Belirsiz — Sinyal netleşene kadar bekle';
 
-// Zaman tavsiyesi
-const zamanSebep = score >= 68 ? '3-7 gün — Momentum devam edebilir' : score >= 50 ? '1-3 hafta — Trend kırılımı bekleniyor' : 'Belirsiz — Sinyal netleşene kadar bekle';
   const ep = entry > 0 ? entry : price, stop = Math.floor(ep * 0.88 * 100) / 100;
   const t1 = (ep * (1 + profit * 0.004)).toFixed(2), t2 = (ep * (1 + profit * 0.0075)).toFixed(2), t3 = (ep * (1 + profit / 100)).toFixed(2);
   const shares = (amount > 0 && ep > 0) ? Math.floor(amount / ep) : null;
   const risk = ep - stop, reward = parseFloat(t3) - ep, rr = risk > 0 ? (reward / risk).toFixed(1) : null;
   const rrw = rr ? Math.min(100, parseFloat(rr) / 5 * 100) : 0;
   let rrverd = '';
-if (rr) {
-  if (parseFloat(rr) >= 3) rrverd = '🔥 Çok İyi';
-  else if (parseFloat(rr) >= 2.5) rrverd = '🟢 İyi';
-  else if (parseFloat(rr) >= 2) rrverd = '🟡 Orta';
-  else rrverd = '🔴 Zayıf — Riski gözden geçir';
-}
+  if (rr) {
+    if (parseFloat(rr) >= 3) rrverd = '🔥 Çok İyi';
+    else if (parseFloat(rr) >= 2.5) rrverd = '🟢 İyi';
+    else if (parseFloat(rr) >= 2) rrverd = '🟡 Orta';
+    else rrverd = '🔴 Trade Değmez (' + rr + ':1)';
+  }
+
   document.getElementById('vbanner').className = 'vbanner ' + aksiyonSonuc.vclass;
   document.getElementById('vticker').textContent = company.toUpperCase() + (ticker !== '—' ? ' · ' + tickerKisa(ticker) : '');
   document.getElementById('vword').textContent = aksiyonSonuc.label;
   document.getElementById('vnudge').textContent = aksiyonSonuc.goldenLine;
-  // Güven parçalama
-  const teknikGuven = Math.min(100, Math.round(score * 0.8 + (rsi > 0 && rsi < 70 ? 10 : 0) + (ma20 > 0 && ma200 > 0 && ma20 > ma200 ? 10 : 0)));
-  const temelGuven = Math.min(100, Math.round((pe > 0 && pe < 20 ? 30 : pe > 0 ? 15 : 20) + (margin > 0 ? Math.min(30, margin) : 20) + 30));
-  const riskGuven = Math.min(100, Math.round(100 - (beta > 0 ? Math.min(50, beta * 20) : 20) - (rsi > 70 ? 30 : 0)));
-  const toplamGuven = Math.round((teknikGuven * 0.5) + (temelGuven * 0.3) + (riskGuven * 0.2));
-  const guvenRenk = toplamGuven >= 70 ? 'var(--green)' : toplamGuven >= 50 ? 'var(--yellow)' : '#ff9800';
-  document.getElementById('vnudge').style.cssText = 'font-size:16px;font-weight:700;color:var(--gold);padding:10px 20px;background:rgba(201,168,76,0.1);border-radius:10px;border:1px solid rgba(201,168,76,0.4);display:inline-block;margin:10px 0;letter-spacing:1px';
   document.getElementById('vscore').textContent = score + ' / 100';
-  const nedenHtml = '<div style="margin:12px 0;padding:12px 16px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.08);text-align:left">' +
-  '<div style="font-size:10px;letter-spacing:2px;color:var(--text2);margin-bottom:8px">📌 NEDEN BU KARAR?</div>' +
-  '<div style="font-size:12px;color:var(--text2);line-height:2">' +
-  (teknikGuven >= temelGuven && teknikGuven >= riskGuven ? '✅' : '⚠️') + ' Teknik <span style="color:' + (teknikGuven >= 60 ? 'var(--green)' : 'var(--yellow)') + ';font-weight:600">%' + teknikGuven + '</span><br>' +
-  (temelGuven >= teknikGuven && temelGuven >= riskGuven ? '✅' : temelGuven >= 50 ? '🟡' : '⚠️') + ' Temel <span style="color:' + (temelGuven >= 60 ? 'var(--green)' : 'var(--yellow)') + ';font-weight:600">%' + temelGuven + '</span><br>' +
-  (riskGuven >= 60 ? '✅' : '⚠️') + ' Risk <span style="color:' + (riskGuven >= 60 ? 'var(--green)' : 'var(--red)') + ';font-weight:600">%' + riskGuven + '</span>' +
-  '</div></div>';
-  document.getElementById('vscore').insertAdjacentHTML('afterend', nedenHtml);
-  document.getElementById('vscore').insertAdjacentHTML('afterend',
-  '<div style="margin-top:16px;padding:14px 18px;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.08);text-align:left">' +
-  '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
-  '<div style="font-size:10px;letter-spacing:3px;color:var(--text2)">KARAR GÜVENİ</div>' +
-  '<div style="font-size:11px;font-weight:700;color:' + guvenRenk + '">' + (toplamGuven >= 70 ? '✅ Yüksek Güven' : toplamGuven >= 50 ? '🟡 Temkinli Güven' : '🔴 Düşük Güven') + '</div>' +
-  '</div>' +
-  '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">' +
-  '<div style="flex:1;height:8px;background:var(--border);border-radius:100px;overflow:hidden"><div style="width:' + toplamGuven + '%;height:100%;background:' + guvenRenk + ';border-radius:100px;transition:width 1s ease"></div></div>' +
-  '<div style="font-size:13px;font-weight:700;color:' + guvenRenk + ';min-width:40px">%' + toplamGuven + '</div>' +
-  '</div>' +
-  '<div style="display:flex;flex-direction:column;gap:5px">' +
-  '<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">• Teknik</span><span style="color:' + guvenRenk + ';font-weight:600">%' + teknikGuven + '</span></div>' +
-  '<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">• Temel</span><span style="color:' + guvenRenk + ';font-weight:600">%' + temelGuven + '</span></div>' +
-  '<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">• Risk</span><span style="color:' + guvenRenk + ';font-weight:600">%' + riskGuven + '</span></div>' +
-  '<div style="margin-top:10px;padding:8px 12px;background:rgba(255,179,0,0.08);border-radius:8px;border-left:3px solid ' + guvenRenk + '">' +
-  '<div style="font-size:10px;color:var(--text2);margin-bottom:4px">⚠️ ZAYIF NOKTA</div>' +
-  '<div style="font-size:12px;font-weight:600;color:' + guvenRenk + '">' +
-  (teknikGuven <= temelGuven && teknikGuven <= riskGuven ? 'Teknik (%' + teknikGuven + ')' : temelGuven <= teknikGuven && temelGuven <= riskGuven ? 'Temel (%' + temelGuven + ')' : 'Risk (%' + riskGuven + ')') +
-  ' — bu faktör kararı düşürüyor</div>' +
-  '</div>' +
-  '</div></div>'
-  );
-  document.getElementById('vsummary').textContent = score >= 75 ? company + ' çok güçlü bir yapıda. Momentum var, giriş planlanabilir.' : score >= 60 ? company + ' sağlıklı görünüyor. Girişi planla, stop loss koy.' : score >= 50 ? company + ' için orta sinyaller var. Kademeli giriş düşünülebilir.' : score >= 40 ? company + ' için karma sinyaller var. Kırılımı veya raporu bekle.' : company + ' şu an riskli. Düşen bıçağı tutma.';
+
+  // GÜVEN BLOĞU
+  const guvenContainer = document.getElementById('guven-blok-container');
+  guvenContainer.innerHTML =
+    '<div style="margin:10px 0;padding:14px 18px;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.08);text-align:left">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-size:10px;letter-spacing:3px;color:var(--text2)">KARAR GÜVENİ</div><div style="font-size:11px;font-weight:700;color:' + guvenRenk + '">' + guvenLabel(guvenG) + '</div></div>' +
+    '<div style="height:8px;background:var(--border);border-radius:100px;overflow:hidden;margin-bottom:10px"><div style="width:' + guvenG + '%;height:100%;background:' + guvenRenk + ';border-radius:100px;transition:width 1s ease"></div></div>' +
+    '<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">' +
+    '<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">• Teknik</span><span style="color:' + (teknikG >= 60 ? 'var(--green)' : teknikG >= 40 ? 'var(--yellow)' : 'var(--red)') + ';font-weight:600">%' + teknikG + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">• Temel</span><span style="color:' + (temelG >= 60 ? 'var(--green)' : temelG >= 40 ? 'var(--yellow)' : 'var(--red)') + ';font-weight:600">%' + temelG + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">• Risk</span><span style="color:' + (riskG >= 60 ? 'var(--green)' : riskG >= 40 ? 'var(--yellow)' : 'var(--red)') + ';font-weight:600">%' + riskG + '</span></div>' +
+    '</div>' +
+    '<div style="padding:8px 12px;border-radius:8px;border-left:3px solid ' + guvenRenk + ';background:rgba(255,255,255,0.02);margin-bottom:8px">' +
+    '<div style="font-size:10px;color:var(--text2);margin-bottom:4px">⚠️ ZAYIF NOKTA</div>' +
+    '<div style="font-size:12px;font-weight:600;color:' + guvenRenk + '">' + zayif.ad + ' (%' + zayif.deger + ') — bu faktör kararı düşürüyor</div>' +
+    '</div>' +
+    '<div style="padding:10px 12px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06)">' +
+    '<div style="font-size:10px;letter-spacing:2px;color:var(--text2);margin-bottom:8px">📌 NEDEN BU KARAR?</div>' +
+    '<div style="font-size:11px;line-height:2">' +
+    (teknikG >= temelG && teknikG >= riskG ? '✅' : '⚠️') + ' Teknik <span style="color:' + (teknikG >= 60 ? 'var(--green)' : 'var(--yellow)') + ';font-weight:600">%' + teknikG + '</span><br>' +
+    (temelG >= teknikG && temelG >= riskG ? '✅' : temelG >= 50 ? '🟡' : '⚠️') + ' Temel <span style="color:' + (temelG >= 60 ? 'var(--green)' : 'var(--yellow)') + ';font-weight:600">%' + temelG + '</span><br>' +
+    (riskG >= 60 ? '✅' : '⚠️') + ' Risk <span style="color:' + (riskG >= 60 ? 'var(--green)' : 'var(--red)') + ';font-weight:600">%' + riskG + '</span>' +
+    '</div></div></div>';
+
+  document.getElementById('vsummary').textContent = score >= 75 ? company + ' çok güçlü bir yapıda. Momentum var, giriş planlanabilir.' : score >= 60 ? company + ' sağlıklı görünüyor. Girişi planla, stop loss koy.' : score >= 45 ? company + ' için orta sinyaller var. Kademeli giriş düşünülebilir.' : score >= 35 ? company + ' için karma sinyaller var. Kırılımı bekle.' : company + ' şu an riskli. Düşen bıçağı tutma.';
   const sbar = document.getElementById('sbar');
   sbar.style.background = score >= 68 ? 'var(--green)' : score >= 45 ? 'var(--yellow)' : 'var(--red)';
   document.getElementById('sbar-pct').textContent = score + '/100';
@@ -1993,7 +1824,6 @@ if (rr) {
   document.getElementById('ep-t3').textContent = '€' + t3;
   document.getElementById('ep-t3-sub').textContent = '%' + profit + ' kar · son 1/3';
   document.getElementById('exit-note').innerHTML = '💡 <strong>Stop:</strong> €' + stop.toFixed(2) + '<br>📊 T1\'de %33, T2\'de %33, T3\'de son %33.' + (shares ? '<br>🏦 ' + shares + ' hisse × €' + ep.toFixed(2) + ' = €' + (shares * ep).toFixed(0) : '');
-  const zamanYorum = score >= 68 ? '⏱️ Bekleme süresi: <strong>3-7 gün</strong> — Kısa vadeli trade için giriş noktası yakın.' : score >= 50 ? '⏱️ Bekleme süresi: <strong>1-3 hafta</strong> — Kırılım veya sinyal teyidini bekle.' : '⏱️ Bekleme süresi: <strong>Belirsiz</strong> — Yapı netleşene kadar kenarda kal.';
   document.getElementById('zaman-tavsiye').innerHTML = '⏱️ <strong>' + zamanSebep + '</strong><br><br>📌 <em style="color:var(--text3)">' + kararSebebiMetni + '</em>';
   adv.push('Stop loss her zaman koy!');
   if (score >= 68) adv.push('Giriş fiyatını sabırla bekle');
@@ -2005,6 +1835,7 @@ if (rr) {
 function sifirla() {
   document.getElementById('result').classList.remove('show');
   document.getElementById('sbar').style.width = '0%';
+  document.getElementById('guven-blok-container').innerHTML = '';
   Object.keys(S).forEach(k => delete S[k]);
   document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('tg', 'tr', 'ty'));
   document.querySelectorAll('.hisse-btn').forEach(b => b.classList.remove('active'));
@@ -2012,18 +1843,18 @@ function sifirla() {
   document.getElementById('fetch-status').textContent = 'Önce bir hisse seç';
   document.getElementById('veri-serit').style.display = 'none';
   document.getElementById('karsilastir').style.display = 'none';
+  const sabitDiv = document.getElementById('sabit-veri-cek');
+  if (sabitDiv) sabitDiv.style.display = 'none';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 levelGuncelle();
 sheetsYukle();
 setInterval(() => sheetsYukle(), 5 * 60 * 1000);
- setInterval(() => {
+setInterval(() => {
   const alarmSonuc = portfolioAlarmKontrol();
-  if (alarmSonuc && alarmSonuc.length > 0) {
-    document.getElementById('portfolio-btn').classList.add('alarm');
-  }
-}, 30 * 1000); 
+  if (alarmSonuc && alarmSonuc.length > 0) document.getElementById('portfolio-btn').classList.add('alarm');
+}, 30 * 1000);
 </script>
 </body>
 </html>
