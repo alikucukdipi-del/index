@@ -1967,13 +1967,6 @@ if (rr) {
   (teknikGuven <= temelGuven && teknikGuven <= riskGuven ? 'Teknik (%' + teknikGuven + ')' : temelGuven <= teknikGuven && temelGuven <= riskGuven ? 'Temel (%' + temelGuven + ')' : 'Risk (%' + riskGuven + ')') +
   ' — bu faktör kararı düşürüyor</div>' +
   '</div>' +
-  '<div style="margin-top:10px;padding:10px 12px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06)">' +
-  '<div style="font-size:10px;letter-spacing:2px;color:var(--text2);margin-bottom:8px">🧠 NEDEN BU KARAR?</div>' +
-  '<div style="font-size:11px;color:var(--text2);line-height:1.8">' +
-  (teknikGuven >= temelGuven && teknikGuven >= riskGuven ? '✅ Teknik güçlü (%' + teknikGuven + ')' : '⚠️ Teknik zayıf (%' + teknikGuven + ')') + '<br>' +
-  (temelGuven >= teknikGuven && temelGuven >= riskGuven ? '✅ Temel güçlü (%' + temelGuven + ')' : '⚠️ Temel orta (%' + temelGuven + ')') + '<br>' +
-  (riskGuven >= 60 ? '✅ Risk dengeli (%' + riskGuven + ')' : '⚠️ Risk yüksek (%' + riskGuven + ')') +
-  '</div></div>' +
   '</div></div>'
   );
   document.getElementById('vsummary').textContent = score >= 75 ? company + ' çok güçlü bir yapıda. Momentum var, giriş planlanabilir.' : score >= 60 ? company + ' sağlıklı görünüyor. Girişi planla, stop loss koy.' : score >= 50 ? company + ' için orta sinyaller var. Kademeli giriş düşünülebilir.' : score >= 40 ? company + ' için karma sinyaller var. Kırılımı veya raporu bekle.' : company + ' şu an riskli. Düşen bıçağı tutma.';
