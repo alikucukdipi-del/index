@@ -1939,6 +1939,14 @@ if (rr) {
   const guvenRenk = toplamGuven >= 70 ? 'var(--green)' : toplamGuven >= 50 ? 'var(--yellow)' : '#ff9800';
   document.getElementById('vnudge').style.cssText = 'font-size:16px;font-weight:700;color:var(--gold);padding:10px 20px;background:rgba(201,168,76,0.1);border-radius:10px;border:1px solid rgba(201,168,76,0.4);display:inline-block;margin:10px 0;letter-spacing:1px';
   document.getElementById('vscore').textContent = score + ' / 100';
+  const nedenHtml = '<div style="margin:12px 0;padding:12px 16px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.08);text-align:left">' +
+  '<div style="font-size:10px;letter-spacing:2px;color:var(--text2);margin-bottom:8px">📌 NEDEN BU KARAR?</div>' +
+  '<div style="font-size:12px;color:var(--text2);line-height:2">' +
+  (teknikGuven >= temelGuven && teknikGuven >= riskGuven ? '✅' : '⚠️') + ' Teknik <span style="color:' + (teknikGuven >= 60 ? 'var(--green)' : 'var(--yellow)') + ';font-weight:600">%' + teknikGuven + '</span><br>' +
+  (temelGuven >= teknikGuven && temelGuven >= riskGuven ? '✅' : temelGuven >= 50 ? '🟡' : '⚠️') + ' Temel <span style="color:' + (temelGuven >= 60 ? 'var(--green)' : 'var(--yellow)') + ';font-weight:600">%' + temelGuven + '</span><br>' +
+  (riskGuven >= 60 ? '✅' : '⚠️') + ' Risk <span style="color:' + (riskGuven >= 60 ? 'var(--green)' : 'var(--red)') + ';font-weight:600">%' + riskGuven + '</span>' +
+  '</div></div>';
+  document.getElementById('vscore').insertAdjacentHTML('afterend', nedenHtml);
   document.getElementById('vscore').insertAdjacentHTML('afterend',
   '<div style="margin-top:16px;padding:14px 18px;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.08);text-align:left">' +
   '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
