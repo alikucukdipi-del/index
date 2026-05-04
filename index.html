@@ -1354,10 +1354,10 @@ function portfolioOzetGoster(el) {
     '</div>' : '';
 
   // Zayıf Halka
-  const zayifHtml = aiAnaliz.zayif ?
-    '<div style="margin-top:8px;font-size:11px;color:var(--red)">🔍 Zayıf halka: <strong>' + aiAnaliz.zayif.ticker + '</strong> (skor ' + aiAnaliz.zayif.skor + ') — gözden geçir</div>' : '';
-    '<div style="margin-top:8px;font-size:11px;color:var(--text2)">⚖️ Denge Skoru: <strong style="color:' + (dengeSkoru(portfolio) >= 70 ? 'var(--green)' : dengeSkoru(portfolio) >= 50 ? 'var(--yellow)' : 'var(--red)') + '">%' + dengeSkoru(portfolio) + '</strong> ' + (dengeSkoru(portfolio) >= 70 ? '✅ Dengeli' : dengeSkoru(portfolio) >= 50 ? '🟡 Orta — çeşitlendirme artırılabilir' : '🔴 Zayıf — sektör yoğunluğu fazla') + '</div>'
-
+const zayifHtml = aiAnaliz.zayif ?
+  '<div style="margin-top:8px;font-size:11px;color:var(--red)">🔍 Zayıf halka: <strong>' + aiAnaliz.zayif.ticker + '</strong> (skor ' + aiAnaliz.zayif.skor + ') — gözden geçir</div>' : '';
+const dengeHtml = '<div style="margin-top:8px;font-size:11px;color:var(--text2)">⚖️ Denge Skoru: <strong style="color:' + (dengeSkoru(portfolio) >= 70 ? 'var(--green)' : dengeSkoru(portfolio) >= 50 ? 'var(--yellow)' : 'var(--red)') + '">%' + dengeSkoru(portfolio) + '</strong> ' + (dengeSkoru(portfolio) >= 70 ? '✅ Dengeli' : dengeSkoru(portfolio) >= 50 ? '🟡 Orta — çeşitlendirme artırılabilir' : '🔴 Zayıf — sektör yoğunluğu fazla') + '</div>';io) >= 50 ? '🟡 Orta — çeşitlendirme artırılabilir' : '🔴 Zayıf — sektör yoğunluğu fazla') + '</div>';
+  
   el.innerHTML = alarmHtml +
     '<div class="portfolio-ozet">' +
     '<div style="display:flex;justify-content:space-between;margin-bottom:8px">' +
