@@ -908,6 +908,8 @@ async function aiPortfoyAnalizYap(portfoyVeri) {
   if (!apiKey) return null;
   const prompt = `Sen bir profesyonel portföy yöneticisisin. Kısa ve Türkçe yorum yap.
 
+Toplam Portföy Değeri: €${portfolio.reduce((acc, p) => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); return acc + (h ? h.fiyat * p.adet : p.alisFiyati * p.adet); }, 0).toFixed(0)}
+Hisseler: ${portfolio.map(p => p.ticker + ' (€' + (p.alisFiyati * p.adet).toFixed(0) + ')').join(', ')}
 Portföy Skoru: ${portfoyVeri.portfoySkoru}/100
 Karar: ${portfoyVeri.karar.durum} — ${portfoyVeri.karar.mesaj}
 Risk Yoğunluğu: %${portfoyVeri.riskYogunlugu}
@@ -920,7 +922,13 @@ Cevabını tam olarak 3 bölümde ver:
 
 1. DURUM: Portföyün genel durumunu 1 cümleyle özetle.
 2. RİSK: En kritik riski 1 cümleyle belirt.
-3. AKSİYON: Kullanıcının tam olarak ne yapması gerektiğini somut yüzdelerle söyle. Örnek: %20 pozisyon azalt, yeni alım için bekle. Bu bölüm zorunludur.
+3. AKSİYON: Kullanıcının tam olarak ne yapması gerektiğini somut rakamlarla söyle. Her hisse için ayrı satırda şu formatta ver:
+[TICKER] → [işlem] €[miktar]
+Örnek:
+ASML → azalt €1200
+ENGI → artır €600
+NAKİT → tut €3000
+Bu format zorunludur, başka format kullanma. Örnek: %20 pozisyon azalt, yeni alım için bekle. Bu bölüm zorunludur.
 
 Sadece bu 3 bölümü yaz, başka hiçbir şey ekleme.`;
 
