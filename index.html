@@ -1941,7 +1941,10 @@ if (rr) {
   document.getElementById('vscore').textContent = score + ' / 100';
   document.getElementById('vscore').insertAdjacentHTML('afterend',
   '<div style="margin-top:16px;padding:14px 18px;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.08);text-align:left">' +
-  '<div style="font-size:10px;letter-spacing:3px;color:var(--text2);margin-bottom:10px">KARAR GÜVENİ</div>' +
+  '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
+  '<div style="font-size:10px;letter-spacing:3px;color:var(--text2)">KARAR GÜVENİ</div>' +
+  '<div style="font-size:11px;font-weight:700;color:' + guvenRenk + '">' + (toplamGuven >= 70 ? '✅ Yüksek Güven' : toplamGuven >= 50 ? '🟡 Temkinli Güven' : '🔴 Düşük Güven') + '</div>' +
+  '</div>' +
   '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">' +
   '<div style="flex:1;height:8px;background:var(--border);border-radius:100px;overflow:hidden"><div style="width:' + toplamGuven + '%;height:100%;background:' + guvenRenk + ';border-radius:100px;transition:width 1s ease"></div></div>' +
   '<div style="font-size:13px;font-weight:700;color:' + guvenRenk + ';min-width:40px">%' + toplamGuven + '</div>' +
@@ -1950,8 +1953,21 @@ if (rr) {
   '<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">• Teknik</span><span style="color:' + guvenRenk + ';font-weight:600">%' + teknikGuven + '</span></div>' +
   '<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">• Temel</span><span style="color:' + guvenRenk + ';font-weight:600">%' + temelGuven + '</span></div>' +
   '<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">• Risk</span><span style="color:' + guvenRenk + ';font-weight:600">%' + riskGuven + '</span></div>' +
+  '<div style="margin-top:10px;padding:8px 12px;background:rgba(255,179,0,0.08);border-radius:8px;border-left:3px solid ' + guvenRenk + '">' +
+  '<div style="font-size:10px;color:var(--text2);margin-bottom:4px">⚠️ ZAYIF NOKTA</div>' +
+  '<div style="font-size:12px;font-weight:600;color:' + guvenRenk + '">' +
+  (teknikGuven <= temelGuven && teknikGuven <= riskGuven ? 'Teknik (%' + teknikGuven + ')' : temelGuven <= teknikGuven && temelGuven <= riskGuven ? 'Temel (%' + temelGuven + ')' : 'Risk (%' + riskGuven + ')') +
+  ' — bu faktör kararı düşürüyor</div>' +
+  '</div>' +
+  '<div style="margin-top:10px;padding:10px 12px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06)">' +
+  '<div style="font-size:10px;letter-spacing:2px;color:var(--text2);margin-bottom:8px">🧠 NEDEN BU KARAR?</div>' +
+  '<div style="font-size:11px;color:var(--text2);line-height:1.8">' +
+  (teknikGuven >= temelGuven && teknikGuven >= riskGuven ? '✅ Teknik güçlü (%' + teknikGuven + ')' : '⚠️ Teknik zayıf (%' + teknikGuven + ')') + '<br>' +
+  (temelGuven >= teknikGuven && temelGuven >= riskGuven ? '✅ Temel güçlü (%' + temelGuven + ')' : '⚠️ Temel orta (%' + temelGuven + ')') + '<br>' +
+  (riskGuven >= 60 ? '✅ Risk dengeli (%' + riskGuven + ')' : '⚠️ Risk yüksek (%' + riskGuven + ')') +
+  '</div></div>' +
   '</div></div>'
-);
+  );
   document.getElementById('vsummary').textContent = score >= 75 ? company + ' çok güçlü bir yapıda. Momentum var, giriş planlanabilir.' : score >= 60 ? company + ' sağlıklı görünüyor. Girişi planla, stop loss koy.' : score >= 50 ? company + ' için orta sinyaller var. Kademeli giriş düşünülebilir.' : score >= 40 ? company + ' için karma sinyaller var. Kırılımı veya raporu bekle.' : company + ' şu an riskli. Düşen bıçağı tutma.';
   const sbar = document.getElementById('sbar');
   sbar.style.background = score >= 68 ? 'var(--green)' : score >= 45 ? 'var(--yellow)' : 'var(--red)';
