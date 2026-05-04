@@ -2190,9 +2190,8 @@ function sifirla() {
   document.getElementById('karsilastir').style.display = 'none';
   const sabitDiv = document.getElementById('sabit-veri-cek');
   if (sabitDiv) sabitDiv.style.display = 'none';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+ window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 levelGuncelle();
 sheetsYukle();
 setInterval(() => sheetsYukle(), 5 * 60 * 1000);
