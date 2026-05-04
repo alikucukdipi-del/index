@@ -358,6 +358,7 @@ select option { background: #181818; }
     <button class="portfolio-sekme" onclick="portfolioSekme('hisseler', this)">📋 Hisseler</button>
     <button class="portfolio-sekme" onclick="portfolioSekme('ekle', this)">➕ Ekle</button>
     <button class="portfolio-sekme" onclick="portfolioSekme('ayarlar', this)">⚙️ Ayarlar</button>
+    <button class="portfolio-sekme" onclick="portfolioSekme('motor', this)">🧠 Motor</button>
   </div>
   <div class="portfolio-icerik" id="portfolio-icerik"></div>
 </div>
@@ -1289,9 +1290,110 @@ function portfolioIcerikGuncelle() {
   if (aktifPortfolioSekme === 'ozet') portfolioOzetGoster(el);
   else if (aktifPortfolioSekme === 'hisseler') portfolioHisselerGoster(el);
   else if (aktifPortfolioSekme === 'ekle') portfolioEkleGoster(el);
-  else portfolioAyarlarGoster(el);
+  else if (aktifPortfolioSekme === 'ayarlar') portfolioAyarlarGoster(el);
+  else portfolioMotorGoster(el);
+}
+function portfolioMotorGoster(el) {
+  if (portfolio.length === 0) { el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text2)">💼 Önce portföye hisse ekle!</div>'; return; }
+  const wind = (portfolio.filter(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); return h && h.ma20 > h.ma200; }).length / portfolio.length) * 2 - 1;
+  const windPct = Math.round((wind + 1) / 2 * 100);
+  const windRenk = wind > 0.3 ? 'var(--green)' : wind < -0.3 ? 'var(--red)' : 'var(--yellow)';
+  const windEtiket = wind > 0.3 ? '🟢 Pupa Yelken' : wind < -0.3 ? '🔴 Fırtına' : '🟡 Kararsız';
+  const riskProfil = ayarlar.riskProfil || 'medium';
+  const stresYuzde = ayarlar.stresYuzde || 20;
+  const betaOrtalama = portfolio.reduce((acc, p) => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); return acc + (h ? h.beta : 1); }, 0) / portfolio.length;
+  const stresEtki = (betaOrtalama * stresYuzde).toFixed(1);
+  const portfoySkoru = portfoySkor(portfolio);
+  const riskYog = portfoyRisk(portfolio);
+  const mom = portfoyMomentum(portfolio);
+  const zayif = enZayifHisse(portfolio);
+  let sovereignDurum, sovereignMesaj, sovereignRenk;
+  if (riskYog > 60 || wind < -0.5) { sovereignDurum = 'KORU'; sovereignMesaj = 'Yüksek risk — defansa çekil'; sovereignRenk = 'var(--red)'; }
+  else if (portfoySkoru > 65 && mom > 60 && wind >= 0) { sovereignDurum = 'ATAK'; sovereignMesaj = 'Şartlar uygun — agresifleşilebilir'; sovereignRenk = 'var(--green)'; }
+  else { sovereignDurum = 'İZLE'; sovereignMesaj = 'Belirsiz market — bekle ve gör'; sovereignRenk = 'var(--yellow)'; }
+
+  el.innerHTML =
+    '<div style="font-size:10px;letter-spacing:3px;color:var(--gold);margin-bottom:16px;font-weight:700">🧠 SOVEREIGN ENGINE v11.2</div>' +
+    '<div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px">' +
+    '<div style="font-size:9px;letter-spacing:2px;color:var(--text2);margin-bottom:8px">🌬️ PİYASA RÜZGARI</div>' +
+    '<div style="height:8px;background:var(--border);border-radius:100px;overflow:hidden;margin-bottom:6px"><div style="width:' + windPct + '%;height:100%;background:' + windRenk + ';border-radius:100px;transition:width 1s ease"></div></div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-bottom:4px"><span>🔴 Fırtına</span><span style="font-weight:700;color:' + windRenk + '">' + windEtiket + '</span><span>🟢 Pupa</span></div>' +
+    '</div>' +
+    '<div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px">' +
+    '<div style="font-size:9px;letter-spacing:2px;color:var(--text2);margin-bottom:10px">👤 RİSK PROFİLİ</div>' +
+    '<div style="display:flex;gap:6px;margin-bottom:8px">' +
+    ['low','medium','high'].map(r => '<div onclick="ayarlar.riskProfil=\'' + r + '\';ayarlariKaydet();portfolioMotorGoster(document.getElementById(\'portfolio-icerik\'))" style="flex:1;padding:6px;border-radius:8px;border:1px solid ' + (riskProfil===r?'var(--gold)':'var(--border)') + ';background:' + (riskProfil===r?'rgba(201,168,76,0.15)':'transparent') + ';color:' + (riskProfil===r?'var(--gold)':'var(--text2)') + ';font-size:10px;font-weight:600;cursor:pointer;text-align:center">' + (r==='low'?'🛡️ Düşük':r==='medium'?'⚖️ Orta':'🚀 Yüksek') + '</div>').join('') +
+    '</div>' +
+    '<div style="display:flex;gap:6px">' +
+    ['short','medium','long'].map(v => '<div onclick="ayarlar.vade=\'' + v + '\';ayarlariKaydet();portfolioMotorGoster(document.getElementById(\'portfolio-icerik\'))" style="flex:1;padding:6px;border-radius:8px;border:1px solid ' + ((ayarlar.vade||'medium')===v?'var(--gold)':'var(--border)') + ';background:' + ((ayarlar.vade||'medium')===v?'rgba(201,168,76,0.15)':'transparent') + ';color:' + ((ayarlar.vade||'medium')===v?'var(--gold)':'var(--text2)') + ';font-size:10px;font-weight:600;cursor:pointer;text-align:center">' + (v==='short'?'⚡ Kısa':v==='medium'?'📊 Orta':'🌱 Uzun') + '</div>').join('') +
+    '</div></div>' +
+    '<div style="background:var(--card2);border:1px solid ' + sovereignRenk + ';border-radius:12px;padding:14px;margin-bottom:12px">' +
+    '<div style="font-size:9px;letter-spacing:2px;color:var(--text2);margin-bottom:8px">🎯 SOVEREIGN KARAR</div>' +
+    '<div style="font-family:Bebas Neue,sans-serif;font-size:28px;color:' + sovereignRenk + ';margin-bottom:4px">' + sovereignDurum + '</div>' +
+    '<div style="font-size:11px;color:var(--text2);margin-bottom:10px">→ ' + sovereignMesaj + '</div>' +
+    '<div style="display:flex;gap:8px">' +
+    '<div style="flex:1;text-align:center;padding:6px;background:rgba(255,255,255,0.03);border-radius:8px"><div style="font-size:9px;color:var(--text3)">SKOR</div><div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--text)">' + portfoySkoru + '</div></div>' +
+    '<div style="flex:1;text-align:center;padding:6px;background:rgba(255,255,255,0.03);border-radius:8px"><div style="font-size:9px;color:var(--text3)">RİSK</div><div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:' + (riskYog>60?'var(--red)':'var(--green)') + '">' + riskYog + '%</div></div>' +
+    '<div style="flex:1;text-align:center;padding:6px;background:rgba(255,255,255,0.03);border-radius:8px"><div style="font-size:9px;color:var(--text3)">MOMENTUM</div><div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--text)">' + mom + '</div></div>' +
+    '</div></div>' +
+    '<div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px">' +
+    '<div style="font-size:9px;letter-spacing:2px;color:var(--text2);margin-bottom:8px">⚡ STRES TESTİ</div>' +
+    '<div style="font-size:11px;color:var(--text2);margin-bottom:8px">Piyasa <strong style="color:var(--red)">%' + stresYuzde + '</strong> düşerse:</div>' +
+    '<input type="range" min="5" max="50" value="' + stresYuzde + '" oninput="ayarlar.stresYuzde=parseInt(this.value);ayarlariKaydet();portfolioMotorGoster(document.getElementById(\'portfolio-icerik\'))" style="width:100%;margin-bottom:8px;accent-color:var(--gold)">' +
+    '<div style="font-size:13px;font-weight:700;color:var(--red)">Portföyün ≈ %' + stresEtki + ' etkilenir (β ≈ ' + betaOrtalama.toFixed(2) + ')</div>' +
+    '</div>' +
+    (zayif ? '<div style="background:rgba(255,61,61,0.06);border:1px solid rgba(255,61,61,0.3);border-radius:12px;padding:14px;margin-bottom:12px">' +
+    '<div style="font-size:9px;letter-spacing:2px;color:var(--red);margin-bottom:8px">🔍 ZAYIF HALKA</div>' +
+    '<div style="font-size:13px;font-weight:700;color:var(--text)">' + zayif.ticker + '</div>' +
+    '<div style="font-size:11px;color:var(--text2);margin-top:4px">Skor ' + zayif.skor + '/100 — gözden geçir veya küçült</div>' +
+    '</div>' : '') +
+    (apiKeyAl() ? '<button onclick="aiMotorYorumGoster()" style="width:100%;padding:10px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);border-radius:10px;color:#6fa3ff;font-family:DM Sans,sans-serif;font-size:11px;font-weight:600;cursor:pointer">🤖 AI Motor Yorumu Al</button>' :
+    '<div style="font-size:10px;color:var(--text3);text-align:center;padding:8px">🤖 AI yorumu için Ayarlar\'dan API key ekle</div>') +
+    '<div id="ai-motor-yorum" style="margin-top:12px"></div>';
 }
 
+async function aiMotorYorumGoster() {
+  const el = document.getElementById('ai-motor-yorum');
+  if (!el) return;
+  el.innerHTML = '<div class="ai-yorum-kutu"><div class="ai-yorum-baslik">🤖 SOVEREIGN AI YORUMU</div><div class="ai-loading"><div class="ai-loading-dot"></div><div class="ai-loading-dot"></div><div class="ai-loading-dot"></div></div></div>';
+  const wind = (portfolio.filter(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); return h && h.ma20 > h.ma200; }).length / portfolio.length) * 2 - 1;
+  const portfoySkoru = portfoySkor(portfolio);
+  const riskYog = portfoyRisk(portfolio);
+  const mom = portfoyMomentum(portfolio);
+  const zayif = enZayifHisse(portfolio);
+  const stresYuzde = ayarlar.stresYuzde || 20;
+  const betaOrtalama = portfolio.reduce((acc, p) => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); return acc + (h ? h.beta : 1); }, 0) / portfolio.length;
+  const stresEtki = (betaOrtalama * stresYuzde).toFixed(1);
+  const apiKey = apiKeyAl();
+  const prompt = `Sen Sovereign Fund AI motorusun. Portföy verilerini analiz et ve Türkçe yorum yap.
+
+Risk Profili: ${ayarlar.riskProfil || 'medium'}
+Vade: ${ayarlar.vade || 'medium'}
+Piyasa Rüzgarı: ${wind > 0.3 ? 'Pupa yelken' : wind < -0.3 ? 'Fırtına' : 'Kararsız'}
+Portföy Skoru: ${portfoySkoru}/100
+Risk Yoğunluğu: %${riskYog}
+Momentum: ${mom}/100
+Zayıf Halka: ${zayif ? zayif.ticker + ' (skor ' + zayif.skor + ')' : 'Yok'}
+Stres Testi: Piyasa %${stresYuzde} düşerse portföy %${stresEtki} etkilenir
+
+3 bölümde yanıtla:
+1. DURUM: Genel portföy durumu
+2. RİSK: En kritik risk
+3. AKSİYON: Somut adımlar
+
+Sadece bu 3 bölümü yaz.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 400, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await res.json();
+    el.innerHTML = '<div class="ai-yorum-kutu"><div class="ai-yorum-baslik">🤖 SOVEREIGN AI YORUMU</div><div class="ai-yorum-text">' + (data.content && data.content[0] ? data.content[0].text : 'AI yorumu alınamadı.') + '</div></div>';
+  } catch (e) {
+    el.innerHTML = '<div class="ai-yorum-kutu"><div class="ai-yorum-text">Bağlantı hatası.</div></div>';
+  }
 function portfolioAyarlarGoster(el) {
   const apiKey = ayarlar.apiKey || '';
   const isim = ayarlar.isim || '';
