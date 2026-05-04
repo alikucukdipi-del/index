@@ -1392,8 +1392,9 @@ Sadece bu 3 bölümü yaz.`;
     const data = await res.json();
     el.innerHTML = '<div class="ai-yorum-kutu"><div class="ai-yorum-baslik">🤖 SOVEREIGN AI YORUMU</div><div class="ai-yorum-text">' + (data.content && data.content[0] ? data.content[0].text : 'AI yorumu alınamadı.') + '</div></div>';
   } catch (e) {
-    el.innerHTML = '<div class="ai-yorum-kutu"><div class="ai-yorum-text">Bağlantı hatası.</div></div>';
+   el.innerHTML = '<div class="ai-yorum-kutu"><div class="ai-yorum-text">Bağlantı hatası.</div></div>';
   }
+}
 function portfolioAyarlarGoster(el) {
   const apiKey = ayarlar.apiKey || '';
   const isim = ayarlar.isim || '';
