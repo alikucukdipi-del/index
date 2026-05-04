@@ -853,6 +853,10 @@ function portfoyKararAI(portfoy) {
   return { durum: 'BEKLE', mesaj: 'Net sinyal yok, portföyü izle', renk: 'var(--yellow)' };
 }
 
+  function dengeSkoru(portfoy) {
+  const sektor = sektorRisk(portfoy);
+  return Math.round(100 - (sektor * 100));
+}
 function portfoyAnalizAI(portfoy) {
   const skor = portfoySkor(portfoy);
   const riskYogunluk = portfoyRisk(portfoy);
@@ -912,7 +916,13 @@ Sektör Konsantrasyonu: %${Math.round(portfoyVeri.sektorOran * 100)}
 ${portfoyVeri.zayif ? 'Zayıf Halka: ' + portfoyVeri.zayif.ticker + ' (skor ' + portfoyVeri.zayif.skor + ')' : ''}
 Akıl Notları: ${portfoyVeri.akilNotlari.join(', ')}
 
-3 cümleyle portföy sahibine net tavsiye ver. Sadece yorumu yaz.`;
+Cevabını tam olarak 3 bölümde ver:
+
+1. DURUM: Portföyün genel durumunu 1 cümleyle özetle.
+2. RİSK: En kritik riski 1 cümleyle belirt.
+3. AKSİYON: Kullanıcının tam olarak ne yapması gerektiğini somut yüzdelerle söyle. Örnek: %20 pozisyon azalt, yeni alım için bekle. Bu bölüm zorunludur.
+
+Sadece bu 3 bölümü yaz, başka hiçbir şey ekleme.`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -1346,6 +1356,7 @@ function portfolioOzetGoster(el) {
   // Zayıf Halka
   const zayifHtml = aiAnaliz.zayif ?
     '<div style="margin-top:8px;font-size:11px;color:var(--red)">🔍 Zayıf halka: <strong>' + aiAnaliz.zayif.ticker + '</strong> (skor ' + aiAnaliz.zayif.skor + ') — gözden geçir</div>' : '';
+    '<div style="margin-top:8px;font-size:11px;color:var(--text2)">⚖️ Denge Skoru: <strong style="color:' + (dengeSkoru(portfolio) >= 70 ? 'var(--green)' : dengeSkoru(portfolio) >= 50 ? 'var(--yellow)' : 'var(--red)') + '">%' + dengeSkoru(portfolio) + '</strong> ' + (dengeSkoru(portfolio) >= 70 ? '✅ Dengeli' : dengeSkoru(portfolio) >= 50 ? '🟡 Orta — çeşitlendirme artırılabilir' : '🔴 Zayıf — sektör yoğunluğu fazla') + '</div>' +
 
   el.innerHTML = alarmHtml +
     '<div class="portfolio-ozet">' +
@@ -1363,13 +1374,19 @@ function portfolioOzetGoster(el) {
     '<div style="font-size:11px;color:var(--text2);margin-bottom:4px">→ ' + sonuc.aksiyon + '</div>' +
     '<div style="font-size:10px;color:var(--text3)">Güven: %' + sonuc.skor + ' (' + guvenLabelPortfoy(sonuc.skor) + ')</div>' +
     '</div>' +
-    zayifHtml + akilHtml +
+    zayifHtml + dengeHtml + akilHtml +
     (temettuSkor > 0 ? '<div style="margin-top:8px;font-size:10px;color:var(--gold)">💰 Temettü gücü: ' + temettuSkor + ' puan</div>' : '') +
     '</div>' +
     // AI Portföy Yorumu
     '<div id="ai-portfoy-yorum" style="margin-top:12px">' +
     (apiKeyAl() ? '<button onclick="aiPortfoyYorumGoster()" style="width:100%;padding:8px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);border-radius:8px;color:#6fa3ff;font-family:DM Sans,sans-serif;font-size:11px;font-weight:600;cursor:pointer">🤖 AI Portföy Yorumu Al</button>' :
-    '<div style="font-size:10px;color:var(--text3);text-align:center;padding:8px">🤖 AI yorumu için Ayarlar\'dan API key ekle</div>') +
+    '<div style="margin-top:10px;padding:10px 14px;background:rgba(255,179,0,0.06);border:1px solid rgba(255,179,0,0.2);border-radius:10px">' +
+'<div style="font-size:9px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px">📋 TAVSİYE</div>' +
+(sonuc.mod === 'ATAK' ? '<div style="font-size:11px;color:var(--text2);line-height:1.8">→ Mevcut pozisyonları koru<br>→ Güçlü hisselerde %10-20 artış düşünülebilir</div>' :
+sonuc.mod === 'KORUMA' ? '<div style="font-size:11px;color:var(--text2);line-height:1.8">→ %20 pozisyon azaltılabilir<br>→ Stop seviyelerini sıkılaştır</div>' :
+sonuc.mod === 'DEFANSİF' ? '<div style="font-size:11px;color:var(--text2);line-height:1.8">→ %30-40 nakite geç<br>→ Yeni alım yapma</div>' :
+'<div style="font-size:11px;color:var(--text2);line-height:1.8">→ Yeni alım için bekle<br>→ Mevcut pozisyonları izle</div>') +
+'</div>') +
     '</div>';
 }
 
