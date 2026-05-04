@@ -1388,7 +1388,7 @@ const dengeHtml = '<div style="margin-top:8px;font-size:11px;color:var(--text2)"
     (apiKeyAl() ? '<button onclick="aiPortfoyYorumGoster()" style="width:100%;padding:8px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);border-radius:8px;color:#6fa3ff;font-family:DM Sans,sans-serif;font-size:11px;font-weight:600;cursor:pointer">🤖 AI Portföy Yorumu Al</button>' :
     '<div style="margin-top:10px;padding:10px 14px;background:rgba(255,179,0,0.06);border:1px solid rgba(255,179,0,0.2);border-radius:10px">' +
     '<div style="font-size:9px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px">📋 TAVSİYE</div>' +
-    (sonuc.mod === 'ATAK' ? portfolio.map(p => '<div>→ ' + p.ticker + ' <span style="color:var(--green)">tut / artır</span></div>').join('') :
+     sonuc.mod === 'ATAK' ? portfolio.map(p => '<div>→ ' + p.ticker + ' <span style="color:var(--green)">tut / artır</span></div>').join('') :
      sonuc.mod === 'KORUMA' ? portfolio.map(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); const deger = h ? (h.fiyat * p.adet * 0.2).toFixed(0) : '—'; return '<div>→ ' + p.ticker + ' <span style="color:var(--red)">azalt €' + deger + '</span></div>'; }).join('') :
      sonuc.mod === 'DEFANSİF' ? portfolio.map(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); const deger = h ? (h.fiyat * p.adet * 0.35).toFixed(0) : '—'; return '<div>→ ' + p.ticker + ' <span style="color:var(--red)">sat €' + deger + '</span></div>'; }).join('') :
      portfolio.map(p => '<div>→ ' + p.ticker + ' <span style="color:var(--yellow)">izle</span></div>').join('')) +
