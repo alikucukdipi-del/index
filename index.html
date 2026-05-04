@@ -1397,8 +1397,7 @@ sonuc.mod === 'DEFANSİF' ? '<div style="font-size:11px;color:var(--text2);line-
 sonuc.mod === 'KORUMA' ? portfolio.map(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); const deger = h ? (h.fiyat * p.adet * 0.2).toFixed(0) : '—'; return '<div>→ ' + p.ticker + ' <span style="color:var(--red)">azalt €' + deger + '</span></div>'; }).join('') :
 sonuc.mod === 'DEFANSİF' ? portfolio.map(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); const deger = h ? (h.fiyat * p.adet * 0.35).toFixed(0) : '—'; return '<div>→ ' + p.ticker + ' <span style="color:var(--red)">sat €' + deger + '</span></div>'; }).join('') :
 portfolio.map(p => '<div>→ ' + p.ticker + ' <span style="color:var(--yellow)">izle</span></div>').join('')) +
-'</div>') +
-    '</div>'
+'</div>';
 }
 
 async function aiPortfoyYorumGoster() {
