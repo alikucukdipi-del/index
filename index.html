@@ -1392,7 +1392,12 @@ const dengeHtml = '<div style="margin-top:8px;font-size:11px;color:var(--text2)"
 (sonuc.mod === 'ATAK' ? '<div style="font-size:11px;color:var(--text2);line-height:1.8">→ Mevcut pozisyonları koru<br>→ Güçlü hisselerde %10-20 artış düşünülebilir</div>' :
 sonuc.mod === 'KORUMA' ? '<div style="font-size:11px;color:var(--text2);line-height:1.8">→ %20 pozisyon azaltılabilir<br>→ Stop seviyelerini sıkılaştır</div>' :
 sonuc.mod === 'DEFANSİF' ? '<div style="font-size:11px;color:var(--text2);line-height:1.8">→ %30-40 nakite geç<br>→ Yeni alım yapma</div>' :
-'<div style="font-size:11px;color:var(--text2);line-height:1.8">→ Yeni alım için bekle<br>→ Mevcut pozisyonları izle</div>') +
+'<div style="font-size:11px;color:var(--text2);line-height:1.8">' +
+(sonuc.mod === 'ATAK' ? portfolio.map(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); return '<div>→ ' + p.ticker + ' <span style="color:var(--green)">tut / artır</span></div>'; }).join('') :
+sonuc.mod === 'KORUMA' ? portfolio.map(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); const deger = h ? (h.fiyat * p.adet * 0.2).toFixed(0) : '—'; return '<div>→ ' + p.ticker + ' <span style="color:var(--red)">azalt €' + deger + '</span></div>'; }).join('') :
+sonuc.mod === 'DEFANSİF' ? portfolio.map(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); const deger = h ? (h.fiyat * p.adet * 0.35).toFixed(0) : '—'; return '<div>→ ' + p.ticker + ' <span style="color:var(--red)">sat €' + deger + '</span></div>'; }).join('') :
+portfolio.map(p => '<div>→ ' + p.ticker + ' <span style="color:var(--yellow)">izle</span></div>').join('')) +
+'</div>'
 '</div>') +
     '</div>';
 }
