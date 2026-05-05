@@ -2952,20 +2952,6 @@ if (wisdomHtml) {
   document.getElementById('result').classList.add('show');
   setTimeout(() => document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
 
-  // Kararı geçmişe kaydet
-  const scalingFlags = {
-    profit_erosion_index: amount > 0 ? Math.round((10 / amount) * 1000) / 10 : null,
-    is_amount_insufficient: amount > 0 && amount < 1200
-  };
-  kararKaydet(
-    ticker !== '—' ? tickerKisa(ticker) : (seciliHisse ? tickerKisa(seciliHisse.ticker) : '—'),
-    price,
-    aksiyonSonuc.label,
-    score,
-    rsi,
-    seciliHisse?.integrity?.risk || 'LOW',
-    scalingFlags
-  );
 }
 
 function sifirla() {
