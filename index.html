@@ -3558,7 +3558,19 @@ function heatmapOlustur() {
     const puan = aktifPuan(h);
     const buyuk = puan >= 15 || h.direncKirildi || h.destekKirildi || setupSeviyesi(h) === 'aplus' || setupSeviyesi(h) === 'a';
     const setup = setupSeviyesi(h);
-    const upside = h.hedef > 0 && h.fiyat > 0 ? ((h.hedef - h.fiyat) / h.fiyat * 100) : null;
+
+    // MOTOR ADİL FİYAT — kartlarda analist yerine motor hesabı
+    function kartMotorAdil(h) {
+      let fiyatlar = [], agirlik = 0;
+      if (h.ma200 > 0) { const rsiFak = h.rsi>70?0.95:h.rsi<30?1.05:1.0; fiyatlar.push(h.ma200*1.05*rsiFak*3); agirlik+=3; }
+      if (h.high12>0&&h.low12>0) { fiyatlar.push(((h.high12+h.low12)/2)*2); agirlik+=2; }
+      if (h.fk>0&&h.fk<60) { fiyatlar.push(h.fiyat*(18/h.fk)*1.5); agirlik+=1.5; }
+      if (h.ma20>0) { fiyatlar.push(h.ma20*1); agirlik+=1; }
+      if (agirlik===0) return h.hedef>0?h.hedef:null;
+      return Math.round((fiyatlar.reduce((a,b)=>a+b,0)/agirlik)*100)/100;
+    }
+    const motorAdil = kartMotorAdil(h);
+    const motorUpside = motorAdil && h.fiyat > 0 ? ((motorAdil - h.fiyat) / h.fiyat * 100) : null;
     const upsideMin = h.hedefMin > 0 && h.fiyat > 0 ? ((h.hedefMin - h.fiyat) / h.fiyat * 100) : null;
     const alimBolgesi = h.rsi > 0 && h.rsi < 35 && upsideMin !== null && upsideMin > 0;
     const bars = miniBarHesapla(h);
@@ -3602,7 +3614,25 @@ function heatmapOlustur() {
       '<div style="font-size:' + (buyuk ? '10px' : '9px') + ';color:#999;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (h.sirket.length > 14 ? h.sirket.substring(0, 14) + '…' : h.sirket) + '</div>' +
       '<div class="el-tooltip"><div style="font-family:Bebas Neue,sans-serif;font-size:' + (buyuk ? '18px' : '14px') + ';color:var(--text)">€' + h.fiyat.toFixed(2) + '</div>' + (fiyatTooltip ? '<div class="el-tooltip-box">' + fiyatTooltip + '</div>' : '') + '</div>' +
       (h.rsi > 0 ? '<div class="el-tooltip"><div style="font-size:' + (buyuk ? '10px' : '9px') + ';color:' + rsiRenk + ';font-weight:700;cursor:help">RSI ' + h.rsi.toFixed(0) + (rsiEt ? ' · ' + rsiEt : '') + '</div><div class="el-tooltip-box">' + rsiTooltip + '</div></div>' : '') +
-      (buyuk && upside !== null ? '<div style="font-size:10px;color:' + (upside > 0 ? 'var(--green)' : 'var(--red)') + ';font-weight:600">+%' + upside.toFixed(1) + '</div>' : '') +
+      (buyuk && motorUpside !== null ? '<div style="font-size:10px;color:' + (motorUpside > 0 ? 'var(--green)' : 'var(--red)') + ';font-weight:600">⚡%' + motorUpside.toFixed(1) + '</div>' : '') +
+      (buyuk && motorAdil && h.low12 > 0 && h.high12 > 0 ? (() => {
+        const min = h.low12 * 0.92, max = h.high12 * 1.08, aralik = max - min;
+        if (aralik <= 0) return '';
+        const pct = v => Math.min(96, Math.max(4, Math.round(((v-min)/aralik)*100)));
+        const fPct = pct(h.fiyat), mPct = pct(motorAdil);
+        const renk = motorUpside > 0 ? 'var(--green)' : 'var(--red)';
+        return `<div style="position:relative;height:28px;margin-top:8px">
+          <div style="position:absolute;top:10px;left:0;right:0;height:3px;border-radius:100px;background:linear-gradient(90deg,var(--red),var(--yellow),var(--green))"></div>
+          <div style="position:absolute;left:${mPct}%;top:4px;transform:translateX(-50%);text-align:center">
+            <div style="font-size:7px;color:var(--gold);white-space:nowrap;font-weight:700">⚡€${motorAdil.toFixed(0)}</div>
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--gold);border:1px solid #080808;margin:1px auto"></div>
+          </div>
+          <div style="position:absolute;left:${fPct}%;top:12px;transform:translateX(-50%);text-align:center">
+            <div style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:5px solid white;margin:0 auto"></div>
+            <div style="font-size:7px;color:white;white-space:nowrap">€${h.fiyat.toFixed(0)}</div>
+          </div>
+        </div>`;
+      })() : '') +
       temettuBadge +
       (buyuk ? '<div style="margin-top:6px;padding:2px 8px;border-radius:100px;background:rgba(255,255,255,0.05);border:1px solid ' + borderColor + ';display:inline-block"><span style="font-size:8px;color:' + labelColor + ';font-weight:700">' + statusIcon + ' ' + statusLabel + '</span></div>' : '') +
       raporBilgi + sinyalHtml +
