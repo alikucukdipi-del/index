@@ -534,7 +534,11 @@ select option { background: #181818; }
   <div class="field"><label>Büyüme</label><div class="tgrp" id="buyume"><button class="tbtn" onclick="T(this,'buyume','tg')" data-v="guclu">🚀 Güçlü</button><button class="tbtn" onclick="T(this,'buyume','tg')" data-v="var">📈 Var</button><button class="tbtn" onclick="T(this,'buyume','ty')" data-v="belirsiz">❓ Belirsiz</button><button class="tbtn" onclick="T(this,'buyume','tr')" data-v="yok">📉 Yok</button></div></div>
 </div>
 
-<button class="abtn" onclick="analiz()">🔍 ANALİZİ YAP</button>
+<button class="abtn" onclick="analiz('gercek')">🔍 ANALİZİ YAP</button>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+  <button onclick="analiz('test')" style="padding:12px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.4);border-radius:10px;color:#6fa3ff;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(41,121,255,0.2)'" onmouseout="this.style.background='rgba(41,121,255,0.1)'">🧪 Test Olarak Kaydet<br><span style="font-size:10px;font-weight:400;opacity:0.7">Sonucu gör, skoru etkileme</span></button>
+  <button onclick="analiz('gercek')" style="padding:12px;background:rgba(0,200,83,0.1);border:1px solid rgba(0,200,83,0.4);border-radius:10px;color:var(--green);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(0,200,83,0.2)'" onmouseout="this.style.background='rgba(0,200,83,0.1)'">✅ Gerçek Karar<br><span style="font-size:10px;font-weight:400;opacity:0.7">Win rate'e dahil et</span></button>
+</div>
 
 <div class="result" id="result">
   <div class="vbanner" id="vbanner">
@@ -888,13 +892,14 @@ function kararGecmisiKaydet() {
   localStorage.setItem('humeyra_karar_gecmisi', JSON.stringify(kararGecmisi.slice(-200)));
 }
 
-function kararKaydet(ticker, fiyat, karar, skor, rsi, integrityRisk, scalingFlags) {
+function kararKaydet(ticker, fiyat, karar, skor, rsi, integrityRisk, scalingFlags, mod) {
   const kayit = {
     id: Date.now().toString(36),
     timestamp: new Date().toISOString(),
     ticker: ticker || '—',
     price_at_analysis: fiyat || 0,
     decision: karar,
+    mod: mod || 'gercek',
     metrics: {
       score: skor,
       rsi: rsi || 0,
@@ -913,34 +918,48 @@ function kararKaydet(ticker, fiyat, karar, skor, rsi, integrityRisk, scalingFlag
 
 function backtestHesapla() {
   const kapalilar = kararGecmisi.filter(k => k.outcome.status !== 'OPEN' && k.outcome.result_pct !== null);
+  const gercekKapalilar = kapalilar.filter(k => k.mod !== 'test');
+  const testKapalilar = kapalilar.filter(k => k.mod === 'test');
   if (kapalilar.length === 0) return null;
 
-  const kazananlar = kapalilar.filter(k => k.outcome.result_pct > 0);
-  const kaybedenler = kapalilar.filter(k => k.outcome.result_pct <= 0);
-  const winRate = Math.round((kazananlar.length / kapalilar.length) * 100);
-  const avgGetiri = Math.round((kapalilar.reduce((a, k) => a + k.outcome.result_pct, 0) / kapalilar.length) * 10) / 10;
-  const maxDD = Math.round(Math.min(...kapalilar.map(k => k.outcome.result_pct)) * 10) / 10;
+  // Win rate sadece gerçek kararlardan
+  const hesapla = (liste) => {
+    if (!liste.length) return null;
+    const kazananlar = liste.filter(k => k.outcome.result_pct > 0);
+    return {
+      winRate: Math.round((kazananlar.length / liste.length) * 100),
+      avgGetiri: Math.round((liste.reduce((a, k) => a + k.outcome.result_pct, 0) / liste.length) * 10) / 10,
+      maxDD: Math.round(Math.min(...liste.map(k => k.outcome.result_pct)) * 10) / 10,
+      toplam: liste.length
+    };
+  };
 
-  // AI doğruluk: yüksek güven → doğru mu?
-  const yuksekGuven = kapalilar.filter(k => k.metrics.score > 70);
+  const gercek = hesapla(gercekKapalilar);
+  const test = hesapla(testKapalilar);
+
+  // AI doğruluk: yüksek güven → doğru mu? (gerçek kararlardan)
+  const yuksekGuven = gercekKapalilar.filter(k => k.metrics.score > 70);
   const aiDogru = yuksekGuven.length > 0
     ? Math.round((yuksekGuven.filter(k => k.outcome.result_pct > 0).length / yuksekGuven.length) * 100)
     : 0;
 
-  // Hatalar
+  // Hatalar (tüm kararlardan)
   const hatalar = kapalilar.filter(k => k.metrics.rsi > 80 && k.outcome.result_pct < 0)
-    .map(k => `RSI ${k.metrics.rsi} → ${k.ticker} ${k.outcome.result_pct > 0 ? '+' : ''}${k.outcome.result_pct}%`);
+    .map(k => `RSI ${k.metrics.rsi} → ${k.ticker} ${k.outcome.result_pct}%`);
 
-  // Kaçırılan fırsatlar
   const kacirilan = kapalilar.filter(k => k.metrics.score < 50 && k.outcome.result_pct > 5)
-    .map(k => `Düşük güven (${k.metrics.score}) → ${k.ticker} +${k.outcome.result_pct}% kazanç`);
+    .map(k => `Düşük güven (${k.metrics.score}) → ${k.ticker} +${k.outcome.result_pct}%`);
 
-  // En iyi sinyal
-  const enIyiSinyal = kapalilar
-    .filter(k => k.metrics.rsi < 35 && k.outcome.result_pct > 0)
-    .length;
+  const enIyiSinyal = kapalilar.filter(k => k.metrics.rsi < 35 && k.outcome.result_pct > 0).length;
 
-  return { winRate, avgGetiri, maxDD, aiDogru, hatalar, kacirilan, enIyiSinyal, toplam: kapalilar.length };
+  return {
+    gercek, test,
+    winRate: gercek?.winRate ?? 0,
+    avgGetiri: gercek?.avgGetiri ?? 0,
+    maxDD: gercek?.maxDD ?? 0,
+    aiDogru, hatalar, kacirilan, enIyiSinyal,
+    toplam: kapalilar.length
+  };
 }
 
 function portfolioGecmisGoster(el) {
@@ -953,11 +972,11 @@ function portfolioGecmisGoster(el) {
     html += `<div class="gecmis-ozet-grid">
       <div class="gecmis-ozet-kart" style="border-color:${bt.winRate>=60?'rgba(0,200,83,0.3)':'rgba(255,61,61,0.3)'}">
         <div class="gecmis-ozet-sayi" style="color:${bt.winRate>=60?'var(--green)':'var(--red)'}">%${bt.winRate}</div>
-        <div class="gecmis-ozet-label">Win Rate</div>
+        <div class="gecmis-ozet-label">✅ Win Rate</div>
       </div>
       <div class="gecmis-ozet-kart" style="border-color:${bt.avgGetiri>=0?'rgba(0,200,83,0.3)':'rgba(255,61,61,0.3)'}">
         <div class="gecmis-ozet-sayi" style="color:${bt.avgGetiri>=0?'var(--green)':'var(--red)'}">%${bt.avgGetiri>0?'+':''}${bt.avgGetiri}</div>
-        <div class="gecmis-ozet-label">Ort. Getiri</div>
+        <div class="gecmis-ozet-label">✅ Ort. Getiri</div>
       </div>
       <div class="gecmis-ozet-kart" style="border-color:rgba(255,61,61,0.3)">
         <div class="gecmis-ozet-sayi" style="color:var(--red)">%${bt.maxDD}</div>
@@ -968,6 +987,14 @@ function portfolioGecmisGoster(el) {
         <div class="gecmis-ozet-label">AI Doğruluk</div>
       </div>
     </div>`;
+
+    // Test sonuçları ayrı göster
+    if (bt.test && bt.test.toplam > 0) {
+      html += `<div style="padding:8px 12px;background:rgba(41,121,255,0.06);border:1px solid rgba(41,121,255,0.2);border-radius:8px;margin-bottom:10px;font-size:11px">
+        <div style="color:#6fa3ff;font-weight:700;margin-bottom:4px">🧪 Test Sonuçları (${bt.test.toplam} karar)</div>
+        <div style="color:var(--text2)">Win rate: %${bt.test.winRate} · Ort: %${bt.test.avgGetiri > 0 ? '+' : ''}${bt.test.avgGetiri}</div>
+      </div>`;
+    }
 
     if (bt.hatalar.length > 0) {
       html += '<div style="font-size:9px;letter-spacing:2px;color:var(--red);margin-bottom:6px;margin-top:4px">🔴 HATALAR</div>';
@@ -1002,9 +1029,16 @@ function portfolioGecmisGoster(el) {
         ? `<span style="color:${k.outcome.result_pct>=0?'var(--green)':'var(--red)'}">%${k.outcome.result_pct>0?'+':''}${k.outcome.result_pct}</span>`
         : `<span style="color:var(--text3)">Açık</span>`;
 
+      const modBadge = k.mod === 'test'
+        ? '<span style="font-size:8px;padding:1px 6px;border-radius:100px;background:rgba(41,121,255,0.15);border:1px solid rgba(41,121,255,0.3);color:#6fa3ff">🧪 Test</span>'
+        : '<span style="font-size:8px;padding:1px 6px;border-radius:100px;background:rgba(0,200,83,0.15);border:1px solid rgba(0,200,83,0.3);color:var(--green)">✅ Gerçek</span>';
+
       html += `<div class="gecmis-log-item" style="border-left-color:${renk}">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-family:Bebas Neue,sans-serif;font-size:16px;color:${renk}">${k.ticker}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="font-family:Bebas Neue,sans-serif;font-size:16px;color:${renk}">${k.ticker}</div>
+            ${modBadge}
+          </div>
           <div style="font-size:10px;font-weight:700;color:${renk}">${k.decision}</div>
           ${sonuc}
         </div>
@@ -2697,7 +2731,8 @@ function gn(id) { return parseFloat(document.getElementById(id).value) || 0; }
 function gs(id) { return document.getElementById(id).value.trim(); }
 function sig(txt, col) { return '<div class="sig"><div class="sigdot" style="background:' + col + '"></div><span>' + txt + '</span></div>'; }
 
-async function analiz() {
+async function analiz(mod) {
+  mod = mod || 'gercek';
   const price = gn('price'), target = gn('target'), entry = gn('entry') || price, amount = gn('amount'), profit = gn('profit') || 20;
   const ma200 = gn('ma200'), ma20 = gn('ma20'), rsi = gn('rsi'), beta = gn('beta'), margin = gn('margin'), pe = gn('pe'), change1m = gn('change1m');
   const company = gs('company') || 'Şirket', ticker = gs('ticker') || '—';
@@ -2825,7 +2860,8 @@ async function analiz() {
     score,
     rsi,
     seciliHisse?.integrity?.risk || 'LOW',
-    scalingFlags
+    scalingFlags,
+    mod
   );
   const kararSebep = [];
   if (ma20 > 0 && ma200 > 0 && ma20 < ma200) kararSebep.push('Trend zayıf');
