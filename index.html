@@ -962,96 +962,141 @@ function backtestHesapla() {
   };
 }
 
-function portfolioGecmisGoster(el) {
+function portfolioGecmisGoster(el, aktifAlt) {
+  aktifAlt = aktifAlt || 'testler';
   const bt = backtestHesapla();
-  const acik = kararGecmisi.filter(k => k.outcome.status === 'OPEN');
 
-  let html = '<div style="font-size:10px;letter-spacing:3px;color:var(--gold);margin-bottom:12px;font-weight:700">📈 KARAR GEÇMİŞİ & BACKTEST</div>';
+  let html = '<div style="font-size:10px;letter-spacing:3px;color:var(--gold);margin-bottom:10px;font-weight:700">📈 KARAR GEÇMİŞİ & BACKTEST</div>';
 
-  if (bt) {
-    html += `<div class="gecmis-ozet-grid">
-      <div class="gecmis-ozet-kart" style="border-color:${bt.winRate>=60?'rgba(0,200,83,0.3)':'rgba(255,61,61,0.3)'}">
-        <div class="gecmis-ozet-sayi" style="color:${bt.winRate>=60?'var(--green)':'var(--red)'}">%${bt.winRate}</div>
-        <div class="gecmis-ozet-label">✅ Win Rate</div>
-      </div>
-      <div class="gecmis-ozet-kart" style="border-color:${bt.avgGetiri>=0?'rgba(0,200,83,0.3)':'rgba(255,61,61,0.3)'}">
-        <div class="gecmis-ozet-sayi" style="color:${bt.avgGetiri>=0?'var(--green)':'var(--red)'}">%${bt.avgGetiri>0?'+':''}${bt.avgGetiri}</div>
-        <div class="gecmis-ozet-label">✅ Ort. Getiri</div>
-      </div>
-      <div class="gecmis-ozet-kart" style="border-color:rgba(255,61,61,0.3)">
-        <div class="gecmis-ozet-sayi" style="color:var(--red)">%${bt.maxDD}</div>
-        <div class="gecmis-ozet-label">Max DD</div>
-      </div>
-      <div class="gecmis-ozet-kart" style="border-color:rgba(41,121,255,0.3)">
-        <div class="gecmis-ozet-sayi" style="color:#6fa3ff">%${bt.aiDogru}</div>
-        <div class="gecmis-ozet-label">AI Doğruluk</div>
-      </div>
-    </div>`;
+  // Alt sekmeler
+  html += `<div style="display:flex;gap:4px;margin-bottom:12px">
+    ${[
+      {id:'testler', label:'🧪 Testler'},
+      {id:'gercekler', label:'✅ Gerçekler'},
+      {id:'stratejiler', label:'📊 Stratejiler'}
+    ].map(s => `<button onclick="portfolioGecmisGoster(document.getElementById('portfolio-icerik'),'${s.id}')"
+      style="flex:1;padding:6px 4px;border-radius:8px;border:1px solid ${aktifAlt===s.id?'rgba(201,168,76,0.4)':'var(--border)'};background:${aktifAlt===s.id?'rgba(201,168,76,0.15)':'transparent'};color:${aktifAlt===s.id?'var(--gold)':'var(--text2)'};font-size:9px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">${s.label}</button>`).join('')}
+  </div>`;
 
-    // Test sonuçları ayrı göster
-    if (bt.test && bt.test.toplam > 0) {
-      html += `<div style="padding:8px 12px;background:rgba(41,121,255,0.06);border:1px solid rgba(41,121,255,0.2);border-radius:8px;margin-bottom:10px;font-size:11px">
-        <div style="color:#6fa3ff;font-weight:700;margin-bottom:4px">🧪 Test Sonuçları (${bt.test.toplam} karar)</div>
-        <div style="color:var(--text2)">Win rate: %${bt.test.winRate} · Ort: %${bt.test.avgGetiri > 0 ? '+' : ''}${bt.test.avgGetiri}</div>
-      </div>`;
-    }
-
-    if (bt.hatalar.length > 0) {
-      html += '<div style="font-size:9px;letter-spacing:2px;color:var(--red);margin-bottom:6px;margin-top:4px">🔴 HATALAR</div>';
-      bt.hatalar.slice(0, 3).forEach(h => {
-        html += `<div class="backtest-hata">⚠️ ${h}</div>`;
-      });
-    }
-
-    if (bt.kacirilan.length > 0) {
-      html += '<div style="font-size:9px;letter-spacing:2px;color:var(--yellow);margin-bottom:6px;margin-top:8px">🟡 KAÇIRILAN FIRSATLAR</div>';
-      bt.kacirilan.slice(0, 2).forEach(k => {
-        html += `<div class="backtest-firsat">💡 ${k}</div>`;
-      });
-    }
-
-    if (bt.enIyiSinyal > 0) {
-      html += `<div style="margin-top:8px;padding:8px 12px;background:rgba(0,200,83,0.06);border:1px solid rgba(0,200,83,0.2);border-radius:8px;font-size:11px;color:var(--green)">🟢 En iyi sinyal: RSI &lt; 35 + düşük risk → ${bt.enIyiSinyal} kez doğru</div>`;
-    }
+  // Kalan gün hesapla
+  function kalanGun(timestamp) {
+    const gecen = Math.floor((Date.now() - new Date(timestamp).getTime()) / 86400000);
+    const kalan = 7 - gecen;
+    if (kalan <= 0) return '✅ Tamamlandı';
+    if (kalan === 1) return '⏳ Yarın biter';
+    return `⏳ ${kalan} gün kaldı`;
   }
 
-  html += `<div style="font-size:9px;letter-spacing:2px;color:var(--text2);margin:12px 0 6px">📋 SON KARARLAR ${acik.length > 0 ? `<span style="color:var(--yellow)">(${acik.length} açık)</span>` : ''}</div>`;
+  // Strateji etiketi
+  function stratejiEtiket(k) {
+    if (k.metrics.rsi < 30) return { label: 'RSI Dip', renk: 'var(--green)' };
+    if (k.metrics.rsi > 75) return { label: 'RSI Zirve', renk: 'var(--red)' };
+    if (k.metrics.score > 70) return { label: 'A+ Setup', renk: 'var(--gold)' };
+    if (k.metrics.score > 55) return { label: 'Momentum', renk: '#6fa3ff' };
+    return { label: 'Genel', renk: 'var(--text2)' };
+  }
 
-  if (kararGecmisi.length === 0) {
-    html += '<div style="text-align:center;padding:20px;color:var(--text2);font-size:12px">Henüz karar kaydı yok.<br>ANALİZİ YAP butonuna bas!</div>';
-  } else {
-    const sonKararlar = [...kararGecmisi].reverse().slice(0, 15);
-    sonKararlar.forEach(k => {
+  function kararListesiHtml(liste) {
+    if (liste.length === 0) return '<div style="text-align:center;padding:20px;color:var(--text2);font-size:12px">Henüz kayıt yok.</div>';
+    return [...liste].reverse().slice(0, 20).map(k => {
       const renkMap = { 'GÜÇLÜ AL': 'var(--green)', 'AL': 'var(--green)', 'TEMKİNLİ AL': '#00c853', 'İZLE': 'var(--yellow)', 'BEKLE': '#6fa3ff', 'UZAK DUR': 'var(--red)', 'KAR AL': 'var(--red)' };
       const renk = renkMap[k.decision] || 'var(--text2)';
       const tarih = new Date(k.timestamp).toLocaleDateString('tr-TR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
       const sonuc = k.outcome.result_pct !== null
-        ? `<span style="color:${k.outcome.result_pct>=0?'var(--green)':'var(--red)'}">%${k.outcome.result_pct>0?'+':''}${k.outcome.result_pct}</span>`
-        : `<span style="color:var(--text3)">Açık</span>`;
-
-      const modBadge = k.mod === 'test'
-        ? '<span style="font-size:8px;padding:1px 6px;border-radius:100px;background:rgba(41,121,255,0.15);border:1px solid rgba(41,121,255,0.3);color:#6fa3ff">🧪 Test</span>'
-        : '<span style="font-size:8px;padding:1px 6px;border-radius:100px;background:rgba(0,200,83,0.15);border:1px solid rgba(0,200,83,0.3);color:var(--green)">✅ Gerçek</span>';
-
-      html += `<div class="gecmis-log-item" style="border-left-color:${renk}">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="display:flex;align-items:center;gap:6px">
-            <div style="font-family:Bebas Neue,sans-serif;font-size:16px;color:${renk}">${k.ticker}</div>
-            ${modBadge}
+        ? `<span style="font-weight:700;color:${k.outcome.result_pct>=0?'var(--green)':'var(--red)'}">%${k.outcome.result_pct>0?'+':''}${k.outcome.result_pct}</span>`
+        : `<span style="color:var(--text3);font-size:9px">${kalanGun(k.timestamp)}</span>`;
+      const strateji = stratejiEtiket(k);
+      return `<div class="gecmis-log-item" style="border-left-color:${renk}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <div style="display:flex;align-items:center;gap:5px">
+            <div style="font-family:Bebas Neue,sans-serif;font-size:15px;color:${renk}">${k.ticker}</div>
+            <span style="font-size:8px;padding:1px 5px;border-radius:100px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:${strateji.renk}">${strateji.label}</span>
           </div>
-          <div style="font-size:10px;font-weight:700;color:${renk}">${k.decision}</div>
-          ${sonuc}
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:9px;font-weight:700;color:${renk}">${k.decision}</span>
+            ${sonuc}
+          </div>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px">
-          <span>Skor: ${k.metrics.score} · RSI: ${k.metrics.rsi}</span>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3)">
+          <span>Skor: ${k.metrics.score} · RSI: ${k.metrics.rsi} · €${k.price_at_analysis?.toFixed(2)||'—'}</span>
           <span>${tarih}</span>
         </div>
       </div>`;
+    }).join('');
+  }
+
+  if (aktifAlt === 'testler') {
+    const testler = kararGecmisi.filter(k => k.mod === 'test');
+    const acik = testler.filter(k => k.outcome.status === 'OPEN');
+    html += `<div style="font-size:9px;color:var(--text2);margin-bottom:8px">🧪 ${testler.length} test · ${acik.length} açık</div>`;
+    html += kararListesiHtml(testler);
+  }
+
+  else if (aktifAlt === 'gercekler') {
+    const gercekler = kararGecmisi.filter(k => k.mod !== 'test');
+    const acik = gercekler.filter(k => k.outcome.status === 'OPEN');
+    if (bt?.gercek) {
+      html += `<div class="gecmis-ozet-grid" style="margin-bottom:10px">
+        <div class="gecmis-ozet-kart" style="border-color:${bt.gercek.winRate>=60?'rgba(0,200,83,0.3)':'rgba(255,61,61,0.3)'}">
+          <div class="gecmis-ozet-sayi" style="color:${bt.gercek.winRate>=60?'var(--green)':'var(--red)'}">%${bt.gercek.winRate}</div>
+          <div class="gecmis-ozet-label">Win Rate</div>
+        </div>
+        <div class="gecmis-ozet-kart" style="border-color:${bt.gercek.avgGetiri>=0?'rgba(0,200,83,0.3)':'rgba(255,61,61,0.3)'}">
+          <div class="gecmis-ozet-sayi" style="color:${bt.gercek.avgGetiri>=0?'var(--green)':'var(--red)'}">%${bt.gercek.avgGetiri>0?'+':''}${bt.gercek.avgGetiri}</div>
+          <div class="gecmis-ozet-label">Ort. Getiri</div>
+        </div>
+        <div class="gecmis-ozet-kart"><div class="gecmis-ozet-sayi" style="color:var(--red)">%${bt.gercek.maxDD}</div><div class="gecmis-ozet-label">Max DD</div></div>
+        <div class="gecmis-ozet-kart"><div class="gecmis-ozet-sayi" style="color:#6fa3ff">%${bt.aiDogru}</div><div class="gecmis-ozet-label">AI Doğruluk</div></div>
+      </div>`;
+    }
+    html += `<div style="font-size:9px;color:var(--text2);margin-bottom:8px">✅ ${gercekler.length} gerçek karar · ${acik.length} açık</div>`;
+    html += kararListesiHtml(gercekler);
+  }
+
+  else if (aktifAlt === 'stratejiler') {
+    const stratejiler = ['RSI Dip', 'RSI Zirve', 'A+ Setup', 'Momentum', 'Genel'];
+    const kapalilar = kararGecmisi.filter(k => k.outcome.result_pct !== null);
+
+    html += '<div style="font-size:9px;color:var(--text2);margin-bottom:10px">Hangi stratejide daha iyi kararlar veriyorsun?</div>';
+
+    stratejiler.forEach(str => {
+      const strRenk = { 'RSI Dip': 'var(--green)', 'RSI Zirve': 'var(--red)', 'A+ Setup': 'var(--gold)', 'Momentum': '#6fa3ff', 'Genel': 'var(--text2)' }[str];
+      const filtre = (k) => {
+        if (str === 'RSI Dip') return k.metrics.rsi < 30;
+        if (str === 'RSI Zirve') return k.metrics.rsi > 75;
+        if (str === 'A+ Setup') return k.metrics.score > 70;
+        if (str === 'Momentum') return k.metrics.score > 55 && k.metrics.score <= 70;
+        return k.metrics.score <= 55;
+      };
+      const grup = kapalilar.filter(filtre);
+      if (grup.length === 0) return;
+      const kazanan = grup.filter(k => k.outcome.result_pct > 0).length;
+      const winRate = Math.round((kazanan / grup.length) * 100);
+      const avgGetiri = Math.round((grup.reduce((a,k) => a + k.outcome.result_pct, 0) / grup.length) * 10) / 10;
+      const barW = winRate;
+
+      html += `<div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:11px;font-weight:700;color:${strRenk}">${str}</span>
+          <div style="display:flex;gap:8px;font-size:10px">
+            <span style="color:${winRate>=60?'var(--green)':'var(--red)'}">%${winRate} win</span>
+            <span style="color:${avgGetiri>=0?'var(--green)':'var(--red)'}">%${avgGetiri>0?'+':''}${avgGetiri} ort</span>
+            <span style="color:var(--text3)">${grup.length} karar</span>
+          </div>
+        </div>
+        <div style="height:5px;background:var(--border);border-radius:100px;overflow:hidden">
+          <div style="width:${barW}%;height:100%;background:${winRate>=60?'var(--green)':'var(--red)'};border-radius:100px"></div>
+        </div>
+      </div>`;
     });
+
+    if (kapalilar.length === 0) {
+      html += '<div style="text-align:center;padding:20px;color:var(--text2);font-size:12px">7 gün sonra stratejiler burada görünecek!</div>';
+    }
   }
 
   if (kararGecmisi.length > 0) {
-    html += `<button onclick="kararGecmisiTemizle()" style="width:100%;margin-top:8px;padding:6px;background:transparent;border:1px solid rgba(255,61,61,0.3);border-radius:8px;color:var(--red);font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif">🗑️ Geçmişi Temizle</button>`;
+    html += `<button onclick="kararGecmisiTemizle()" style="width:100%;margin-top:10px;padding:6px;background:transparent;border:1px solid rgba(255,61,61,0.3);border-radius:8px;color:var(--red);font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif">🗑️ Geçmişi Temizle</button>`;
   }
 
   el.innerHTML = html;
@@ -3018,4 +3063,4 @@ setInterval(() => {
 }, 30 * 1000); 
 </script>
 </body>
-</html> 
+</html>
