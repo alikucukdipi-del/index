@@ -3201,10 +3201,20 @@ function aktifPuan(h) {
 let hisseler = [], seciliHisse = null;
 
 async function sheetsYukle() {
+  const proxies = [
+    `https://corsproxy.io/?${encodeURIComponent(SHEETS_CSV + '&t=' + Date.now())}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(SHEETS_CSV + '&t=' + Date.now())}`,
+    `https://thingproxy.freeboard.io/fetch/${SHEETS_CSV}`,
+  ];
+  let text = null;
+  for (const url of proxies) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) { text = await res.text(); break; }
+    } catch(e) { continue; }
+  }
   try {
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(SHEETS_CSV + '&t=' + Date.now())}`;
-    const res = await fetch(proxyUrl);
-    const text = await res.text();
+    if (!text) throw new Error('Tüm proxyler başarısız');
     const satirlar = text.trim().split('\n');
     hisseler = [];
     for (let i = VERI_BASLANGIC_SATIRI; i < satirlar.length; i++) {
