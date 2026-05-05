@@ -525,6 +525,7 @@ select option { background: #181818; }
     <div class="vsummary" id="vsummary"></div>
   </div>
   <div id="guven-blok-container"></div>
+  <div id="integrity-blok" style="display:none;margin-bottom:14px"></div>
   <!-- AI YORUM -->
   <div class="ai-yorum-kutu" id="ai-yorum-kutu" style="display:none">
     <div class="ai-yorum-baslik">🤖 AI ANALİST YORUMU</div>
@@ -565,6 +566,279 @@ select option { background: #181818; }
 </div>
 </div>
 <script>
+  // ═══════════════════════════════════════════════════════
+// SOVEREIGN ENGINE v1.0 — ANA MOTOR 🚀
+// UP TO THE MOON
+// ═══════════════════════════════════════════════════════
+
+async function yahooVeriCek(ticker, gun = 40) {
+  const yahooTicker = tickerDonustur(ticker);
+  if (!yahooTicker) return null;
+  const bitis = Math.floor(Date.now() / 1000);
+  const baslangic = bitis - (gun * 24 * 60 * 60);
+  const url = `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${yahooTicker}?period1=${baslangic}&period2=${bitis}&interval=1d`)}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    const chart = data?.chart?.result?.[0];
+    if (!chart) return null;
+    const kapanis = chart.indicators.quote[0].close;
+    const hacim = chart.indicators.quote[0].volume;
+    const timestamps = chart.timestamp;
+    return kapanis.map((f, i) => ({
+      tarih: new Date(timestamps[i] * 1000).toLocaleDateString('tr-TR'),
+      kapanis: f, hacim: hacim[i]
+    })).filter(d => d.kapanis !== null && d.kapanis > 0);
+  } catch (e) { console.warn('Yahoo hata:', ticker, e); return null; }
+}
+
+function tickerDonustur(ticker) {
+  const temiz = ticker.replace('AMS:','').replace('EPA:','').replace('FRA:','').replace('AEX:','');
+  const MAP = {
+    'ASML':'ASML.AS','INGA':'INGA.AS','ABN':'ABN.AS','SHELL':'SHELL.AS','AD':'AD.AS',
+    'PHIA':'PHIA.AS','KPN':'KPN.AS','AGN':'AGN.AS','ADYEN':'ADYEN.AS','FUR':'FUR.AS',
+    'PHARM':'PHARM.AS','TWEKA':'TWEKA.AS','RAND':'RAND.AS','GLPG':'GLPG.AS',
+    'MICC':'MICC.AS','MT':'MT.AS','CVC':'CVC.AS',
+    'AF':'AF.PA','RNO':'RNO.PA','TTE':'TTE.PA','ORA':'ORA.PA','GLE':'GLE.PA',
+    'CA':'CA.PA','STLAP':'STLAP.PA','ACA':'ACA.PA','ENGI':'ENGI.PA','VIV':'VIV.PA','SGO':'SGO.PA',
+    'P911':'P911.DE','DBK':'DBK.DE','CBK':'CBK.DE','LHA':'LHA.DE','BAYN':'BAYN.DE',
+    'IFX':'IFX.DE','VOW3':'VOW3.DE','MBG':'MBG.DE','DTE':'DTE.DE','CON':'CON.DE','EOAN':'EOAN.DE'
+  };
+  return MAP[temiz] || null;
+}
+
+function rsiHesapla(kapanis, periyot = 14) {
+  if (!kapanis || kapanis.length < periyot + 1) return 50;
+  let kazanclar = [], kayiplar = [];
+  for (let i = 1; i < kapanis.length; i++) {
+    const fark = kapanis[i] - kapanis[i-1];
+    kazanclar.push(fark > 0 ? fark : 0);
+    kayiplar.push(fark < 0 ? Math.abs(fark) : 0);
+  }
+  let ortKazanc = kazanclar.slice(0,periyot).reduce((a,b)=>a+b)/periyot;
+  let ortKayip = kayiplar.slice(0,periyot).reduce((a,b)=>a+b)/periyot;
+  for (let i = periyot; i < kazanclar.length; i++) {
+    ortKazanc = (ortKazanc*(periyot-1)+kazanclar[i])/periyot;
+    ortKayip = (ortKayip*(periyot-1)+kayiplar[i])/periyot;
+  }
+  if (ortKayip === 0) return 100;
+  return Math.round(100-(100/(1+ortKazanc/ortKayip)));
+}
+
+function maHesapla(kapanis, periyot) {
+  if (!kapanis || kapanis.length < periyot) return 0;
+  const dilim = kapanis.slice(-periyot);
+  return Math.round((dilim.reduce((a,b)=>a+b)/periyot)*100)/100;
+}
+
+function atrHesapla(veriler, periyot = 14) {
+  if (!veriler || veriler.length < periyot+1) return 0;
+  const trDizisi = [];
+  for (let i = 1; i < veriler.length; i++) {
+    const y = veriler[i].kapanis*1.005, d = veriler[i].kapanis*0.995, o = veriler[i-1].kapanis;
+    trDizisi.push(Math.max(y-d, Math.abs(y-o), Math.abs(d-o)));
+  }
+  let atr = trDizisi.slice(0,periyot).reduce((a,b)=>a+b)/periyot;
+  for (let i = periyot; i < trDizisi.length; i++) atr = (atr*(periyot-1)+trDizisi[i])/periyot;
+  return Math.round(atr*100)/100;
+}
+
+function macdHesapla(kapanis) {
+  if (!kapanis || kapanis.length < 26) return { macd:0, sinyal:0, histogram:0 };
+  function ema(dizi, p) {
+    const k = 2/(p+1); let v = dizi[0];
+    for (let i = 1; i < dizi.length; i++) v = dizi[i]*k+v*(1-k);
+    return v;
+  }
+  const macdDizisi = [];
+  for (let i = 26; i <= kapanis.length; i++) {
+    macdDizisi.push(ema(kapanis.slice(0,i),12)-ema(kapanis.slice(0,i),26));
+  }
+  const macdVal = macdDizisi[macdDizisi.length-1];
+  const sinyalVal = ema(macdDizisi,9);
+  return {
+    macd: Math.round(macdVal*1000)/1000,
+    sinyal: Math.round(sinyalVal*1000)/1000,
+    histogram: Math.round((macdVal-sinyalVal)*1000)/1000
+  };
+}
+
+async function anaMotorCalistir(h) {
+  const veriler = await yahooVeriCek(h.ticker, 40);
+  if (!veriler || veriler.length < 15) return null;
+  const kapanis = veriler.map(d => d.kapanis);
+  const sonFiyat = kapanis[kapanis.length-1];
+  const onceki = kapanis[kapanis.length-2] || sonFiyat;
+  return {
+    rsi: rsiHesapla(kapanis, 14),
+    ma20: maHesapla(kapanis, 20),
+    ma50: maHesapla(kapanis, 50),
+    ma200: maHesapla(kapanis, Math.min(200, kapanis.length)),
+    atr: atrHesapla(veriler, 14),
+    macd: macdHesapla(kapanis),
+    degisim: Math.round(((sonFiyat-onceki)/onceki)*10000)/100,
+    fiyat: Math.round(sonFiyat*100)/100,
+    veriler
+  };
+}
+
+async function motorArkaPlandaCalistir() {
+  const sirali = [...hisseler].sort((a,b) => aktifPuan(b)-aktifPuan(a));
+  for (const h of sirali) {
+    if (h.motorYuklendi || h.motorYukleniyor) continue;
+    h.motorYukleniyor = true;
+    const sonuc = await anaMotorCalistir(h);
+    if (sonuc) {
+      h.rsi = sonuc.rsi;
+      h.ma20 = sonuc.ma20;
+      h.ma200 = sonuc.ma200;
+      h.degisim = sonuc.degisim;
+      const kapanis = sonuc.veriler.map(d=>d.kapanis);
+      const hacim = sonuc.veriler.map(d=>d.hacim||0);
+      h.integrity = integrityHesapla(kapanis, hacim);
+      if (h.high12>0 && h.low12>0 && h.high12!==h.low12) {
+        h.pozisyon12H = Math.round((h.fiyat-h.low12)/(h.high12-h.low12)*100);
+      }
+      h.rsiTutarsiz = h.pozisyon12H!
+      // ═══════════════════════════════════════════════════════
+// INTEGRITY MOTORU — MANİPÜLASYON KALKANI 🛡️
+// ═══════════════════════════════════════════════════════
+
+function benfordSkor(kapanis) {
+  if (!kapanis || kapanis.length < 10) return 1;
+  const beklenen = [0.301,0.176,0.125,0.097,0.079,0.067,0.058,0.051,0.046];
+  const sayac = new Array(9).fill(0);
+  kapanis.forEach(f => {
+    const r = parseInt(Math.abs(f).toString().replace('0.','').replace('.','')[0]);
+    if (r >= 1 && r <= 9) sayac[r-1]++;
+  });
+  const toplam = sayac.reduce((a,b)=>a+b);
+  if (!toplam) return 1;
+  let sapma = 0;
+  sayac.forEach((s,i) => sapma += Math.abs(s/toplam-beklenen[i]));
+  return Math.round(Math.max(0,1-sapma)*100)/100;
+}
+
+function fraktalKirilma(kapanis) {
+  if (!kapanis || kapanis.length < 5) return 0;
+  const getiriler = [];
+  for (let i = 1; i < kapanis.length; i++) getiriler.push(Math.abs((kapanis[i]-kapanis[i-1])/kapanis[i-1]));
+  const ort = getiriler.reduce((a,b)=>a+b)/getiriler.length;
+  const std = Math.sqrt(getiriler.map(g=>Math.pow(g-ort,2)).reduce((a,b)=>a+b)/getiriler.length);
+  const sonUc = getiriler.slice(-3).reduce((a,b)=>a+b)/3;
+  return std > 0 ? Math.round((sonUc/std)*100)/100 : 0;
+}
+
+function patternSkor(kapanis) {
+  if (!kapanis || kapanis.length < 6) return 0;
+  let tekrar = 0;
+  for (let i = 2; i < kapanis.length; i++) {
+    const f1 = Math.abs(kapanis[i]-kapanis[i-1]);
+    const f2 = Math.abs(kapanis[i-1]-kapanis[i-2]);
+    if (f2 > 0 && Math.abs(f1-f2)/f2 < 0.05) tekrar++;
+  }
+  return Math.round((tekrar/kapanis.length)*100)/100;
+}
+
+function entropySkor(hacim) {
+  if (!hacim || hacim.length < 5) return 1;
+  const temiz = hacim.filter(h=>h>0);
+  if (temiz.length < 3) return 1;
+  const ort = temiz.reduce((a,b)=>a+b)/temiz.length;
+  const std = Math.sqrt(temiz.map(h=>Math.pow(h-ort,2)).reduce((a,b)=>a+b)/temiz.length);
+  const cv = ort > 0 ? std/ort : 0;
+  return Math.round(Math.max(0,1-Math.min(cv,1))*100)/100;
+}
+
+function integrityHesapla(kapanis, hacim) {
+  const th = { benford_min:0.85, fractal_max:2.5, pattern_max:0.7, entropy_min:0.5 };
+  const benford = benfordSkor(kapanis);
+  const fraktal = fraktalKirilma(kapanis);
+  const pattern = patternSkor(kapanis);
+  const entropy = entropySkor(hacim);
+  const bayraklar = {
+    benford: benford < th.benford_min,
+    fraktal: fraktal > th.fractal_max,
+    pattern: pattern > th.pattern_max,
+    entropy: entropy < th.entropy_min
+  };
+  const anomaliSayisi = Object.values(bayraklar).filter(Boolean).length;
+  const risk = anomaliSayisi >= 2 ? 'HIGH' : anomaliSayisi === 1 ? 'MEDIUM' : 'LOW';
+  return { benford, fraktal, pattern, entropy, bayraklar, anomaliSayisi, risk };
+}
+
+function integrityKartHtml(integrity) {
+  if (!integrity) return '';
+  const renkMap = { LOW:'var(--green)', MEDIUM:'var(--yellow)', HIGH:'var(--red)' };
+  const ikonMap = { LOW:'✅', MEDIUM:'⚠️', HIGH:'🚨' };
+  const renk = renkMap[integrity.risk];
+  return `<div style="background:var(--card2);border:1px solid ${renk};border-radius:12px;padding:14px 16px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div style="font-size:10px;letter-spacing:3px;color:var(--text2);font-weight:700">🛡️ MANİPÜLASYON KALKANI</div>
+      <div style="padding:4px 12px;border-radius:100px;background:${renk}22;border:1px solid ${renk};font-size:11px;font-weight:700;color:${renk}">${ikonMap[integrity.risk]} ${integrity.risk}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      ${[
+        {n:'Benford',d:integrity.benford,b:integrity.bayraklar.benford},
+        {n:'Fraktal',d:integrity.fraktal,b:integrity.bayraklar.fraktal},
+        {n:'Pattern',d:integrity.pattern,b:integrity.bayraklar.pattern},
+        {n:'Entropy',d:integrity.entropy,b:integrity.bayraklar.entropy}
+      ].map(m=>`<div style="padding:8px 10px;background:${m.b?'rgba(255,61,61,0.08)':'rgba(0,200,83,0.08)'};border:1px solid ${m.b?'rgba(255,61,61,0.3)':'rgba(0,200,83,0.3)'};border-radius:8px">
+        <div style="font-size:9px;color:var(--text3);margin-bottom:3px">${m.n}</div>
+        <div style="font-size:13px;font-weight:700;color:${m.b?'var(--red)':'var(--green)'}">${m.d}</div>
+      </div>`).join('')}
+    </div>
+    <div style="font-size:10px;color:var(--text3);font-style:italic">Fiyatın gürültüsüne değil, terazinin dürüstlüğüne bak. HIGH ise masada hile vardır.</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// WISDOM LAYER — GEMİNİ FELSEFESİ 🧠
+// ═══════════════════════════════════════════════════════
+
+const WISDOM = {
+  tooltips: {
+    rsi: "RSI sadece bir sayı değildir; hissenin nefes nefese kalıp kalmadığını ölçen bir nabız ölçerdir. 80 üstü oksijensiz bölgedir.",
+    integrity_risk: "Fiyatın gürültüsüne değil, terazinin dürüstlüğüne bak. HIGH ise masada hile vardır.",
+    realized_pnl: "Gerçekleşmiş zarar bir mağlubiyet değil, piyasaya ödenmiş bir eğitim masrafıdır.",
+    value_gap: "Fiyat ne kadar şişerse şişsin, yerçekimi (Adil Değer) eninde sonunda galip gelir."
+  },
+  sentry: [
+    {
+      isim: 'MANIPULATION_WARNING',
+      kontrol: (ig,rsi,ak,nk,is,pnl) => ig === 'HIGH',
+      quote: "Hisse altın olsa da, terazi hileliyse o tartıya çıkma. Bırak başkaları kumar oynasın, sen paranı koru.",
+      renk: 'var(--red)', ikon: '🚨'
+    },
+    {
+      isim: 'FOMO_WARNING',
+      kontrol: (ig,rsi,ak,nk,is,pnl) => ak === 'BUY' && rsi > 70,
+      quote: "Piyasa, paranın sabırsız olandan sabırlı olana aktarıldığı bir mekanizmadır. Kaçan trene atlanmaz, bir sonraki seferi bekle.",
+      renk: 'var(--yellow)', ikon: '⚠️'
+    },
+    {
+      isim: 'CASH_PROTECTION',
+      kontrol: (ig,rsi,ak,nk,is,pnl) => is > 0 && nk < is * 0.2,
+      quote: "Kurşunun (nakdin) %80'ini harcadın. Cephaneyi tek cephede tüketme; piyasa her zaman ikinci bir şans verir.",
+      renk: 'var(--yellow)', ikon: '💰'
+    },
+    {
+      isim: 'REVENGE_TRADE_WARNING',
+      kontrol: (ig,rsi,ak,nk,is,pnl) => pnl < -100 && ak === 'BUY',
+      quote: "Şu an zararını çıkarmak için hırsla işlem yapıyor olabilir misin? En iyi işlem, bazen ekrandan uzaklaşmaktır.",
+      renk: 'var(--red)', ikon: '🛑'
+    }
+  ]
+};
+
+function wisdomUyariUret(integrity, rsi, aksiyon, nakit, ilkSermaye, pnl) {
+  const tetiklenen = WISDOM.sentry.find(s => s.kontrol(integrity, rsi, aksiyon, nakit, ilkSermaye, pnl));
+  if (!tetiklenen) return '';
+  return `<div style="margin-top:14px;padding:16px 18px;background:rgba(255,255,255,0.03);border:1px solid ${tetiklenen.renk};border-left:4px solid ${tetiklenen.renk};border-radius:12px;animation:fadeInUp .4s ease">
+    <div style="font-size:9px;letter-spacing:3px;color:${tetiklenen.renk};font-weight:700;margin-bottom:8px">${tetiklenen.ikon} ${tetiklenen.isim}</div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.8;font-style:italic">"${tetiklenen.quote}"</div>
+  </div>`;
+}
 // ─── AYARLAR ───
 let ayarlar = JSON.parse(localStorage.getItem('humeyra_ayarlar') || '{}');
 
@@ -1187,6 +1461,25 @@ function senaryoModalKapat() { document.getElementById('senaryo-overlay').classL
 
 // ─── PORTFÖY SİSTEMİ ───
 let portfolio = JSON.parse(localStorage.getItem('humeyra_portfolio') || '[]');
+ let portfolioWallet = JSON.parse(localStorage.getItem('humeyra_wallet') || '{"ilkSermaye":0,"nakit":0}');
+let satisGecmisi = JSON.parse(localStorage.getItem('humeyra_satis') || '[]');
+
+function portfolioWalletKaydet() { localStorage.setItem('humeyra_wallet', JSON.stringify(portfolioWallet)); }
+function satisGecmisiKaydet() { localStorage.setItem('humeyra_satis', JSON.stringify(satisGecmisi)); }
+
+const PORTFOLIO_MODLARI = {
+  ATAK:     { desc:'Agresif büyüme modu',   renk:'var(--green)',  ikon:'🚀' },
+  KORUMA:   { desc:'Dengeli koruma modu',    renk:'var(--yellow)', ikon:'🛡️' },
+  DEFANSIF: { desc:'Risk azaltma modu',      renk:'var(--amber)',  ikon:'⚠️' },
+  KRITIK:   { desc:'Acil durum modu',        renk:'var(--red)',    ikon:'🚨' }
+};
+
+function portfolioModu(healthScore, nakitOrani) {
+  if (healthScore >= 80 && nakitOrani <= 0.25) return 'ATAK';
+  if (healthScore >= 60) return 'KORUMA';
+  if (healthScore >= 40) return 'DEFANSIF';
+  return 'KRITIK';
+}     
 let aktifPortfolioSekme = 'ozet';
 
 function portfolioAc() { const p = document.getElementById('portfolio-panel'); p.classList.toggle('acik'); if (p.classList.contains('acik')) portfolioIcerikGuncelle(); }
@@ -1195,10 +1488,82 @@ function portfolioSekme(sekme, btn) { aktifPortfolioSekme = sekme; document.quer
 function portfolioKaydet() { localStorage.setItem('humeyra_portfolio', JSON.stringify(portfolio)); portfolioAlarmKontrol(); }
 
 function portfolioHisseEkle(ticker, fiyat, adet) {
+  const maliyet = fiyat * adet;
+  if (portfolioWallet.ilkSermaye > 0 && maliyet > portfolioWallet.nakit) {
+    alert(`⚠️ Yetersiz nakit!\nGerekli: €${maliyet.toFixed(2)}\nMevcut: €${portfolioWallet.nakit.toFixed(2)}`);
+    return false;
+  }
   const mevcut = portfolio.findIndex(p => p.ticker === ticker);
-  if (mevcut >= 0) portfolio[mevcut].adet += adet;
-  else portfolio.push({ ticker, alisFiyati: fiyat, adet, eklenmeTarihi: new Date().toISOString().split('T')[0] });
-  portfolioKaydet(); portfolioIcerikGuncelle();
+  if (mevcut >= 0) {
+    const eskiToplam = portfolio[mevcut].alisFiyati * portfolio[mevcut].adet;
+    const yeniToplam = fiyat * adet;
+    portfolio[mevcut].adet += adet;
+    portfolio[mevcut].alisFiyati = (eskiToplam + yeniToplam) / portfolio[mevcut].adet;
+  } else {
+    portfolio.push({ ticker, alisFiyati: fiyat, adet, eklenmeTarihi: new Date().toISOString().split('T')[0] });
+  }
+  if (portfolioWallet.ilkSermaye > 0) {
+    portfolioWallet.nakit -= maliyet;
+    portfolioWalletKaydet();
+  }
+  portfolioKaydet();
+  portfolioIcerikGuncelle();
+  return true;
+}
+
+function portfolioHisseSat(ticker, adet, satisFiyati) {
+  const idx = portfolio.findIndex(p => p.ticker === ticker);
+  if (idx < 0) return;
+  const p = portfolio[idx];
+  const satisAdet = adet || p.adet;
+  const gelir = satisFiyati * satisAdet;
+  const karZarar = gelir - (p.alisFiyati * satisAdet);
+  satisGecmisi.push({
+    ticker, adet: satisAdet,
+    alisFiyati: p.alisFiyati,
+    satisFiyati, karZarar,
+    tarih: new Date().toISOString().split('T')[0]
+  });
+  satisGecmisiKaydet();
+  if (portfolioWallet.ilkSermaye > 0) {
+    portfolioWallet.nakit += gelir;
+    portfolioWalletKaydet();
+  }
+  if (satisAdet >= p.adet) portfolio.splice(idx, 1);
+  else portfolio[idx].adet -= satisAdet;
+  portfolioKaydet();
+  portfolioIcerikGuncelle();
+}
+
+function satisModalAc(ticker, fiyat, maxAdet) {
+  const fiyatNum = parseFloat(fiyat);
+  const adetNum = parseInt(maxAdet);
+  document.body.insertAdjacentHTML('beforeend', `
+    <div style="background:rgba(0,0,0,0.85);position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center" id="satis-overlay">
+      <div style="background:#141414;border:1px solid rgba(255,61,61,0.3);border-radius:16px;padding:24px;width:320px">
+        <div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:#ff6b6b;margin-bottom:16px">📤 ${ticker} SAT</div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:10px;color:var(--text2);margin-bottom:4px">Satış Fiyatı (€)</div>
+          <input type="number" id="satis-fiyat" value="${fiyatNum.toFixed(2)}" step="0.01" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px">
+        </div>
+        <div style="margin-bottom:16px">
+          <div style="font-size:10px;color:var(--text2);margin-bottom:4px">Lot Sayısı (max: ${adetNum})</div>
+          <input type="number" id="satis-adet" value="${adetNum}" min="1" max="${adetNum}" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px">
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="satisOnayla('${ticker}')" style="flex:1;padding:10px;background:linear-gradient(135deg,#ff3d3d,#ff6b6b);color:#fff;border:none;border-radius:8px;font-family:Bebas Neue,sans-serif;font-size:16px;cursor:pointer">SATIŞ YAP</button>
+          <button onclick="document.getElementById('satis-overlay').remove()" style="padding:10px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;cursor:pointer">İptal</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+function satisOnayla(ticker) {
+  const fiyat = parseFloat(document.getElementById('satis-fiyat').value);
+  const adet = parseInt(document.getElementById('satis-adet').value);
+  if (!fiyat || !adet || fiyat <= 0 || adet <= 0) { alert('Geçerli değerler gir!'); return; }
+  document.getElementById('satis-overlay').remove();
+  portfolioHisseSat(ticker, adet, fiyat);
 }
 
 function portfolioHisseSil(ticker) { portfolio = portfolio.filter(p => p.ticker !== ticker); portfolioKaydet(); portfolioIcerikGuncelle(); }
@@ -1403,6 +1768,11 @@ function portfolioAyarlarGoster(el) {
     '<div style="font-size:10px;letter-spacing:3px;color:var(--gold);margin-bottom:16px;font-weight:700">⚙️ AYARLAR</div>' +
     '<div style="margin-bottom:14px">' +
     '<div style="font-size:11px;color:var(--text2);margin-bottom:6px">👤 İsim (opsiyonel)</div>' +
+    '<div style="margin-bottom:14px">' +
+    '<div style="font-size:11px;color:var(--text2);margin-bottom:4px">💰 Başlangıç Sermayesi (€)</div>' +
+    '<input type="number" id="ayar-sermaye" value="' + (portfolioWallet.ilkSermaye||'') + '" placeholder="örn. 5000" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px">' +
+    '<div style="font-size:10px;color:var(--text3);margin-top:4px">Mevcut nakit: €' + portfolioWallet.nakit.toFixed(2) + '</div>' +
+    '</div>' +
     '<input type="text" id="ayar-isim" value="' + isim + '" placeholder="Adınız..." style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:DM Sans,sans-serif;font-size:13px">' +
     '</div>' +
     '<div style="margin-bottom:14px">' +
@@ -1425,13 +1795,140 @@ function ayarlariGuncelle() {
   ayarlar.borsa = document.getElementById('ayar-borsa').value;
   ayarlar.apiKey = document.getElementById('ayar-api').value.trim();
   ayarlariKaydet();
+  const yeniSermaye = parseFloat(document.getElementById('ayar-sermaye')?.value);
+if (yeniSermaye > 0 && yeniSermaye !== portfolioWallet.ilkSermaye) {
+  const fark = yeniSermaye - portfolioWallet.ilkSermaye;
+  portfolioWallet.ilkSermaye = yeniSermaye;
+  portfolioWallet.nakit = Math.max(0, portfolioWallet.nakit + fark);
+  portfolioWalletKaydet();
+}
   portfolioAyarlarGoster(document.getElementById('portfolio-icerik'));
   const btn = document.getElementById('ayar-api');
   if (btn) { btn.style.borderColor = 'var(--green)'; setTimeout(() => { btn.style.borderColor = 'var(--border)'; }, 2000); }
 }
 
 function portfolioOzetGoster(el) {
-  if (portfolio.length === 0) {
+  // Sermaye girilmemişse kurulum ekranı
+  if (!portfolioWallet.ilkSermaye || portfolioWallet.ilkSermaye === 0) {
+    el.innerHTML = `
+      <div style="text-align:center;padding:20px">
+        <div style="font-size:32px;margin-bottom:12px">💰</div>
+        <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:8px">Başlangıç Sermayeni Gir</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:16px;line-height:1.6">Portföyünü doğru takip etmek için yatırım bütçeni belirle.</div>
+        <input type="number" id="ilk-sermaye-input" placeholder="örn. 5000" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;margin-bottom:10px">
+        <button onclick="sermayeKaydet()" style="width:100%;padding:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;border:none;border-radius:10px;font-family:Bebas Neue,sans-serif;font-size:16px;letter-spacing:2px;cursor:pointer">💰 SERMAYEYI KAYDET</button>
+      </div>`;
+    return;
+  }
+
+  let toplamMaliyet = 0, toplamDeger = 0, gerceklesmisPnl = 0;
+  for (const p of portfolio) {
+    const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
+    if (!h) continue;
+    toplamMaliyet += p.alisFiyati * p.adet;
+    toplamDeger += h.fiyat * p.adet;
+  }
+  for (const s of satisGecmisi) gerceklesmisPnl += s.karZarar;
+
+  const gerceklesmemis = toplamDeger - toplamMaliyet;
+  const toplamDegerTam = toplamDeger + portfolioWallet.nakit;
+  const nakitOrani = portfolioWallet.ilkSermaye > 0 ? portfolioWallet.nakit / portfolioWallet.ilkSermaye : 0;
+  const healthScore = Math.max(0, Math.min(100, 50 + ((gerceklesmemis + gerceklesmisPnl) / portfolioWallet.ilkSermaye * 100)));
+  const mod = portfolioModu(healthScore, nakitOrani);
+  const modBilgi = PORTFOLIO_MODLARI[mod];
+
+  // Seçili hisse için kaç lot?
+  const maxLot = seciliHisse && seciliHisse.fiyat > 0
+    ? Math.floor(portfolioWallet.nakit / seciliHisse.fiyat) : null;
+  const onerilen = seciliHisse && portfolioWallet.ilkSermaye > 0
+    ? Math.floor(portfolioWallet.ilkSermaye * 0.2 / seciliHisse.fiyat) : null;
+
+  const alarmlar = portfolioAlarmKontrol();
+
+  el.innerHTML = `
+    ${alarmlar.length > 0 ? `<div style="background:rgba(255,61,61,0.1);border:1px solid rgba(255,61,61,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:#ff6b6b">${alarmlar[0]}</div>` : ''}
+
+    <div class="portfolio-ozet">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <div>
+          <div style="font-size:9px;color:var(--text2);margin-bottom:2px">TOPLAM DEĞER</div>
+          <div style="font-family:Bebas Neue,sans-serif;font-size:22px">€${toplamDegerTam.toFixed(2)}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:9px;color:var(--text2);margin-bottom:2px">NAKİT</div>
+          <div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--gold)">€${portfolioWallet.nakit.toFixed(2)}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div style="padding:8px;background:var(--card);border-radius:8px;border:1px solid ${gerceklesmemis>=0?'rgba(0,200,83,0.2)':'rgba(255,61,61,0.2)'}">
+          <div style="font-size:9px;color:var(--text3)">AÇIK POZİSYON</div>
+          <div style="font-size:14px;font-weight:700;color:${gerceklesmemis>=0?'var(--green)':'var(--red)'}">
+            ${gerceklesmemis>=0?'+':''}€${gerceklesmemis.toFixed(2)}
+          </div>
+        </div>
+        <div style="padding:8px;background:var(--card);border-radius:8px;border:1px solid ${gerceklesmisPnl>=0?'rgba(0,200,83,0.2)':'rgba(255,61,61,0.2)'}">
+          <div style="font-size:9px;color:var(--text3)">KAPANAN İŞLEM</div>
+          <div style="font-size:14px;font-weight:700;color:${gerceklesmisPnl>=0?'var(--green)':'var(--red)'}">
+            ${gerceklesmisPnl>=0?'+':''}€${gerceklesmisPnl.toFixed(2)}
+          </div>
+          <div style="font-size:9px;color:var(--text3);margin-top:2px">Gerçekleşmiş zarar eğitim masrafıdır.</div>
+        </div>
+      </div>
+
+      <div style="padding:10px 12px;background:var(--card);border-radius:10px;border:1px solid ${modBilgi.renk};margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:9px;letter-spacing:2px;color:${modBilgi.renk};font-weight:700">${modBilgi.ikon} PORTFÖY MODU</div>
+            <div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:${modBilgi.renk}">${mod}</div>
+            <div style="font-size:10px;color:var(--text2)">${modBilgi.desc}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:9px;color:var(--text3)">SAĞLIK</div>
+            <div style="font-family:Bebas Neue,sans-serif;font-size:24px">${Math.round(healthScore)}</div>
+          </div>
+        </div>
+      </div>
+
+      ${maxLot !== null ? `
+      <div style="padding:10px 12px;background:rgba(41,121,255,0.08);border:1px solid rgba(41,121,255,0.3);border-radius:10px;margin-bottom:10px">
+        <div style="font-size:9px;letter-spacing:2px;color:#6fa3ff;font-weight:700;margin-bottom:4px">💡 SEÇİLİ HİSSE İÇİN</div>
+        <div style="font-size:13px;color:var(--text)">
+          <strong style="color:#6fa3ff">${tickerKisa(seciliHisse.ticker)}</strong> için max
+          <strong style="color:var(--gold)">${maxLot} lot</strong> alabilirsin
+        </div>
+        <div style="font-size:10px;color:var(--text2);margin-top:2px">€${seciliHisse.fiyat.toFixed(2)} × ${maxLot} = €${(seciliHisse.fiyat*maxLot).toFixed(2)}</div>
+        <div style="font-size:9px;color:var(--text3);margin-top:4px">
+          ⚠️ %20 kural: max €${(portfolioWallet.ilkSermaye*0.2).toFixed(0)} → önerilen ${onerilen} lot
+        </div>
+      </div>` : ''}
+
+      ${satisGecmisi.length > 0 ? `
+      <div style="margin-top:8px">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:6px">📋 SON SATIŞLAR</div>
+        ${satisGecmisi.slice(-3).reverse().map(s=>`
+          <div style="display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid var(--border)">
+            <span style="color:var(--text2)">${s.ticker} · ${s.adet} lot · ${s.tarih}</span>
+            <span style="font-weight:700;color:${s.karZarar>=0?'var(--green)':'var(--red)'}">
+              ${s.karZarar>=0?'+':''}€${s.karZarar.toFixed(2)}
+            </span>
+          </div>`).join('')}
+      </div>` : ''}
+    </div>
+
+    <div id="ai-portfoy-yorum" style="margin-top:12px">
+      ${apiKeyAl() ? '<button onclick="aiPortfoyYorumGoster()" style="width:100%;padding:8px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);border-radius:8px;color:#6fa3ff;font-family:DM Sans,sans-serif;font-size:11px;font-weight:600;cursor:pointer">🤖 AI Portföy Yorumu Al</button>' : ''}
+    </div>`;
+}
+
+function sermayeKaydet() {
+  const input = document.getElementById('ilk-sermaye-input');
+  const deger = parseFloat(input?.value);
+  if (!deger || deger <= 0) { alert('Geçerli bir miktar gir!'); return; }
+  portfolioWallet = { ilkSermaye: deger, nakit: deger };
+  portfolioWalletKaydet();
+  portfolioIcerikGuncelle();
+}
     el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text2)"><div style="font-size:32px;margin-bottom:12px">💼</div><div style="font-size:13px">Henüz portföyünde hisse yok.</div><div style="font-size:11px;margin-top:8px;color:var(--text3)">Hisse seç → VERİ ÇEK → Portföye Ekle</div></div>';
     return;
   }
@@ -1525,7 +2022,7 @@ function portfolioHisselerGoster(el) {
     html += '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px"><span>Alış: €' + p.alisFiyati.toFixed(2) + ' × ' + p.adet + '</span><span>Şu an: €' + h.fiyat.toFixed(2) + '</span></div>';
     html += '<div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-size:13px;font-weight:700;color:var(--text)">€' + (h.fiyat * p.adet).toFixed(2) + '</div><div style="font-size:13px;font-weight:700;color:' + karRenk + '">' + (karZarar >= 0 ? '+' : '') + '€' + karZarar.toFixed(2) + ' (' + (karYuzde >= 0 ? '+' : '') + karYuzde.toFixed(1) + '%)</div></div>';
     html += '<div style="font-size:10px;color:var(--text2);line-height:1.5;margin-bottom:8px">' + tavsiye + '</div>';
-    html += '<button onclick="portfolioHisseSil(\'' + p.ticker + '\')" style="padding:4px 10px;background:transparent;border:1px solid rgba(255,61,61,0.3);border-radius:6px;color:#ff6b6b;font-size:10px;cursor:pointer">✕ Çıkar</button></div>';
+    html += `<div style="display:flex;gap:6px;margin-top:6px">   <button onclick="satisModalAc('${p.ticker}','${h.fiyat}','${p.adet}')" style="flex:1;padding:5px;background:rgba(255,61,61,0.1);border:1px solid rgba(255,61,61,0.3);border-radius:6px;color:#ff6b6b;font-size:10px;cursor:pointer;font-weight:600">📤 Sat</button>   <button onclick="portfolioHisseSil('${p.ticker}')" style="padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--text3);font-size:10px;cursor:pointer">✕</button> </div></div>`;
   }
   el.innerHTML = html;
 }
@@ -1533,11 +2030,35 @@ function portfolioHisselerGoster(el) {
 function portfolioEkleGoster(el) {
   const ticker = seciliHisse ? tickerKisa(seciliHisse.ticker) : '';
   const fiyat = seciliHisse ? seciliHisse.fiyat.toFixed(2) : '';
-  el.innerHTML = '<div style="font-size:12px;color:var(--text2);margin-bottom:12px">Önce bir hisse seç, sonra buradan portföyüne ekle.</div>' +
-    '<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">Ticker</div><input type="text" id="p-ticker" value="' + ticker + '" placeholder="INGA" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:DM Sans,sans-serif;font-size:13px"></div>' +
-    '<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">Alış Fiyatı (€)</div><input type="number" id="p-fiyat" value="' + fiyat + '" placeholder="0.00" step="0.01" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:DM Sans,sans-serif;font-size:13px"></div>' +
-    '<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">Adet</div><input type="number" id="p-adet" value="1" min="1" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:DM Sans,sans-serif;font-size:13px"></div>' +
-    '<button onclick="portfolioEkleOnayla()" class="portfolio-ekle-btn">💼 Portföye Ekle</button>';
+  const maxLot = seciliHisse && portfolioWallet.nakit > 0
+    ? Math.floor(portfolioWallet.nakit / seciliHisse.fiyat) : null;
+  const onerilen = seciliHisse && portfolioWallet.ilkSermaye > 0
+    ? Math.floor(portfolioWallet.ilkSermaye * 0.2 / seciliHisse.fiyat) : null;
+
+  el.innerHTML = `
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px">
+      ${portfolioWallet.ilkSermaye > 0
+        ? `💰 Kullanılabilir nakit: <strong style="color:var(--gold)">€${portfolioWallet.nakit.toFixed(2)}</strong>`
+        : '⚠️ Önce Ayarlar\'dan sermayeni gir!'}
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:10px;color:var(--text2);margin-bottom:4px">Ticker</div>
+      <input type="text" id="p-ticker" value="${ticker}" placeholder="INGA" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px">
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:10px;color:var(--text2);margin-bottom:4px">Alış Fiyatı (€)</div>
+      <input type="number" id="p-fiyat" value="${fiyat}" placeholder="0.00" step="0.01" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px">
+    </div>
+    <div style="margin-bottom:${maxLot ? '6px' : '14px'}">
+      <div style="font-size:10px;color:var(--text2);margin-bottom:4px">Lot Sayısı</div>
+      <input type="number" id="p-adet" value="1" min="1" style="width:100%;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px">
+    </div>
+    ${maxLot !== null ? `
+    <div style="padding:8px 12px;background:rgba(41,121,255,0.08);border:1px solid rgba(41,121,255,0.2);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--text2)">
+      💡 Max: <strong style="color:var(--gold)">${maxLot} lot</strong> · Önerilen (%20): <strong style="color:#6fa3ff">${onerilen} lot</strong>
+      <button onclick="document.getElementById('p-adet').value=${onerilen}" style="margin-left:8px;padding:2px 8px;background:rgba(41,121,255,0.2);border:1px solid rgba(41,121,255,0.4);border-radius:4px;color:#6fa3ff;font-size:10px;cursor:pointer">Uygula</button>
+    </div>` : ''}
+    <button onclick="portfolioEkleOnayla()" class="portfolio-ekle-btn">💼 Portföye Ekle</button>`;
 }
 
 function portfolioEkleOnayla() {
@@ -1745,6 +2266,30 @@ async function sheetsYukle() {
         direncKirildi: bool(cols[COL.direncKirildi]),
         destekKirildi: bool(cols[COL.destekKirildi])
       };
+      // Motor alanları
+h.integrity = null;
+h.motorYuklendi = false;
+h.motorYukleniyor = false;
+
+// 12H pozisyon skoru
+if (h.high12 > 0 && h.low12 > 0 && h.high12 !== h.low12) {
+  h.pozisyon12H = Math.round((h.fiyat - h.low12) / (h.high12 - h.low12) * 100);
+} else {
+  h.pozisyon12H = null;
+}
+
+// RSI tutarsızlık kontrolü
+h.rsiTutarsiz = false;
+h.rsiUyari = '';
+if (h.pozisyon12H !== null && h.rsi > 0) {
+  if (h.rsi < 35 && h.pozisyon12H > 65) {
+    h.rsiTutarsiz = true;
+    h.rsiUyari = '⚠️ RSI dip gösteriyor ama fiyat 12H aralığının üst bölgesinde';
+  } else if (h.rsi > 65 && h.pozisyon12H < 35) {
+    h.rsiTutarsiz = true;
+    h.rsiUyari = '⚠️ RSI güçlü gösteriyor ama fiyat alt bölgede';
+  }
+}
       if (h.ticker && h.fiyat > 0) hisseler.push(h);
     }
     if (hisseler.length > 0) {
@@ -1753,6 +2298,8 @@ async function sheetsYukle() {
       const alarmSonuc = portfolioAlarmKontrol();
       if (alarmSonuc && alarmSonuc.length > 0) document.getElementById('portfolio-btn').classList.add('alarm');
       window.scrollTo(0, 0);
+      // Motor arka planda çalıştır
+      motorArkaPlandaCalistir();
     }
   } catch (e) {
     document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Bağlantı hatası</div>';
@@ -1958,6 +2505,28 @@ function heatmapOlustur() {
       (buyuk ? '<div class="zaman-etiketi">' + zamanEtiketi() + '</div>' : '') +
       '</div>' +
       '<div class="tooltip-box">' + durumTooltipMetni + (rsiTooltip ? '<br><br><em style="color:#888;font-size:10px">' + rsiTooltip + '</em>' : '') + '</div>';
+    // data-ticker ekle — motor güncellemesi için
+div.setAttribute('data-ticker', tickerKisa(h.ticker));
+
+// Integrity badge — motor yükleyince dolacak
+div.innerHTML += `
+  <div class="integrity-badge" style="display:none;margin-top:4px;padding:2px 8px;border-radius:100px;font-size:8px;font-weight:700;text-align:center"></div>`;
+
+// RSI uyarı alanı
+div.innerHTML += `
+  <div class="rsi-uyari" style="display:${h.rsiTutarsiz?'block':'none'};margin-top:4px;padding:4px 8px;background:rgba(255,179,0,0.1);border:1px solid rgba(255,179,0,0.3);border-radius:6px;font-size:8px;color:var(--yellow);line-height:1.5">${h.rsiUyari}</div>`;
+
+// 12H pozisyon barı — sadece büyük kartlarda
+if (buyuk && h.pozisyon12H !== null) {
+  div.innerHTML += `
+    <div style="margin-top:6px">
+      <div style="font-size:8px;color:var(--text3);margin-bottom:3px">12H POZİSYON</div>
+      <div style="height:4px;background:var(--border);border-radius:100px;overflow:hidden">
+        <div style="width:${h.pozisyon12H}%;height:100%;border-radius:100px;background:${h.pozisyon12H>65?'var(--red)':h.pozisyon12H<35?'var(--green)':'var(--yellow)'}"></div>
+      </div>
+      <div style="font-size:8px;color:var(--text3);margin-top:2px">%${h.pozisyon12H} · ${h.pozisyon12H>65?'🔴 Üst bölge':h.pozisyon12H<35?'🟢 Alt bölge':'🟡 Orta'}</div>
+    </div>`;
+}
     div.onclick = () => hisseGriddenSec(h.ticker);
     el.appendChild(div);
   });
@@ -2172,6 +2741,34 @@ async function analiz() {
   adv.push('Stop loss her zaman koy!');
   if (score >= 68) adv.push('Giriş fiyatını sabırla bekle');
   document.getElementById('tavsiye').innerHTML = adv.map(a => sig(a, 'var(--blue)')).join('');
+  // Integrity kartı göster
+const integrityEl = document.getElementById('integrity-blok');
+if (integrityEl && seciliHisse?.integrity) {
+  integrityEl.innerHTML = integrityKartHtml(seciliHisse.integrity);
+  integrityEl.style.display = 'block';
+  // Integrity HIGH ise skoru kapat
+  if (seciliHisse.integrity.risk === 'HIGH') {
+    score = Math.min(score, 40);
+  }
+}
+
+// Wisdom uyarısı
+const ilkSermaye = portfolioWallet.ilkSermaye || 0;
+const toplamPnl = portfolio.reduce((acc, p) => {
+  const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
+  return acc + (h ? (h.fiyat - p.alisFiyati) * p.adet : 0);
+}, 0);
+const wisdomHtml = wisdomUyariUret(
+  seciliHisse?.integrity?.risk || 'LOW',
+  rsi,
+  aksiyonSonuc.vclass.includes('AL') ? 'BUY' : 'WAIT',
+  portfolioWallet.nakit || 0,
+  ilkSermaye,
+  toplamPnl
+);
+if (wisdomHtml) {
+  document.getElementById('guven-blok-container').innerHTML += wisdomHtml;
+}
   document.getElementById('result').classList.add('show');
   setTimeout(() => document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
 }
@@ -2182,6 +2779,8 @@ function sifirla() {
   document.getElementById('guven-blok-container').innerHTML = '';
   const aiKutu = document.getElementById('ai-yorum-kutu');
   if (aiKutu) aiKutu.style.display = 'none';
+  const intEl = document.getElementById('integrity-blok');
+if (intEl) { intEl.innerHTML = ''; intEl.style.display = 'none'; }
   Object.keys(S).forEach(k => delete S[k]);
   document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('tg', 'tr', 'ty'));
   document.querySelectorAll('.hisse-btn').forEach(b => b.classList.remove('active'));
