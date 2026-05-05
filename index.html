@@ -885,7 +885,104 @@ function wisdomUyariUret(integrity, rsi, aksiyon, nakit, ilkSermaye, pnl) {
     <div style="font-size:13px;color:var(--text2);line-height:1.8;font-style:italic">"${tetiklenen.quote}"</div>
   </div>`;
 }
-// ─── KARAR GEÇMİŞİ & BACKTEST MOTORU (Sovereign v15.0) ───
+// ═══════════════════════════════════════════════════════
+// SOVEREIGN MEMORY KATMANI v15.5
+// Gemini: decision_ledger + scenario_stats + test_runs
+// Copilot: State Machine (REAL/TEST/OUTCOME/SCENARIO)
+// ═══════════════════════════════════════════════════════
+
+let sovereignMemory = JSON.parse(localStorage.getItem('humeyra_sovereign_memory') || JSON.stringify({
+  scenario_stats: {},
+  test_runs: [],
+  last_updated: null
+}));
+
+function sovereignMemoryKaydet() {
+  sovereignMemory.last_updated = new Date().toISOString();
+  localStorage.setItem('humeyra_sovereign_memory', JSON.stringify(sovereignMemory));
+}
+
+// State Machine — Copilot tasarımı
+const STATE_MACHINE = {
+  transitions: {
+    ANALYZE: 'REAL',
+    START_TEST: 'TEST',
+    FINISH_TEST: 'OUTCOME',
+    CLOSE_POSITION: 'OUTCOME',
+    UPDATE_SCENARIO: 'SCENARIO'
+  },
+  actions: {
+    REAL: ['save_to_ledger', 'start_countdown'],
+    TEST: ['simulate', 'update_days_left'],
+    OUTCOME: ['calculate_win_loss', 'update_scenario_stats'],
+    SCENARIO: ['recompute_strategy_score']
+  }
+};
+
+function stateMachineTransition(karar, event) {
+  const yeniState = STATE_MACHINE.transitions[event];
+  if (!yeniState) return;
+  karar.state = yeniState;
+  const actions = STATE_MACHINE.actions[yeniState] || [];
+  actions.forEach(action => {
+    if (action === 'update_scenario_stats') scenarioStatsGuncelle(karar);
+    if (action === 'recompute_strategy_score') stratejiskorGuncelle();
+  });
+}
+
+// Gemini: Senaryo istatistiklerini güncelle
+function scenarioStatsGuncelle(karar) {
+  const scenario = karar.metrics.rsi < 30 ? 'RSI_DIP' :
+                   karar.metrics.rsi > 75 ? 'RSI_ZIRVE' :
+                   karar.metrics.score > 70 ? 'A_PLUS' :
+                   karar.metrics.score > 55 ? 'MOMENTUM' : 'GENEL';
+
+  karar.scenario = scenario;
+
+  if (!sovereignMemory.scenario_stats[scenario]) {
+    sovereignMemory.scenario_stats[scenario] = { wins: 0, loss: 0, total: 0, avg_days: 0, total_days: 0 };
+  }
+
+  const s = sovereignMemory.scenario_stats[scenario];
+  s.total++;
+  if (karar.outcome.result_pct > 0) s.wins++;
+  else s.loss++;
+
+  const gunFark = Math.floor((Date.now() - new Date(karar.timestamp).getTime()) / 86400000);
+  s.total_days += gunFark;
+  s.avg_days = Math.round(s.total_days / s.total * 10) / 10;
+  s.win_rate = Math.round((s.wins / s.total) * 100);
+
+  sovereignMemoryKaydet();
+}
+
+// Strateji skoru yeniden hesapla
+function stratejiskorGuncelle() {
+  Object.keys(sovereignMemory.scenario_stats).forEach(key => {
+    const s = sovereignMemory.scenario_stats[key];
+    s.strategy_score = Math.round((s.win_rate * 0.6) + ((s.wins - s.loss) / Math.max(s.total, 1) * 40));
+  });
+  sovereignMemoryKaydet();
+}
+
+// Copilot: setInterval countdown — her saat days_left güncelle
+function countdownMotorBaslat() {
+  setInterval(() => {
+    let degisti = false;
+    kararGecmisi.forEach(k => {
+      if (k.outcome.status !== 'OPEN') return;
+      const gunFark = Math.floor((Date.now() - new Date(k.timestamp).getTime()) / 86400000);
+      k.days_left = Math.max(0, 7 - gunFark);
+      if (k.days_left === 0 && k.outcome.status === 'OPEN') {
+        acikKararlariGuncelle();
+        degisti = true;
+      }
+    });
+    if (degisti) kararGecmisiKaydet();
+  }, 60 * 60 * 1000); // her saat
+}
+
+
 let kararGecmisi = JSON.parse(localStorage.getItem('humeyra_karar_gecmisi') || '[]');
 
 function kararGecmisiKaydet() {
@@ -900,12 +997,14 @@ function kararKaydet(ticker, fiyat, karar, skor, rsi, integrityRisk, scalingFlag
     price_at_analysis: fiyat || 0,
     decision: karar,
     mod: mod || 'gercek',
+    state: 'ACTIVE', // State machine: PENDING → ACTIVE → EXPIRED/CONVERTED/CLOSED
     metrics: {
       score: skor,
       rsi: rsi || 0,
       integrity_risk: integrityRisk || 'LOW'
     },
     scaling_flags: scalingFlags || {},
+    failure_correlation: null, // Gemini Post-Mortem
     outcome: {
       price_after_7d: null,
       result_pct: null,
@@ -914,6 +1013,22 @@ function kararKaydet(ticker, fiyat, karar, skor, rsi, integrityRisk, scalingFlag
   };
   kararGecmisi.push(kayit);
   kararGecmisiKaydet();
+}
+
+// Gerçek karara dönüştür (Gemini Conversion Gate)
+function gercekKaraaDonustur(id) {
+  const k = kararGecmisi.find(x => x.id === id);
+  if (!k) return;
+  const h = hisseler.find(x => tickerKisa(x.ticker) === k.ticker || x.ticker === k.ticker);
+  const yeniFiyat = h ? h.fiyat : k.price_at_analysis;
+  k.mod = 'gercek';
+  k.state = 'CONVERTED';
+  k.price_at_analysis = yeniFiyat; // Yeni entry price
+  k.timestamp = new Date().toISOString(); // Sayaç sıfırla
+  k.outcome = { price_after_7d: null, result_pct: null, status: 'OPEN' };
+  k.threeN_raporu = null;
+  kararGecmisiKaydet();
+  portfolioGecmisGoster(document.getElementById('portfolio-icerik'), 'gercekler');
 }
 
 function backtestHesapla() {
@@ -996,7 +1111,7 @@ function portfolioGecmisGoster(el, aktifAlt) {
     return { label: 'Genel', renk: 'var(--text2)' };
   }
 
-  function kararListesiHtml(liste) {
+  function kararListesiHtml(liste, showConvert) {
     if (liste.length === 0) return '<div style="text-align:center;padding:20px;color:var(--text2);font-size:12px">Henüz kayıt yok.</div>';
     return [...liste].reverse().slice(0, 20).map(k => {
       const renkMap = { 'GÜÇLÜ AL': 'var(--green)', 'AL': 'var(--green)', 'TEMKİNLİ AL': '#00c853', 'İZLE': 'var(--yellow)', 'BEKLE': '#6fa3ff', 'UZAK DUR': 'var(--red)', 'KAR AL': 'var(--red)' };
@@ -1006,11 +1121,32 @@ function portfolioGecmisGoster(el, aktifAlt) {
         ? `<span style="font-weight:700;color:${k.outcome.result_pct>=0?'var(--green)':'var(--red)'}">%${k.outcome.result_pct>0?'+':''}${k.outcome.result_pct}</span>`
         : `<span style="color:var(--text3);font-size:9px">${kalanGun(k.timestamp)}</span>`;
       const strateji = stratejiEtiket(k);
+
+      // 3N Raporu
+      const rapor3N = k.threeN_raporu ? `
+        <div style="margin-top:8px;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border-left:3px solid ${k.threeN_raporu.basari?'var(--green)':'var(--red)'}">
+          <div style="font-size:9px;letter-spacing:2px;color:${k.threeN_raporu.basari?'var(--green)':'var(--red)'};font-weight:700;margin-bottom:6px">📋 3N RAPORU</div>
+          <div style="font-size:10px;color:var(--text2);margin-bottom:4px"><span style="color:var(--gold);font-weight:600">NE OLDU:</span> ${k.threeN_raporu.neOldu}</div>
+          <div style="font-size:10px;color:var(--text2);margin-bottom:4px"><span style="color:var(--gold);font-weight:600">NEDEN:</span> ${k.threeN_raporu.nedenDogru}</div>
+          <div style="font-size:10px;color:var(--text2)"><span style="color:var(--gold);font-weight:600">NASIL ÖĞRENİRİZ:</span> ${k.threeN_raporu.nasılOgrenilir}</div>
+        </div>` : '';
+
+      // Canlı yield
+      const canlıYield = k.current_yield !== undefined && k.outcome.status === 'OPEN'
+        ? `<span style="font-size:9px;color:${k.current_yield>=0?'var(--green)':'var(--red)'};margin-left:6px">${k.current_yield>0?'+':''}%${k.current_yield} şu an</span>`
+        : '';
+
+      // Gerçek karara dönüştür butonu
+      const donusturBtn = showConvert && k.outcome.status === 'OPEN'
+        ? `<button onclick="event.stopPropagation();gercekKaraaDonustur('${k.id}')" style="margin-top:6px;width:100%;padding:5px;background:rgba(0,200,83,0.1);border:1px solid rgba(0,200,83,0.3);border-radius:6px;color:var(--green);font-size:9px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">✅ Gerçek Karara Dönüştür → Yeni entry: €${hisseler.find(x=>tickerKisa(x.ticker)===k.ticker)?.fiyat?.toFixed(2)||k.price_at_analysis?.toFixed(2)}</button>`
+        : '';
+
       return `<div class="gecmis-log-item" style="border-left-color:${renk}">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <div style="display:flex;align-items:center;gap:5px">
+          <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
             <div style="font-family:Bebas Neue,sans-serif;font-size:15px;color:${renk}">${k.ticker}</div>
             <span style="font-size:8px;padding:1px 5px;border-radius:100px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:${strateji.renk}">${strateji.label}</span>
+            ${canlıYield}
           </div>
           <div style="display:flex;align-items:center;gap:6px">
             <span style="font-size:9px;font-weight:700;color:${renk}">${k.decision}</span>
@@ -1021,6 +1157,8 @@ function portfolioGecmisGoster(el, aktifAlt) {
           <span>Skor: ${k.metrics.score} · RSI: ${k.metrics.rsi} · €${k.price_at_analysis?.toFixed(2)||'—'}</span>
           <span>${tarih}</span>
         </div>
+        ${donusturBtn}
+        ${rapor3N}
       </div>`;
     }).join('');
   }
@@ -1028,8 +1166,14 @@ function portfolioGecmisGoster(el, aktifAlt) {
   if (aktifAlt === 'testler') {
     const testler = kararGecmisi.filter(k => k.mod === 'test');
     const acik = testler.filter(k => k.outcome.status === 'OPEN');
+
+    // Gemini altın cümle
+    html += `<div style="padding:10px 14px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:10px;margin-bottom:12px;font-size:10px;color:var(--gold);line-height:1.6;font-style:italic">
+      💎 "Skorlar sadece ihtimalleri, raporlar ise gerçekleri söyler. Kârını realize etmediğin sürece, o sadece ekrandaki bir sayıdır."
+    </div>`;
+
     html += `<div style="font-size:9px;color:var(--text2);margin-bottom:8px">🧪 ${testler.length} test · ${acik.length} açık</div>`;
-    html += kararListesiHtml(testler);
+    html += kararListesiHtml(testler, true);
   }
 
   else if (aktifAlt === 'gercekler') {
@@ -1054,44 +1198,56 @@ function portfolioGecmisGoster(el, aktifAlt) {
   }
 
   else if (aktifAlt === 'stratejiler') {
-    const stratejiler = ['RSI Dip', 'RSI Zirve', 'A+ Setup', 'Momentum', 'Genel'];
-    const kapalilar = kararGecmisi.filter(k => k.outcome.result_pct !== null);
+    const scenarioLabels = {
+      'RSI_DIP': { label: 'RSI Dip', renk: 'var(--green)', aciklama: 'RSI < 30 bölgesinde alım' },
+      'RSI_ZIRVE': { label: 'RSI Zirve', renk: 'var(--red)', aciklama: 'RSI > 75 bölgesinde karar' },
+      'A_PLUS': { label: 'A+ Setup', renk: 'var(--gold)', aciklama: 'Skor > 70 güçlü yapı' },
+      'MOMENTUM': { label: 'Momentum', renk: '#6fa3ff', aciklama: 'Skor 55-70 momentum takibi' },
+      'GENEL': { label: 'Genel', renk: 'var(--text2)', aciklama: 'Diğer sinyaller' }
+    };
+
+    const stats = sovereignMemory.scenario_stats;
+    const hasStats = Object.keys(stats).length > 0;
 
     html += '<div style="font-size:9px;color:var(--text2);margin-bottom:10px">Hangi stratejide daha iyi kararlar veriyorsun?</div>';
 
-    stratejiler.forEach(str => {
-      const strRenk = { 'RSI Dip': 'var(--green)', 'RSI Zirve': 'var(--red)', 'A+ Setup': 'var(--gold)', 'Momentum': '#6fa3ff', 'Genel': 'var(--text2)' }[str];
-      const filtre = (k) => {
-        if (str === 'RSI Dip') return k.metrics.rsi < 30;
-        if (str === 'RSI Zirve') return k.metrics.rsi > 75;
-        if (str === 'A+ Setup') return k.metrics.score > 70;
-        if (str === 'Momentum') return k.metrics.score > 55 && k.metrics.score <= 70;
-        return k.metrics.score <= 55;
-      };
-      const grup = kapalilar.filter(filtre);
-      if (grup.length === 0) return;
-      const kazanan = grup.filter(k => k.outcome.result_pct > 0).length;
-      const winRate = Math.round((kazanan / grup.length) * 100);
-      const avgGetiri = Math.round((grup.reduce((a,k) => a + k.outcome.result_pct, 0) / grup.length) * 10) / 10;
-      const barW = winRate;
-
-      html += `<div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <span style="font-size:11px;font-weight:700;color:${strRenk}">${str}</span>
-          <div style="display:flex;gap:8px;font-size:10px">
-            <span style="color:${winRate>=60?'var(--green)':'var(--red)'}">%${winRate} win</span>
-            <span style="color:${avgGetiri>=0?'var(--green)':'var(--red)'}">%${avgGetiri>0?'+':''}${avgGetiri} ort</span>
-            <span style="color:var(--text3)">${grup.length} karar</span>
+    if (!hasStats) {
+      html += '<div style="text-align:center;padding:20px;color:var(--text2);font-size:12px">7 gün sonra stratejiler burada görünecek!<br><span style="font-size:10px;color:var(--text3)">Her kapanan karar otomatik ekleniyor.</span></div>';
+    } else {
+      Object.entries(stats).forEach(([key, s]) => {
+        const meta = scenarioLabels[key] || { label: key, renk: 'var(--text2)', aciklama: '' };
+        const winRate = s.win_rate || 0;
+        const stratScore = s.strategy_score || 0;
+        html += `<div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div>
+              <span style="font-size:12px;font-weight:700;color:${meta.renk}">${meta.label}</span>
+              <span style="font-size:9px;color:var(--text3);margin-left:6px">${meta.aciklama}</span>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:10px;font-weight:700;color:${stratScore>=60?'var(--green)':'var(--red)'}">Strateji: ${stratScore}</div>
+            </div>
           </div>
-        </div>
-        <div style="height:5px;background:var(--border);border-radius:100px;overflow:hidden">
-          <div style="width:${barW}%;height:100%;background:${winRate>=60?'var(--green)':'var(--red)'};border-radius:100px"></div>
-        </div>
-      </div>`;
-    });
+          <div style="display:flex;gap:8px;font-size:10px;margin-bottom:6px">
+            <span style="color:${winRate>=60?'var(--green)':'var(--red)'}">%${winRate} win</span>
+            <span style="color:var(--text3)">·</span>
+            <span style="color:var(--green)">${s.wins} ✅</span>
+            <span style="color:var(--red)">${s.loss} ❌</span>
+            <span style="color:var(--text3)">· ${s.total} karar</span>
+            <span style="color:var(--text3)">· ort ${s.avg_days}g</span>
+          </div>
+          <div style="height:5px;background:var(--border);border-radius:100px;overflow:hidden">
+            <div style="width:${winRate}%;height:100%;background:${winRate>=60?'var(--green)':'var(--red)'};border-radius:100px;transition:width 1s ease"></div>
+          </div>
+        </div>`;
+      });
+    }
 
-    if (kapalilar.length === 0) {
-      html += '<div style="text-align:center;padding:20px;color:var(--text2);font-size:12px">7 gün sonra stratejiler burada görünecek!</div>';
+    // Kaçırılan fırsatlar ve hatalar
+    const kapalilar = kararGecmisi.filter(k => k.outcome.result_pct !== null);
+    const hatalar = kapalilar.filter(k => k.failure_reason?.includes('rsi_high'));
+    if (hatalar.length > 0) {
+      html += `<div style="margin-top:8px;padding:8px 12px;background:rgba(255,61,61,0.06);border:1px solid rgba(255,61,61,0.2);border-radius:8px;font-size:10px;color:var(--red)">⚠️ Yüksek RSI hatası: ${hatalar.length} kez tekrarlandı — RSI > 75 iken AL yapma!</div>`;
     }
   }
 
@@ -1110,18 +1266,64 @@ function kararGecmisiTemizle() {
   }
 }
 
-// Açık pozisyonları güncelle (simüle)
 function acikKararlariGuncelle() {
   let degisti = false;
   kararGecmisi.forEach(k => {
     if (k.outcome.status !== 'OPEN') return;
     const h = hisseler.find(x => tickerKisa(x.ticker) === k.ticker || x.ticker === k.ticker);
     if (!h || !k.price_at_analysis) return;
+
+    // Living Log — canlı yield hesapla
+    k.current_yield = Math.round(((h.fiyat - k.price_at_analysis) / k.price_at_analysis) * 1000) / 10;
+
     const gunFark = Math.floor((Date.now() - new Date(k.timestamp).getTime()) / 86400000);
     if (gunFark >= 7) {
       k.outcome.price_after_7d = h.fiyat;
-      k.outcome.result_pct = Math.round(((h.fiyat - k.price_at_analysis) / k.price_at_analysis) * 1000) / 10;
+      k.outcome.result_pct = k.current_yield;
+      k.state = k.outcome.result_pct >= 10 ? 'CLOSED' : k.outcome.result_pct <= -7 ? 'EXPIRED' : 'CLOSED';
       k.outcome.status = k.outcome.result_pct >= 10 ? 'TP' : k.outcome.result_pct <= -7 ? 'SL' : 'CLOSED';
+
+      // failure_reason array — Gemini formatı
+      if (k.outcome.result_pct < 0) {
+        k.failure_reason = [];
+        if (k.metrics.rsi > 75) k.failure_reason.push('rsi_high');
+        if (k.metrics.integrity_risk !== 'LOW') k.failure_reason.push('integrity_' + k.metrics.integrity_risk.toLowerCase());
+        if (k.metrics.score < 50) k.failure_reason.push('score_low');
+        if (k.scaling_flags?.is_amount_insufficient) k.failure_reason.push('scaling_insufficient');
+        if (k.failure_reason.length === 0) k.failure_reason.push('market_reversal');
+
+        k.failure_correlation = {
+          rsi_hatasi: k.metrics.rsi > 75,
+          integrity_hatasi: k.metrics.integrity_risk !== 'LOW',
+          skor_hatasi: k.metrics.score < 50,
+          sebep: k.failure_reason[0] === 'rsi_high' ? `RSI ${k.metrics.rsi} zirvedeydi` :
+                 k.failure_reason[0]?.startsWith('integrity') ? `Integrity ${k.metrics.integrity_risk} iken giriş yapıldı` :
+                 k.failure_reason[0] === 'score_low' ? `Güven skoru ${k.metrics.score} yetersizdi` :
+                 'Piyasa koşulları tersine döndü'
+        };
+      }
+
+      // State machine: OUTCOME → SCENARIO
+      stateMachineTransition(k, 'FINISH_TEST');
+      stateMachineTransition(k, 'UPDATE_SCENARIO');
+
+      // 3N RAPORU
+      const basari = k.outcome.result_pct > 0;
+      const strateji = k.metrics.rsi < 30 ? 'RSI Dip' : k.metrics.rsi > 75 ? 'RSI Zirve' : k.metrics.score > 70 ? 'A+ Setup' : 'Momentum';
+      k.threeN_raporu = {
+        neOldu: `${k.ticker} → ${k.decision} dedik → ${k.outcome.result_pct > 0 ? '+' : ''}%${k.outcome.result_pct} ${basari ? '✅' : '❌'}`,
+        nedenDogru: basari ?
+          (k.metrics.rsi < 30 ? `RSI ${k.metrics.rsi} dip bölgesiydi, toparlanma beklentisi doğru çıktı` :
+           k.metrics.score > 70 ? `A+ Setup skor ${k.metrics.score} güçlü yapıyı onayladı` :
+           'Momentum ve trend analizi doğru yönü gösterdi') :
+          (k.failure_correlation?.sebep || 'Piyasa koşulları beklentinin tersine döndü'),
+        nasılOgrenilir: basari ?
+          (strateji === 'RSI Dip' ? 'RSI < 30 + düşük risk = güvenilir sinyal. Bu stratejiyi güçlendir.' :
+           'Bu sinyal kombinasyonu tekrarlanabilir. Not al.') :
+          (k.metrics.rsi > 75 ? 'Yüksek RSI\'da AL kararından kaçın. Skor > 60 + RSI < 70 kuralını uygula.' :
+           'Düşük skorda giriş yapmaktan kaçın. Skor > 60 kuralını uygula.'),
+        strateji, basari
+      };
       degisti = true;
     }
   });
@@ -3056,6 +3258,7 @@ if (intEl) { intEl.innerHTML = ''; intEl.style.display = 'none'; }
 }
 levelGuncelle();
 sheetsYukle();
+countdownMotorBaslat();
 setInterval(() => sheetsYukle(), 5 * 60 * 1000);
 setInterval(() => {
   const alarmSonuc = portfolioAlarmKontrol();
