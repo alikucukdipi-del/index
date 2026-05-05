@@ -1616,58 +1616,70 @@ function fiyatPusulasıHtml(fiyat, motorAdil, analistAdil, low12, high12) {
     valueGapMotor > 5 ? 'var(--green)' :
     valueGapMotor > -5 ? 'var(--yellow)' : 'var(--red)';
 
-  return `<div class="pusula-wrap">
+  return `<div style="background:var(--card);border:1px solid rgba(201,168,76,0.25);border-radius:14px;padding:18px 20px;margin-bottom:14px">
     <div style="font-size:10px;letter-spacing:3px;color:var(--gold);font-weight:700;margin-bottom:4px">📊 FİYAT PUSULASI</div>
-    <div style="font-size:11px;color:${durumRenk};font-weight:600;margin-bottom:12px">${durum}</div>
+    <div style="font-size:12px;font-weight:700;color:${durumRenk};margin-bottom:20px">${durum}</div>
 
-    <div class="pusula-bar" style="background:linear-gradient(90deg,var(--red) 0%,var(--yellow) 40%,var(--green) 70%,var(--gold) 100%)">
+    <!-- ÇUBUK ALANI -->
+    <div style="position:relative;height:90px;margin:0 14px 16px">
 
-      ${low12 > 0 ? `<div class="pusula-marker" style="left:2%">
-        <div class="pusula-marker-dot" style="background:var(--red)"></div>
-        <div class="pusula-marker-label" style="color:var(--red)">€${low12.toFixed(0)}</div>
-        <div style="font-size:8px;color:var(--text3)">12H dip</div>
-      </div>` : ''}
+      <!-- Gradient çubuk -->
+      <div style="position:absolute;top:38px;left:0;right:0;height:6px;border-radius:100px;
+        background:linear-gradient(90deg,var(--red) 0%,var(--yellow) 40%,var(--green) 70%,var(--gold) 100%)"></div>
 
-      ${high12 > 0 ? `<div class="pusula-marker" style="left:98%">
-        <div class="pusula-marker-dot" style="background:var(--gold)"></div>
-        <div class="pusula-marker-label" style="color:var(--gold)">€${high12.toFixed(0)}</div>
-        <div style="font-size:8px;color:var(--text3)">12H zirve</div>
-      </div>` : ''}
+      <!-- Sol etiket -->
+      <div style="position:absolute;top:26px;left:-10px;text-align:center">
+        <div style="font-size:9px;color:var(--red);font-weight:700">${low12>0?'€'+low12.toFixed(0):''}</div>
+        <div style="font-size:7px;color:var(--text3)">DİP</div>
+      </div>
 
-      ${motorPct !== null ? `<div class="pusula-marker" style="left:${motorPct}%;z-index:3">
-        <div class="pusula-marker-dot" style="background:var(--gold);box-shadow:0 0 8px rgba(201,168,76,0.6)"></div>
-        <div class="pusula-marker-label" style="color:var(--gold)">⚡€${motorAdil.toFixed(2)}</div>
-        <div style="font-size:8px;color:var(--gold)">Motor</div>
-      </div>` : ''}
+      <!-- Sağ etiket -->
+      <div style="position:absolute;top:26px;right:-10px;text-align:center">
+        <div style="font-size:9px;color:var(--gold);font-weight:700">${high12>0?'€'+high12.toFixed(0):''}</div>
+        <div style="font-size:7px;color:var(--text3)">ZİRVE</div>
+      </div>
 
-      ${analistPct !== null ? `<div class="pusula-marker" style="left:${analistPct}%;z-index:2">
-        <div class="pusula-marker-dot" style="background:#6fa3ff"></div>
-        <div class="pusula-marker-label" style="color:#6fa3ff">€${analistAdil.toFixed(2)}</div>
-        <div style="font-size:8px;color:#6fa3ff">Analist</div>
-      </div>` : ''}
+      <!-- MOTOR marker — çubuğun üstünde -->
+      ${motorPct!==null?`<div style="position:absolute;left:${motorPct}%;top:4px;transform:translateX(-50%);text-align:center;z-index:3">
+        <div style="font-size:9px;color:var(--gold);font-weight:700;white-space:nowrap">⚡€${motorAdil.toFixed(0)}</div>
+        <div style="width:2px;height:14px;background:var(--gold);margin:2px auto;border-radius:100px"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--gold);border:2px solid var(--bg);box-shadow:0 0 8px rgba(201,168,76,0.7);margin:0 auto"></div>
+        <div style="font-size:7px;color:var(--gold);margin-top:2px">Motor</div>
+      </div>`:''}
 
-      <div class="pusula-current" style="left:${fiyatPct}%">
-        <div class="pusula-current-arrow"></div>
-        <div class="pusula-current-price">€${fiyat.toFixed(2)}</div>
-        <div style="font-size:8px;color:var(--text3)">Şu an</div>
+      <!-- ANALİST marker — çubuğun üstünde -->
+      ${analistPct!==null?`<div style="position:absolute;left:${analistPct}%;top:4px;transform:translateX(-50%);text-align:center;z-index:2">
+        <div style="font-size:9px;color:#6fa3ff;font-weight:700;white-space:nowrap">📊€${analistAdil.toFixed(0)}</div>
+        <div style="width:2px;height:14px;background:#6fa3ff;margin:2px auto;border-radius:100px;opacity:0.7"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#6fa3ff;border:2px solid var(--bg);margin:0 auto"></div>
+        <div style="font-size:7px;color:#6fa3ff;margin-top:2px">Analist</div>
+      </div>`:''}
+
+      <!-- ŞU AN — çubuğun altında ok -->
+      <div style="position:absolute;left:${fiyatPct}%;top:44px;transform:translateX(-50%);text-align:center;z-index:5">
+        <div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:8px solid white;margin:0 auto"></div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:white;white-space:nowrap;margin-top:2px">€${fiyat.toFixed(2)}</div>
+        <div style="font-size:7px;color:var(--text3)">Şu an</div>
       </div>
     </div>
 
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
-      ${motorAdil > 0 ? `<div style="flex:1;min-width:120px;padding:8px 10px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px">
-        <div style="font-size:9px;color:var(--gold);font-weight:700">⚡ MOTOR ADİL FİYAT</div>
-        <div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--gold)">€${motorAdil.toFixed(2)}</div>
-        <div style="font-size:10px;color:${valueGapMotor>=0?'var(--green)':'var(--red)'};font-weight:600">${valueGapMotor>=0?'+':''}%${valueGapMotor}</div>
-      </div>` : ''}
-      ${analistAdil > 0 ? `<div style="flex:1;min-width:120px;padding:8px 10px;background:rgba(41,121,255,0.06);border:1px solid rgba(41,121,255,0.2);border-radius:8px">
-        <div style="font-size:9px;color:#6fa3ff;font-weight:700">📊 ANALİST REFERANS</div>
-        <div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:#6fa3ff">€${analistAdil.toFixed(2)}</div>
-        <div style="font-size:10px;color:${valueGapAnalist>=0?'var(--green)':'var(--red)'};font-weight:600">${valueGapAnalist>=0?'+':''}%${valueGapAnalist} <span style="color:var(--text3);font-weight:400">(salt referans)</span></div>
-      </div>` : ''}
+    <!-- ALT ÖZET -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+      ${motorAdil>0?`<div style="padding:10px 12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);border-radius:10px">
+        <div style="font-size:9px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:4px">⚡ MOTOR ADİL FİYAT</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold)">€${motorAdil.toFixed(2)}</div>
+        <div style="font-size:11px;font-weight:700;color:${valueGapMotor>=0?'var(--green)':'var(--red)'}">${valueGapMotor>=0?'+':''}%${valueGapMotor}</div>
+      </div>`:'<div></div>'}
+      ${analistAdil>0?`<div style="padding:10px 12px;background:rgba(41,121,255,0.06);border:1px solid rgba(41,121,255,0.2);border-radius:10px">
+        <div style="font-size:9px;color:#6fa3ff;font-weight:700;letter-spacing:1px;margin-bottom:4px">📊 ANALİST REFERANS</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#6fa3ff">€${analistAdil.toFixed(2)}</div>
+        <div style="font-size:11px;color:${valueGapAnalist>=0?'var(--green)':'var(--red)'}">${valueGapAnalist>=0?'+':''}%${valueGapAnalist} <span style="color:var(--text3);font-weight:400;font-size:9px">(salt referans)</span></div>
+      </div>`:'<div></div>'}
     </div>
   </div>`;
 }
 
+function sovereignUyariHtml(sovereign) {
   const uyarilar = [];
   if (!sovereign.safety_checks.integrity_ok)
     uyarilar.push({ tip: 'danger', mesaj: '🚨 MANİPÜLASYON RİSKİ — İşlem yapma, bekle' });
@@ -2329,10 +2341,162 @@ function portfolioKapat() { document.getElementById('portfolio-panel').classList
 function portfolioSekme(sekme, btn) { aktifPortfolioSekme = sekme; document.querySelectorAll('.portfolio-sekme').forEach(b => b.classList.remove('aktif')); btn.classList.add('aktif'); portfolioIcerikGuncelle(); }
 function portfolioKaydet() { localStorage.setItem('humeyra_portfolio', JSON.stringify(portfolio)); portfolioAlarmKontrol(); }
 
+// ═══════════════════════════════════════════════════════
+// SOVEREIGN v15.0 — WALLET RESERVED CASH
+// Her alımda nakit rezerve edilir, satışta serbest kalır
+// ═══════════════════════════════════════════════════════
+
+function walletReserveEt(miktar) {
+  portfolioWallet.reserved_cash = (portfolioWallet.reserved_cash || 0) + miktar;
+  portfolioWallet.available_cash = portfolioWallet.nakit - portfolioWallet.reserved_cash;
+  portfolioWalletKaydet();
+}
+
+function walletReserveSerbest(miktar) {
+  portfolioWallet.reserved_cash = Math.max(0, (portfolioWallet.reserved_cash || 0) - miktar);
+  portfolioWallet.available_cash = portfolioWallet.nakit - portfolioWallet.reserved_cash;
+  portfolioWalletKaydet();
+}
+
+function walletAvailableCash() {
+  return (portfolioWallet.nakit || 0) - (portfolioWallet.reserved_cash || 0);
+}
+
+// ═══════════════════════════════════════════════════════
+// SOVEREIGN v15.0 — DYNAMIC SCALING
+// confidence > 70 → %100, > 55 → %70, else → %40
+// ═══════════════════════════════════════════════════════
+
+function dynamicScaling(confidenceScore, yatirimMiktari, fiyat) {
+  const scale = confidenceScore > 70 ? 1.0 : confidenceScore > 55 ? 0.7 : 0.4;
+  const scaledMiktar = Math.round(yatirimMiktari * scale);
+  const lot = fiyat > 0 ? Math.floor(scaledMiktar / fiyat) : 0;
+  return {
+    scale,
+    scale_pct: Math.round(scale * 100),
+    scaled_miktar: scaledMiktar,
+    lot,
+    aciklama: scale === 1.0 ? '🔥 TAM POZİSYON — Güven yüksek' :
+              scale === 0.7 ? '⚡ ORTA POZİSYON — Temkinli giriş' :
+                              '🛡️ KÜÇÜK POZİSYON — Düşük güven'
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+// SOVEREIGN v15.0 — 3N PRIORITY SİSTEMİ
+// MANİPÜLASYON > VERİMSİZ ÖLÇEK > ZİRVE > DİP > GÜÇLÜ ALIM
+// ═══════════════════════════════════════════════════════
+
+function threeNPriority(h, sovereignSonuc) {
+  const checks = [
+    {
+      id: 'MANIPÜLASYON RİSKİ',
+      aktif: h.integrity && h.integrity.risk === 'HIGH',
+      ne: '🚨 MANİPÜLASYON RİSKİ',
+      neden: 'Fiyat/hacim verisinde anomali tespit edildi. Terazi hileli olabilir.',
+      nasil: 'İşlem yapma. Başka enstrümana yönel. Bekle.',
+      renk: 'var(--red)', oncelik: 1
+    },
+    {
+      id: 'VERİMSİZ ÖLÇEK',
+      aktif: sovereignSonuc && sovereignSonuc.scaling.is_amount_insufficient,
+      ne: '⚠️ VERİMSİZ ÖLÇEK',
+      neden: `Komisyon maliyeti potansiyel kârı yutuyor. Min €${sovereignSonuc?.scaling.min_investment} gerekli.`,
+      nasil: 'Bu parayı ETF veya faizde değerlendirmek daha mantıklı olabilir.',
+      renk: 'var(--yellow)', oncelik: 2
+    },
+    {
+      id: 'ZİRVE',
+      aktif: h.rsi > 80,
+      ne: `🔴 ZİRVE — RSI ${h.rsi}`,
+      neden: 'Hisse aşırı ısınmış. Momentum kırılabilir.',
+      nasil: 'Yeni alım yapma. Mevcut pozisyonlarda kâr realizasyonu düşün.',
+      renk: 'var(--red)', oncelik: 3
+    },
+    {
+      id: 'DİP',
+      aktif: h.rsi > 0 && h.rsi < 30,
+      ne: `🟢 DİP — RSI ${h.rsi}`,
+      neden: 'Hisse aşırı satım bölgesinde. Toparlanma ihtimali yüksek.',
+      nasil: 'Kademeli alım yapılabilir. Stop loss koy.',
+      renk: 'var(--green)', oncelik: 4
+    },
+    {
+      id: 'GÜÇLÜ ALIM',
+      aktif: sovereignSonuc && sovereignSonuc.confidence_score > 70 && sovereignSonuc.safety_passed,
+      ne: '💎 GÜÇLÜ ALIM SİNYALİ',
+      neden: `Güven skoru ${sovereignSonuc?.confidence_score}, tüm safety check'ler geçti.`,
+      nasil: 'Pozisyon açılabilir. Dynamic scaling uygula.',
+      renk: 'var(--green)', oncelik: 5
+    }
+  ];
+
+  return checks.filter(c => c.aktif).sort((a, b) => a.oncelik - b.oncelik);
+}
+
+function threeNHtml(threeNSonuclar) {
+  if (!threeNSonuclar || threeNSonuclar.length === 0) return '';
+  const en = threeNSonuclar[0];
+  return `<div style="margin-top:12px;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid ${en.renk};border-left:4px solid ${en.renk};border-radius:12px;animation:fadeInUp .4s ease">
+    <div style="font-size:9px;letter-spacing:3px;color:${en.renk};font-weight:700;margin-bottom:8px">3N ANALİZ · ÖNCELİK ${threeNSonuclar.length > 1 ? `(+${threeNSonuclar.length-1} daha)` : ''}</div>
+    <div style="font-size:13px;font-weight:700;color:${en.renk};margin-bottom:8px">${en.ne}</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:4px"><span style="color:var(--gold);font-weight:600">NEDEN:</span> ${en.neden}</div>
+    <div style="font-size:11px;color:var(--text2)"><span style="color:var(--gold);font-weight:600">NASIL:</span> ${en.nasil}</div>
+    ${threeNSonuclar.length > 1 ? `<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${threeNSonuclar.slice(1).map(s=>`<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(255,255,255,0.04);border:1px solid ${s.renk};color:${s.renk}">${s.id}</span>`).join('')}</div>` : ''}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// SOVEREIGN v15.0 — BROWSER PUSH NOTIFICATIONS
+// ═══════════════════════════════════════════════════════
+
+async function notificationIzniAl() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') return true;
+  if (Notification.permission === 'denied') return false;
+  const izin = await Notification.requestPermission();
+  return izin === 'granted';
+}
+
+function sovereignBildirimGonder(baslik, mesaj, ikon) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  new Notification(baslik, {
+    body: mesaj,
+    icon: ikon || '⚡',
+    badge: '🛡️',
+    tag: 'sovereign-' + Date.now()
+  });
+}
+
+function sovereignAlarmKontrol() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  hisseler.forEach(h => {
+    if (h.rsi > 88) {
+      sovereignBildirimGonder(
+        `🚨 ${tickerKisa(h.ticker)} — Aşırı Isınma`,
+        `RSI ${h.rsi} — ZİRVE bölgesinde! Pozisyon riskli.`
+      );
+    }
+    if (h.rsi > 0 && h.rsi < 25) {
+      sovereignBildirimGonder(
+        `🎯 ${tickerKisa(h.ticker)} — Dip Fırsatı`,
+        `RSI ${h.rsi} — DİP bölgesinde! İncelemeye değer.`
+      );
+    }
+    if (h.direncKirildi) {
+      sovereignBildirimGonder(
+        `🟢 ${tickerKisa(h.ticker)} — Direnç Kırıldı`,
+        `Fiyat €${h.fiyat.toFixed(2)} — Kırılım gerçekleşti!`
+      );
+    }
+  });
+}
+
 function portfolioHisseEkle(ticker, fiyat, adet) {
   const maliyet = fiyat * adet;
-  if (portfolioWallet.ilkSermaye > 0 && maliyet > portfolioWallet.nakit) {
-    alert(`⚠️ Yetersiz nakit!\nGerekli: €${maliyet.toFixed(2)}\nMevcut: €${portfolioWallet.nakit.toFixed(2)}`);
+  const available = walletAvailableCash();
+  if (portfolioWallet.ilkSermaye > 0 && maliyet > available) {
+    alert(`⚠️ Yetersiz kullanılabilir nakit!\nGerekli: €${maliyet.toFixed(2)}\nMevcut: €${available.toFixed(2)}\nRezerve: €${(portfolioWallet.reserved_cash||0).toFixed(2)}`);
     return false;
   }
   const mevcut = portfolio.findIndex(p => p.ticker === ticker);
@@ -2346,6 +2510,7 @@ function portfolioHisseEkle(ticker, fiyat, adet) {
   }
   if (portfolioWallet.ilkSermaye > 0) {
     portfolioWallet.nakit -= maliyet;
+    walletReserveEt(0); // available_cash güncelle
     portfolioWalletKaydet();
   }
   portfolioKaydet();
@@ -3036,7 +3201,8 @@ let hisseler = [], seciliHisse = null;
 
 async function sheetsYukle() {
   try {
-    const res = await fetch(SHEETS_CSV + '&t=' + Date.now());
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(SHEETS_CSV + '&t=' + Date.now())}`;
+    const res = await fetch(proxyUrl);
     const text = await res.text();
     const satirlar = text.trim().split('\n');
     hisseler = [];
@@ -3265,7 +3431,7 @@ function veriCek() {
     </div>`;
   }
 
-  // Şu an fiyatı — ok işareti 
+  // Şu an fiyatı — ok işareti
   const sPct = pozisyonPct(h.fiyat);
   const fiyatRenk = motorAdilFiyat && h.fiyat < motorAdilFiyat ? 'var(--green)' : 'var(--red)';
   barHTML += `<div style="position:absolute;top:30px;left:${sPct}%;transform:translateX(-50%);text-align:center">
@@ -3657,7 +3823,30 @@ async function analiz(mod) {
   adv.push('Stop loss her zaman koy!');
   if (score >= 68) adv.push('Giriş fiyatını sabırla bekle');
   document.getElementById('tavsiye').innerHTML = adv.map(a => sig(a, 'var(--blue)')).join('');
-  // FİYAT PUSULASI
+  // 3N PRİORİTY SİSTEMİ
+  const threeNSonuclar = threeNPriority(
+    seciliHisse || { rsi, integrity: null },
+    sovereignSonuc
+  );
+  const threeNHtmlStr = threeNHtml(threeNSonuclar);
+  if (threeNHtmlStr) {
+    document.getElementById('guven-blok-container').innerHTML += threeNHtmlStr;
+  }
+
+  // DYNAMIC SCALING bloğu
+  const dynScale = dynamicScaling(sovereignSonuc.confidence_score, amount || 500, price);
+  document.getElementById('guven-blok-container').innerHTML += `
+    <div style="margin-top:10px;padding:10px 14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--text2);font-weight:700;margin-bottom:6px">⚖️ DYNAMIC SCALING</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:12px;font-weight:700;color:var(--text)">${dynScale.aciklama}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold)">%${dynScale.scale_pct}</div>
+      </div>
+      ${amount > 0 ? `<div style="font-size:10px;color:var(--text2);margin-top:4px">
+        €${amount} × %${dynScale.scale_pct} = <strong style="color:var(--gold)">€${dynScale.scaled_miktar}</strong>
+        ${price > 0 ? `→ <strong style="color:var(--gold)">${dynScale.lot} lot</strong>` : ''}
+      </div>` : ''}
+    </div>`;
   const pusulaDom = document.getElementById('pusula-container');
   if (pusulaDom) {
     const h_pusula = seciliHisse || {};
@@ -3760,7 +3949,9 @@ function sifirla() {
 levelGuncelle();
 sheetsYukle();
 countdownMotorBaslat();
+notificationIzniAl();
 setInterval(() => sheetsYukle(), 5 * 60 * 1000);
+setInterval(() => sovereignAlarmKontrol(), 5 * 60 * 1000);
 setInterval(() => {
   const alarmSonuc = portfolioAlarmKontrol();
   if (alarmSonuc && alarmSonuc.length > 0) document.getElementById('portfolio-btn').classList.add('alarm');
