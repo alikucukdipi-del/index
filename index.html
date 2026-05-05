@@ -699,7 +699,29 @@ async function motorArkaPlandaCalistir() {
       if (h.high12>0 && h.low12>0 && h.high12!==h.low12) {
         h.pozisyon12H = Math.round((h.fiyat-h.low12)/(h.high12-h.low12)*100);
       }
-      h.rsiTutarsiz = h.pozisyon12H!
+     h.rsiTutarsiz = h.pozisyon12H !== null && ((h.rsi < 35 && h.pozisyon12H > 65) || (h.rsi > 65 && h.pozisyon12H < 35));
+h.rsiUyari = h.rsiTutarsiz ? (h.rsi < 35 ? '⚠️ RSI dip gösteriyor ama fiyat üst bölgede' : '⚠️ RSI güçlü ama fiyat alt bölgede') : '';
+h.motorYuklendi = true;
+heatmapKartGuncelle(h);
+    }
+    h.motorYukleniyor = false;
+    await new Promise(r => setTimeout(r, 800));
+  }
+}
+
+function heatmapKartGuncelle(h) {
+  const kart = document.querySelector('.heatmap-card[data-ticker="' + tickerKisa(h.ticker) + '"]');
+  if (!kart) return;
+  const badge = kart.querySelector('.integrity-badge');
+  if (badge && h.integrity) {
+    const renkMap = { LOW:'#00c853', MEDIUM:'#ffb300', HIGH:'#ff3d3d' };
+    badge.style.display = 'block';
+    badge.style.background = renkMap[h.integrity.risk] + '22';
+    badge.style.border = '1px solid ' + renkMap[h.integrity.risk];
+    badge.style.color = renkMap[h.integrity.risk];
+    badge.textContent = '🛡️ ' + h.integrity.risk;
+  }
+}
       // ═══════════════════════════════════════════════════════
 // INTEGRITY MOTORU — MANİPÜLASYON KALKANI 🛡️
 // ═══════════════════════════════════════════════════════
@@ -1929,73 +1951,8 @@ function sermayeKaydet() {
   portfolioWalletKaydet();
   portfolioIcerikGuncelle();
 }
-    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text2)"><div style="font-size:32px;margin-bottom:12px">💼</div><div style="font-size:13px">Henüz portföyünde hisse yok.</div><div style="font-size:11px;margin-top:8px;color:var(--text3)">Hisse seç → VERİ ÇEK → Portföye Ekle</div></div>';
-    return;
-  }
-  let toplamMaliyet = 0, toplamDeger = 0, temettuSkor = 0;
-  for (const p of portfolio) {
-    const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker);
-    if (!h) continue;
-    toplamMaliyet += p.alisFiyati * p.adet;
-    toplamDeger += h.fiyat * p.adet;
-    if (h.temettu) temettuSkor += 15;
-  }
-  const toplamKarZarar = toplamDeger - toplamMaliyet;
-  const toplamKarYuzde = toplamMaliyet > 0 ? (toplamKarZarar / toplamMaliyet) * 100 : 0;
-  const isi = portfolioIsiHesapla();
-  const isiRenk = isi >= 70 ? 'var(--green)' : isi >= 40 ? 'var(--yellow)' : 'var(--red)';
-  const portfoyTrendSkor = portfolio.length > 0 ? portfolio.reduce((acc, p) => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); if (!h) return acc; return acc + (h.ma20 > h.ma200 ? 7 : 3); }, 0) / portfolio.length : 5;
-  const portfoyRiskSkor = portfolio.filter(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); return h && h.beta > 1.5; }).length;
-  const sonuc = portfoyAnalizEt({ isi, toplamKarYuzde, trendSkor: portfoyTrendSkor, riskSkor: portfoyRiskSkor, temettuSkor });
-  const modRenk = kararRenk(sonuc.mod);
-  const portfoyMesaji = portfoyMesaj(sonuc);
-  const aiAnaliz = portfoyAnalizAI(portfolio);
-  const alarmlar = portfolioAlarmKontrol();
-  let alarmHtml = '';
-  if (alarmlar && alarmlar.length > 0) alarmHtml = '<div style="background:rgba(255,61,61,0.1);border:1px solid rgba(255,61,61,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:#ff6b6b">' + alarmlar[0] + '</div>';
+   
 
-  // Akıl Notları
-  const akilHtml = aiAnaliz.akilNotlari.length > 0 ?
-    '<div style="margin-top:10px;padding:10px 12px;background:rgba(41,121,255,0.05);border:1px solid rgba(41,121,255,0.2);border-radius:8px">' +
-    '<div style="font-size:9px;letter-spacing:2px;color:#6fa3ff;margin-bottom:6px">🧠 AKIL NOTLARI</div>' +
-    aiAnaliz.akilNotlari.map(n => '<div style="font-size:11px;color:var(--text2);margin-bottom:4px">• ' + n + '</div>').join('') +
-    '</div>' : '';
-
-  // Zayıf Halka
-const zayifHtml = aiAnaliz.zayif ?
-  '<div style="margin-top:8px;font-size:11px;color:var(--red)">🔍 Zayıf halka: <strong>' + aiAnaliz.zayif.ticker + '</strong> (skor ' + aiAnaliz.zayif.skor + ') — gözden geçir</div>' : '';
-const dengeHtml = '<div style="margin-top:8px;font-size:11px;color:var(--text2)">⚖️ Denge: <strong style="color:' + (dengeSkoru(portfolio) >= 70 ? 'var(--green)' : dengeSkoru(portfolio) >= 50 ? 'var(--yellow)' : 'var(--red)') + '">%' + dengeSkoru(portfolio) + '</strong></div>';  
-  el.innerHTML = alarmHtml +
-    '<div class="portfolio-ozet">' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:8px">' +
-    '<div><div style="font-size:10px;color:var(--text2);margin-bottom:2px">TOPLAM DEĞER</div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--text)">€' + toplamDeger.toFixed(2) + '</div></div>' +
-    '<div style="text-align:right"><div style="font-size:10px;color:var(--text2);margin-bottom:2px">KAR/ZARAR</div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:' + (toplamKarZarar >= 0 ? 'var(--green)' : 'var(--red)') + '">' + (toplamKarZarar >= 0 ? '+' : '') + '€' + toplamKarZarar.toFixed(2) + '</div></div>' +
-    '</div>' +
-    '<div style="font-size:11px;color:' + (toplamKarYuzde >= 0 ? 'var(--green)' : 'var(--red)') + ';margin-bottom:10px">' + (toplamKarYuzde >= 0 ? '+' : '') + toplamKarYuzde.toFixed(2) + '% toplam getiri</div>' +
-    '<div style="font-size:9px;color:var(--text2);margin-bottom:4px;letter-spacing:2px">PORTFÖY ISISI</div>' +
-    '<div class="portfolio-isi-bar"><div class="portfolio-isi-fill" style="width:' + isi + '%;background:' + isiRenk + '"></div></div>' +
-    '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-bottom:8px"><span>0</span><span>' + isi.toFixed(0) + '/100</span><span>100</span></div>' +
-    '<div style="margin-top:12px;padding:12px 14px;background:var(--card);border-radius:10px;border:1px solid ' + modRenk + '">' +
-    '<div style="font-size:9px;letter-spacing:2px;color:' + modRenk + ';font-weight:700;margin-bottom:6px">📊 PORTFÖY KARARI</div>' +
-    '<div style="font-size:13px;color:' + modRenk + ';font-weight:600;margin-bottom:4px">' + portfoyMesaji + '</div>' +
-    '<div style="font-size:11px;color:var(--text2);margin-bottom:4px">→ ' + sonuc.aksiyon + '</div>' +
-    '<div style="font-size:10px;color:var(--text3)">Güven: %' + sonuc.skor + ' (' + guvenLabelPortfoy(sonuc.skor) + ')</div>' +
-    '</div>' +
-    zayifHtml + dengeHtml + akilHtml +
-    (temettuSkor > 0 ? '<div style="margin-top:8px;font-size:10px;color:var(--gold)">💰 Temettü gücü: ' + temettuSkor + ' puan</div>' : '') +
-    '</div>' +
-    '<div id="ai-portfoy-yorum" style="margin-top:12px">' +
-    (apiKeyAl() ? '<button onclick="aiPortfoyYorumGoster()" style="width:100%;padding:8px;background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);border-radius:8px;color:#6fa3ff;font-family:DM Sans,sans-serif;font-size:11px;font-weight:600;cursor:pointer">🤖 AI Portföy Yorumu Al</button>' :
-    '<div style="margin-top:10px;padding:10px 14px;background:rgba(255,179,0,0.06);border:1px solid rgba(255,179,0,0.2);border-radius:10px">' +
-   '<div style="font-size:9px;letter-spacing:2px;color:var(--yellow);margin-bottom:8px">📋 TAVSİYE</div>' +
-(sonuc.mod === 'ATAK' ? portfolio.map(p => '<div>→ ' + p.ticker + ' <span style="color:var(--green)">tut / artır</span></div>').join('') :
-sonuc.mod === 'KORUMA' ? portfolio.map(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); const deger = h ? (h.fiyat * p.adet * 0.2).toFixed(0) : '—'; return '<div>→ ' + p.ticker + ' <span style="color:var(--red)">azalt €' + deger + '</span></div>'; }).join('') :
-sonuc.mod === 'DEFANSİF' ? portfolio.map(p => { const h = hisseler.find(x => tickerKisa(x.ticker) === p.ticker || x.ticker === p.ticker); const deger = h ? (h.fiyat * p.adet * 0.35).toFixed(0) : '—'; return '<div>→ ' + p.ticker + ' <span style="color:var(--red)">sat €' + deger + '</span></div>'; }).join('') :
-portfolio.map(p => '<div>→ ' + p.ticker + ' <span style="color:var(--yellow)">izle</span></div>').join('')) + 
-
-'</div>') +
-'</div>';
-}
 
 async function aiPortfoyYorumGoster() {
   const el = document.getElementById('ai-portfoy-yorum');
