@@ -217,6 +217,16 @@ select option { background: #181818; }
 .sbar-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text3); margin-bottom: 6px; }
 .sbar-bg { height: 5px; background: var(--border); border-radius: 100px; overflow: hidden; }
 .sbar-fill { height: 100%; border-radius: 100px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+
+/* FİYAT PUSULASI */
+.pusula-wrap { background: var(--card); border: 1px solid rgba(201,168,76,0.25); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+.pusula-bar { position: relative; height: 6px; border-radius: 100px; margin: 28px 0 36px; }
+.pusula-marker { position: absolute; top: -8px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; cursor: help; }
+.pusula-marker-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--bg); margin-bottom: 4px; }
+.pusula-marker-label { font-size: 9px; white-space: nowrap; font-weight: 700; letter-spacing: 0.5px; }
+.pusula-current { position: absolute; bottom: -28px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+.pusula-current-price { font-family: 'Bebas Neue', sans-serif; font-size: 15px; color: white; }
+.pusula-current-arrow { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid white; margin-bottom: 2px; }
 .sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
 .scard { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
 .scard.good { border-color: rgba(0,200,83,0.2); }
@@ -549,6 +559,7 @@ select option { background: #181818; }
     <div class="vsummary" id="vsummary"></div>
   </div>
   <div id="guven-blok-container"></div>
+  <div id="pusula-container"></div>
   <div id="integrity-blok" style="display:none;margin-bottom:14px"></div>
   <!-- AI YORUM -->
   <div class="ai-yorum-kutu" id="ai-yorum-kutu" style="display:none">
@@ -886,7 +897,90 @@ function wisdomUyariUret(integrity, rsi, aksiyon, nakit, ilkSermaye, pnl) {
   </div>`;
 }
 // ═══════════════════════════════════════════════════════
-// SOVEREIGN MEMORY KATMANI v15.5
+// LEARNING SYSTEM — Sovereign v15.5
+// "Sistem hata yapar → öğrenir → bir daha yapmaz"
+// ═══════════════════════════════════════════════════════
+
+let learningThresholds = JSON.parse(localStorage.getItem('humeyra_learning') || JSON.stringify({
+  rsi_buy_limit: 75,     // Başlangıç: RSI 75 üstü alma
+  min_score: 40,         // Başlangıç: min skor 40
+  integrity_block: false // Başlangıç: integrity block kapalı
+}));
+
+function learningThresholdsKaydet() {
+  localStorage.setItem('humeyra_learning', JSON.stringify(learningThresholds));
+}
+
+function failureReasonSay() {
+  const kapalilar = kararGecmisi.filter(k => k.failure_reason && k.failure_reason.length > 0);
+  const sayac = {};
+  kapalilar.forEach(k => {
+    k.failure_reason.forEach(r => {
+      sayac[r] = (sayac[r] || 0) + 1;
+    });
+  });
+  return sayac;
+}
+
+function learningSystemCalistir() {
+  const sayac = failureReasonSay();
+  let degisti = false;
+
+  // RSI yüksek → 3+ hata → limiti düşür
+  if ((sayac['rsi_high'] || 0) >= 3 && learningThresholds.rsi_buy_limit > 65) {
+    learningThresholds.rsi_buy_limit = 65;
+    degisti = true;
+    console.log('🧠 Learning: RSI buy limit → 65');
+  }
+  if ((sayac['rsi_high'] || 0) >= 7 && learningThresholds.rsi_buy_limit > 60) {
+    learningThresholds.rsi_buy_limit = 60;
+    degisti = true;
+    console.log('🧠 Learning: RSI buy limit → 60');
+  }
+
+  // Düşük skor → 3+ hata → min skoru artır
+  if ((sayac['score_low'] || 0) >= 3 && learningThresholds.min_score < 55) {
+    learningThresholds.min_score = 55;
+    degisti = true;
+    console.log('🧠 Learning: Min score → 55');
+  }
+  if ((sayac['score_low'] || 0) >= 7 && learningThresholds.min_score < 60) {
+    learningThresholds.min_score = 60;
+    degisti = true;
+    console.log('🧠 Learning: Min score → 60');
+  }
+
+  // Integrity hatası → 3+ hata → integrity block aç
+  if ((sayac['integrity_medium'] || 0) + (sayac['integrity_high'] || 0) >= 3) {
+    learningThresholds.integrity_block = true;
+    degisti = true;
+    console.log('🧠 Learning: Integrity block → true');
+  }
+
+  if (degisti) {
+    learningThresholdsKaydet();
+    learningUyariGoster(sayac);
+  }
+  return sayac;
+}
+
+function learningUyariGoster(sayac) {
+  const uyarilar = [];
+  if (learningThresholds.rsi_buy_limit < 75) {
+    uyarilar.push(`🧠 Motor öğrendi: RSI alım limiti → ${learningThresholds.rsi_buy_limit} (RSI hatası ${sayac['rsi_high'] || 0} kez)`);
+  }
+  if (learningThresholds.min_score > 40) {
+    uyarilar.push(`🧠 Motor öğrendi: Min skor → ${learningThresholds.min_score} (düşük skor hatası ${sayac['score_low'] || 0} kez)`);
+  }
+  if (learningThresholds.integrity_block) {
+    uyarilar.push(`🧠 Motor öğrendi: Integrity filtresi aktif (integrity hatası ${(sayac['integrity_medium']||0)+(sayac['integrity_high']||0)} kez)`);
+  }
+  if (uyarilar.length > 0) {
+    console.log('Sovereign Learning Update:', uyarilar);
+  }
+}
+
+
 // Gemini: decision_ledger + scenario_stats + test_runs
 // Copilot: State Machine (REAL/TEST/OUTCOME/SCENARIO)
 // ═══════════════════════════════════════════════════════
@@ -1243,19 +1337,60 @@ function portfolioGecmisGoster(el, aktifAlt) {
       });
     }
 
-    // Kaçırılan fırsatlar ve hatalar
-    const kapalilar = kararGecmisi.filter(k => k.outcome.result_pct !== null);
-    const hatalar = kapalilar.filter(k => k.failure_reason?.includes('rsi_high'));
-    if (hatalar.length > 0) {
-      html += `<div style="margin-top:8px;padding:8px 12px;background:rgba(255,61,61,0.06);border:1px solid rgba(255,61,61,0.2);border-radius:8px;font-size:10px;color:var(--red)">⚠️ Yüksek RSI hatası: ${hatalar.length} kez tekrarlandı — RSI > 75 iken AL yapma!</div>`;
+    // Failure reason sayacı
+    const sayac = learningSystemCalistir();
+    const failureLabels = {
+      'rsi_high': 'RSI yüksek',
+      'score_low': 'Düşük skor',
+      'integrity_medium': 'Integrity MEDIUM',
+      'integrity_high': 'Integrity HIGH',
+      'scaling_insufficient': 'Sermaye yetersiz',
+      'market_reversal': 'Piyasa tersine döndü'
+    };
+
+    const toplamHata = Object.values(sayac).reduce((a,b) => a+b, 0);
+    if (toplamHata > 0) {
+      html += `<div style="margin-top:12px;margin-bottom:6px;font-size:9px;letter-spacing:2px;color:var(--red);font-weight:700">🔴 HATA ANALİZİ</div>`;
+      Object.entries(sayac).sort((a,b) => b[1]-a[1]).forEach(([key, count]) => {
+        const label = failureLabels[key] || key;
+        const pct = Math.round((count / toplamHata) * 100);
+        html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:rgba(255,61,61,0.05);border:1px solid rgba(255,61,61,0.15);border-radius:8px;margin-bottom:4px">
+          <span style="font-size:10px;color:var(--text2)">⚠️ ${label}</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:60px;height:4px;background:var(--border);border-radius:100px;overflow:hidden">
+              <div style="width:${pct}%;height:100%;background:var(--red);border-radius:100px"></div>
+            </div>
+            <span style="font-size:10px;font-weight:700;color:var(--red)">${count} kez</span>
+          </div>
+        </div>`;
+      });
     }
-  }
+
+    // Learning system durumu
+    const learningDegisti = learningThresholds.rsi_buy_limit < 75 || learningThresholds.min_score > 40 || learningThresholds.integrity_block;
+    if (learningDegisti) {
+      html += `<div style="margin-top:12px;padding:10px 12px;background:rgba(0,200,83,0.06);border:1px solid rgba(0,200,83,0.25);border-radius:10px">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--green);font-weight:700;margin-bottom:8px">🧠 MOTOR ÖĞRENDİ</div>
+        ${learningThresholds.rsi_buy_limit < 75 ? `<div style="font-size:10px;color:var(--text2);margin-bottom:4px">✅ RSI alım limiti → <strong style="color:var(--green)">${learningThresholds.rsi_buy_limit}</strong> (başlangıç: 75)</div>` : ''}
+        ${learningThresholds.min_score > 40 ? `<div style="font-size:10px;color:var(--text2);margin-bottom:4px">✅ Min skor → <strong style="color:var(--green)">${learningThresholds.min_score}</strong> (başlangıç: 40)</div>` : ''}
+        ${learningThresholds.integrity_block ? `<div style="font-size:10px;color:var(--text2)">✅ Integrity filtresi → <strong style="color:var(--green)">AKTİF</strong></div>` : ''}
+        <button onclick="learningThresholdsSifirla()" style="margin-top:8px;padding:4px 10px;background:transparent;border:1px solid rgba(255,61,61,0.3);border-radius:6px;color:var(--red);font-size:9px;cursor:pointer;font-family:'DM Sans',sans-serif">↩️ Öğrenmeyi Sıfırla</button>
+      </div>`;
+    } else if (toplamHata === 0) {
+      html += `<div style="text-align:center;padding:16px;color:var(--text2);font-size:11px;margin-top:8px">🧠 Motor henüz öğrenme modunda değil.<br><span style="font-size:10px;color:var(--text3)">7 gün sonra sonuçlar gelince otomatik öğrenir.</span></div>`;
+    }
 
   if (kararGecmisi.length > 0) {
     html += `<button onclick="kararGecmisiTemizle()" style="width:100%;margin-top:10px;padding:6px;background:transparent;border:1px solid rgba(255,61,61,0.3);border-radius:8px;color:var(--red);font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif">🗑️ Geçmişi Temizle</button>`;
   }
 
   el.innerHTML = html;
+}
+
+function learningThresholdsSifirla() {
+  learningThresholds = { rsi_buy_limit: 75, min_score: 40, integrity_block: false };
+  learningThresholdsKaydet();
+  portfolioGecmisGoster(document.getElementById('portfolio-icerik'), 'stratejiler');
 }
 
 function kararGecmisiTemizle() {
@@ -1330,6 +1465,226 @@ function acikKararlariGuncelle() {
   if (degisti) kararGecmisiKaydet();
 }
 
+
+// ═══════════════════════════════════════════════════════
+// SOVEREIGN ENGINE v15.0 — ANA MOTOR HESAPLAMALARI
+// profit_erosion_index, safety_checks, confidence_raw
+// value_gap, ces, execution_block
+// ═══════════════════════════════════════════════════════
+
+function sovereignHesapla(h, yatirimMiktari) {
+  yatirimMiktari = yatirimMiktari || 500;
+  const commission = 10;
+  const expected_return_1y = 0.05;
+  const target_profit = yatirimMiktari * expected_return_1y;
+
+  // SCALING MODULE
+  const min_investment = (target_profit + commission) / expected_return_1y;
+  const profit_erosion_index = (commission / yatirimMiktari) * 100;
+  const is_amount_insufficient = yatirimMiktari < min_investment;
+
+  // CES — Capital Efficiency Score
+  const normalized_heat = Math.min(100, Math.max(0, h.rsi || 50));
+  const ces = (expected_return_1y - (commission / yatirimMiktari)) / (normalized_heat / 100 + 0.01);
+
+  // ADİL FİYAT — Motor kendi hesaplıyor (analistlere güvenmiyoruz!)
+  // Formül: MA200 bazlı + RSI düzeltmesi + F/K faktörü + 12H orta noktası
+  function motorAdilFiyatHesapla(h) {
+    let adilFiyat = 0;
+    let agirlik = 0;
+
+    // 1. MA200 bazlı (en güvenilir uzun vadeli referans)
+    if (h.ma200 > 0) {
+      const rsiDuzeltme = h.rsi > 0 ? (1 + (50 - h.rsi) / 200) : 1; // RSI 30 → +%10, RSI 70 → -%10
+      adilFiyat += h.ma200 * rsiDuzeltme * 3;
+      agirlik += 3;
+    }
+
+    // 2. 12H aralık orta noktası
+    if (h.high12 > 0 && h.low12 > 0) {
+      const ortaNokta = (h.high12 + h.low12) / 2;
+      adilFiyat += ortaNokta * 2;
+      agirlik += 2;
+    }
+
+    // 3. F/K bazlı değerleme (sektör F/K ortalaması ~18 varsayımı)
+    if (h.fk > 0 && h.fiyat > 0) {
+      const sektorFK = 18;
+      const fkDuzeltme = sektorFK / h.fk;
+      adilFiyat += h.fiyat * fkDuzeltme * 1.5;
+      agirlik += 1.5;
+    }
+
+    // 4. MA20 (kısa vadeli momentum)
+    if (h.ma20 > 0) {
+      adilFiyat += h.ma20 * 1;
+      agirlik += 1;
+    }
+
+    // Hesaplanamadıysa analist hedefine bak, o da yoksa şu fiyat
+    if (agirlik === 0) {
+      return h.hedef > 0 ? h.hedef : h.fiyat;
+    }
+
+    return Math.round((adilFiyat / agirlik) * 100) / 100;
+  }
+
+  // VALUE GAP — motor hesabı kullan, analist sadece referans
+  const motor_fair_price = motorAdilFiyatHesapla(h);
+  const analyst_fair_price = h.hedef > 0 ? h.hedef :
+    (h.hedefMin > 0 && h.hedefMax > 0 ? (h.hedefMin + h.hedefMax) / 2 : 0);
+  const fair_price = motor_fair_price; // Motor kazanır!
+  const value_gap = fair_price > 0 ? (fair_price - h.fiyat) / fair_price : 0;
+
+  // RISK/REWARD — 12H aralığından
+  const high = h.high12 > 0 ? h.high12 : h.fiyat * 1.1;
+  const low = h.low12 > 0 ? h.low12 : h.fiyat * 0.9;
+  const risk_reward = (h.fiyat - low) > 0 ? (high - h.fiyat) / (h.fiyat - low) : 1;
+
+  // MOMENTUM
+  const rsiNorm = Math.min(100, h.rsi || 50);
+  const trendNorm = (h.ma20 > 0 && h.ma200 > 0)
+    ? Math.min(100, Math.max(0, ((h.ma20 - h.ma200) / h.ma200) * 100 + 50)) : 50;
+  const volumeNorm = Math.min(100, Math.abs(h.degisim || 0) * 10 + 30);
+  const momentum = 0.5 * rsiNorm + 0.3 * trendNorm + 0.2 * volumeNorm;
+
+  // CONFIDENCE RAW — v15.0 formülü
+  const confidence_raw = (momentum / 100) * 0.35 +
+                         (1 - Math.abs(value_gap)) * 0.35 +
+                         0.5 * 0.2 +
+                         (risk_reward / 3) * 0.1;
+  const confidence_score = Math.max(5, Math.round(Math.min(100, Math.max(0, confidence_raw * 100))));
+
+  // SAFETY CHECKS
+  const integrity_ok = !h.integrity || h.integrity.risk !== 'HIGH';
+  const erosion_ok = profit_erosion_index <= 1.5;
+  const ces_ok = ces >= 0.5;
+  const wallet_ok = yatirimMiktari >= min_investment * 0.5;
+  const safety_checks = { integrity_ok, erosion_ok, ces_ok, wallet_ok };
+  const safety_passed = integrity_ok && erosion_ok && wallet_ok;
+
+  // DYNAMIC SCALING
+  const scale = confidence_score > 70 ? 1.0 : confidence_score > 55 ? 0.7 : 0.4;
+  const position_size = h.fiyat > 0 ? Math.floor((yatirimMiktari * scale) / h.fiyat) : 0;
+
+  const execution_action = safety_passed && confidence_score > 55 ? 'BUY' : 'WAIT';
+
+  return {
+    scaling: {
+      min_investment: Math.round(min_investment),
+      profit_erosion_index: Math.round(profit_erosion_index * 100) / 100,
+      is_amount_insufficient,
+      ces: Math.round(ces * 100) / 100
+    },
+    confidence_score,
+    value_gap: Math.round(value_gap * 100) / 100,
+    fair_price: Math.round(fair_price * 100) / 100,
+    analyst_fair_price: Math.round((analyst_fair_price || 0) * 100) / 100,
+    risk_reward: Math.round(risk_reward * 100) / 100,
+    safety_checks, safety_passed, execution_action, position_size, scale
+  };
+}
+
+function fiyatPusulasıHtml(fiyat, motorAdil, analistAdil, low12, high12) {
+  if (!fiyat || fiyat <= 0) return '';
+
+  // Skala sınırları — low12'den %20 aşağı, high12'den %20 yukarı
+  const min = low12 > 0 ? low12 * 0.85 : fiyat * 0.75;
+  const max = high12 > 0 ? high12 * 1.15 : fiyat * 1.35;
+  const aralik = max - min;
+  if (aralik <= 0) return '';
+
+  function pct(deger) {
+    return Math.min(98, Math.max(2, Math.round(((deger - min) / aralik) * 100)));
+  }
+
+  const fiyatPct = pct(fiyat);
+  const motorPct = motorAdil > 0 ? pct(motorAdil) : null;
+  const analistPct = analistAdil > 0 ? pct(analistAdil) : null;
+
+  const valueGapMotor = motorAdil > 0 ? Math.round(((motorAdil - fiyat) / fiyat) * 100) : null;
+  const valueGapAnalist = analistAdil > 0 ? Math.round(((analistAdil - fiyat) / fiyat) * 100) : null;
+
+  const durum = valueGapMotor === null ? '' :
+    valueGapMotor > 15 ? '🎯 Motor: Değerinin çok altında — güçlü fırsat' :
+    valueGapMotor > 5 ? '🎯 Motor: Değerinin altında' :
+    valueGapMotor > -5 ? '⚖️ Motor: Adil değer civarında' :
+    valueGapMotor > -15 ? '⚠️ Motor: Değerinin biraz üzerinde' :
+    '🚨 Motor: Değerinin çok üzerinde — pahalı';
+
+  const durumRenk = valueGapMotor === null ? 'var(--text2)' :
+    valueGapMotor > 5 ? 'var(--green)' :
+    valueGapMotor > -5 ? 'var(--yellow)' : 'var(--red)';
+
+  return `<div class="pusula-wrap">
+    <div style="font-size:10px;letter-spacing:3px;color:var(--gold);font-weight:700;margin-bottom:4px">📊 FİYAT PUSULASI</div>
+    <div style="font-size:11px;color:${durumRenk};font-weight:600;margin-bottom:12px">${durum}</div>
+
+    <div class="pusula-bar" style="background:linear-gradient(90deg,var(--red) 0%,var(--yellow) 40%,var(--green) 70%,var(--gold) 100%)">
+
+      ${low12 > 0 ? `<div class="pusula-marker" style="left:2%">
+        <div class="pusula-marker-dot" style="background:var(--red)"></div>
+        <div class="pusula-marker-label" style="color:var(--red)">€${low12.toFixed(0)}</div>
+        <div style="font-size:8px;color:var(--text3)">12H dip</div>
+      </div>` : ''}
+
+      ${high12 > 0 ? `<div class="pusula-marker" style="left:98%">
+        <div class="pusula-marker-dot" style="background:var(--gold)"></div>
+        <div class="pusula-marker-label" style="color:var(--gold)">€${high12.toFixed(0)}</div>
+        <div style="font-size:8px;color:var(--text3)">12H zirve</div>
+      </div>` : ''}
+
+      ${motorPct !== null ? `<div class="pusula-marker" style="left:${motorPct}%;z-index:3">
+        <div class="pusula-marker-dot" style="background:var(--gold);box-shadow:0 0 8px rgba(201,168,76,0.6)"></div>
+        <div class="pusula-marker-label" style="color:var(--gold)">⚡€${motorAdil.toFixed(2)}</div>
+        <div style="font-size:8px;color:var(--gold)">Motor</div>
+      </div>` : ''}
+
+      ${analistPct !== null ? `<div class="pusula-marker" style="left:${analistPct}%;z-index:2">
+        <div class="pusula-marker-dot" style="background:#6fa3ff"></div>
+        <div class="pusula-marker-label" style="color:#6fa3ff">€${analistAdil.toFixed(2)}</div>
+        <div style="font-size:8px;color:#6fa3ff">Analist</div>
+      </div>` : ''}
+
+      <div class="pusula-current" style="left:${fiyatPct}%">
+        <div class="pusula-current-arrow"></div>
+        <div class="pusula-current-price">€${fiyat.toFixed(2)}</div>
+        <div style="font-size:8px;color:var(--text3)">Şu an</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+      ${motorAdil > 0 ? `<div style="flex:1;min-width:120px;padding:8px 10px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px">
+        <div style="font-size:9px;color:var(--gold);font-weight:700">⚡ MOTOR ADİL FİYAT</div>
+        <div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--gold)">€${motorAdil.toFixed(2)}</div>
+        <div style="font-size:10px;color:${valueGapMotor>=0?'var(--green)':'var(--red)'};font-weight:600">${valueGapMotor>=0?'+':''}%${valueGapMotor}</div>
+      </div>` : ''}
+      ${analistAdil > 0 ? `<div style="flex:1;min-width:120px;padding:8px 10px;background:rgba(41,121,255,0.06);border:1px solid rgba(41,121,255,0.2);border-radius:8px">
+        <div style="font-size:9px;color:#6fa3ff;font-weight:700">📊 ANALİST REFERANS</div>
+        <div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:#6fa3ff">€${analistAdil.toFixed(2)}</div>
+        <div style="font-size:10px;color:${valueGapAnalist>=0?'var(--green)':'var(--red)'};font-weight:600">${valueGapAnalist>=0?'+':''}%${valueGapAnalist} <span style="color:var(--text3);font-weight:400">(salt referans)</span></div>
+      </div>` : ''}
+    </div>
+  </div>`;
+}
+
+  const uyarilar = [];
+  if (!sovereign.safety_checks.integrity_ok)
+    uyarilar.push({ tip: 'danger', mesaj: '🚨 MANİPÜLASYON RİSKİ — İşlem yapma, bekle' });
+  if (sovereign.scaling.is_amount_insufficient)
+    uyarilar.push({ tip: 'warn', mesaj: `⚠️ VERİMSİZ ÖLÇEK — Bu hedef için en az €${sovereign.scaling.min_investment} gerekli` });
+  if (sovereign.scaling.profit_erosion_index > 1.5)
+    uyarilar.push({ tip: 'warn', mesaj: `⚠️ KOMİSYON EROZYONU — %${sovereign.scaling.profit_erosion_index} oran yüksek` });
+  if (!sovereign.safety_checks.ces_ok)
+    uyarilar.push({ tip: 'info', mesaj: `💡 CES DÜŞÜK — Sermaye verimliliği yetersiz (${sovereign.scaling.ces})` });
+  if (uyarilar.length === 0) return '';
+  return `<div style="margin-top:12px">${uyarilar.map(u =>
+    `<div style="padding:10px 14px;margin-bottom:6px;border-radius:10px;font-size:12px;line-height:1.6;
+      background:${u.tip==='danger'?'rgba(255,61,61,0.08)':u.tip==='warn'?'rgba(255,179,0,0.08)':'rgba(41,121,255,0.08)'};
+      border-left:4px solid ${u.tip==='danger'?'var(--red)':u.tip==='warn'?'var(--yellow)':'var(--blue)'};
+      border:1px solid ${u.tip==='danger'?'rgba(255,61,61,0.3)':u.tip==='warn'?'rgba(255,179,0,0.3)':'rgba(41,121,255,0.3)'};
+      color:var(--text2)">${u.mesaj}</div>`).join('')}</div>`;
+}
 
 let ayarlar = JSON.parse(localStorage.getItem('humeyra_ayarlar') || '{}');
 
@@ -2832,18 +3187,110 @@ function veriCek() {
     { l: 'Destek', v: h.destekKirildi ? 'KIRILDI' : '—', c: h.destekKirildi ? 'var(--red)' : 'var(--text3)' }
   ].map(d => '<div class="veri-item"><div class="veri-label">' + d.l + '</div><div class="veri-val" style="color:' + d.c + '">' + d.v + '</div></div>').join('');
   const barEl = document.getElementById('analyst-bar');
-  if (h.hedefMin > 0 && h.hedefMax > 0) {
-    const pct = Math.min(100, Math.max(0, ((h.fiyat - h.hedefMin) / (h.hedefMax - h.hedefMin)) * 100));
-    const durum = h.fiyat < h.hedefMin ? '🚨 Analist koridorunun ALTINDA' : h.fiyat > h.hedefMax ? '⚠️ Üstünde' : '✅ Koridor içinde';
-    const durumRenk = h.fiyat < h.hedefMin ? 'var(--green)' : h.fiyat > h.hedefMax ? 'var(--red)' : 'var(--gold)';
-    barEl.style.display = 'block';
-    barEl.innerHTML = '<div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px">📊 Analist Güven Aralığı</div>' +
-      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="font-size:11px;color:var(--red);font-weight:600">€' + h.hedefMin + '</span>' +
-      '<div style="flex:1;position:relative;height:8px;background:linear-gradient(90deg,var(--red-dim),var(--yellow-dim),var(--green-dim));border-radius:100px;border:1px solid var(--border)"><div style="position:absolute;top:50%;left:' + pct + '%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:white;border:2px solid var(--gold)"></div></div>' +
-      '<span style="font-size:11px;color:var(--green);font-weight:600">€' + h.hedefMax + '</span></div>' +
-      '<div style="font-size:12px;font-weight:600;color:' + durumRenk + '">' + durum + '</div>' +
-      '<div style="font-size:11px;color:var(--text2);margin-top:4px">Şu an: <strong style="color:var(--gold)">€' + h.fiyat.toFixed(2) + '</strong> · Hedef: <strong>€' + h.hedef.toFixed(2) + '</strong>' + (h.temettu ? ' · <span style="color:var(--gold)">💰 Temettü veriyor</span>' : '') + '</div>';
-  } else { barEl.style.display = 'none'; }
+
+  // MOTOR ADİL FİYAT HESABI
+  function motorAdilFiyatHesapla(h) {
+    let fiyatlar = [];
+    // MA200 bazlı
+    if (h.ma200 > 0) fiyatlar.push(h.ma200 * 1.05);
+    // 12H orta nokta
+    if (h.high12 > 0 && h.low12 > 0) fiyatlar.push((h.high12 + h.low12) / 2);
+    // F/K bazlı (sektör F/K ~18 varsayım)
+    if (h.fk > 0 && h.fk < 60) fiyatlar.push(h.fiyat * (18 / h.fk));
+    // RSI düzeltmesi — RSI > 70 ise %5 indir, < 30 ise %5 artır
+    const rsiFaktor = h.rsi > 70 ? 0.95 : h.rsi < 30 ? 1.05 : 1.0;
+    if (fiyatlar.length === 0) return null;
+    const ort = fiyatlar.reduce((a, b) => a + b) / fiyatlar.length;
+    return Math.round(ort * rsiFaktor * 100) / 100;
+  }
+
+  const motorAdilFiyat = motorAdilFiyatHesapla(h);
+
+  // Fiyat çizgisi için değerleri hesapla
+  const analistMin = h.hedefMin > 0 ? h.hedefMin : null;
+  const analistMax = h.hedefMax > 0 ? h.hedefMax : null;
+  const analistHedef = h.hedef > 0 ? h.hedef : null;
+
+  // Çizgi için min/max aralık
+  const tumFiyatlar = [h.fiyat, motorAdilFiyat, analistMin, analistMax, analistHedef].filter(Boolean);
+  const cizgiMin = Math.min(...tumFiyatlar) * 0.93;
+  const cizgiMax = Math.max(...tumFiyatlar) * 1.07;
+  const cizgiAralik = cizgiMax - cizgiMin;
+
+  function pozisyonPct(fiyat) {
+    return Math.min(95, Math.max(5, Math.round(((fiyat - cizgiMin) / cizgiAralik) * 100)));
+  }
+
+  barEl.style.display = 'block';
+
+  let barHTML = `<div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:14px">📊 FİYAT PUSULASI</div>`;
+
+  // Ana çizgi görseli
+  barHTML += `<div style="position:relative;height:80px;margin:0 8px 16px">`;
+
+  // Çizgi
+  barHTML += `<div style="position:absolute;top:28px;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red-dim),var(--yellow-dim),var(--green-dim));border-radius:100px"></div>`;
+
+  // Min etiketi (sol)
+  const solFiyat = Math.round(cizgiMin * 1.02);
+  barHTML += `<div style="position:absolute;top:22px;left:0;transform:translateX(-50%)">
+    <div style="font-size:9px;color:var(--text3);font-weight:600">€${solFiyat}</div>
+    <div style="width:1px;height:8px;background:var(--text3);margin:2px auto"></div>
+  </div>`;
+
+  // Max etiketi (sağ)
+  const sagFiyat = Math.round(cizgiMax * 0.98);
+  barHTML += `<div style="position:absolute;top:22px;right:0;transform:translateX(50%)">
+    <div style="font-size:9px;color:var(--text3);font-weight:600">€${sagFiyat}</div>
+    <div style="width:1px;height:8px;background:var(--text3);margin:2px auto"></div>
+  </div>`;
+
+  // Analist hedef — üstte
+  if (analistHedef) {
+    const aPct = pozisyonPct(analistHedef);
+    barHTML += `<div style="position:absolute;top:0;left:${aPct}%;transform:translateX(-50%);text-align:center">
+      <div style="font-size:9px;color:#6fa3ff;font-weight:700">€${analistHedef.toFixed(0)}</div>
+      <div style="font-size:8px;color:#6fa3ff;opacity:0.7">analist</div>
+      <div style="width:1px;height:12px;background:#6fa3ff;margin:1px auto;opacity:0.5"></div>
+    </div>`;
+  }
+
+  // Motor adil fiyat — üstte (analistten farklı renk)
+  if (motorAdilFiyat) {
+    const mPct = pozisyonPct(motorAdilFiyat);
+    barHTML += `<div style="position:absolute;top:0;left:${mPct}%;transform:translateX(-50%);text-align:center">
+      <div style="font-size:9px;color:var(--gold);font-weight:700">€${motorAdilFiyat.toFixed(0)}</div>
+      <div style="font-size:8px;color:var(--gold);opacity:0.7">⚡ motor</div>
+      <div style="width:1px;height:12px;background:var(--gold);margin:1px auto;opacity:0.6"></div>
+    </div>`;
+  }
+
+  // Şu an fiyatı — ok işareti
+  const sPct = pozisyonPct(h.fiyat);
+  const fiyatRenk = motorAdilFiyat && h.fiyat < motorAdilFiyat ? 'var(--green)' : 'var(--red)';
+  barHTML += `<div style="position:absolute;top:30px;left:${sPct}%;transform:translateX(-50%);text-align:center">
+    <div style="width:2px;height:10px;background:${fiyatRenk};margin:0 auto"></div>
+    <div style="font-size:8px;color:${fiyatRenk};margin-top:2px">▲</div>
+    <div style="font-size:10px;font-weight:700;color:${fiyatRenk};white-space:nowrap">€${h.fiyat.toFixed(2)}</div>
+  </div>`;
+
+  barHTML += `</div>`; // relative div kapanıyor
+
+  // Alt özet
+  const valuePct = motorAdilFiyat ? Math.round(((motorAdilFiyat - h.fiyat) / h.fiyat) * 100) : null;
+  const durumRenk = valuePct > 5 ? 'var(--green)' : valuePct < -5 ? 'var(--red)' : 'var(--yellow)';
+  const durumMesaj = valuePct > 10 ? '🎯 Motor: Değerinin altında' : valuePct > 0 ? '✅ Motor: Makul fiyat' : valuePct > -10 ? '⚠️ Motor: Hafif pahalı' : '🚨 Motor: Pahalı görünüyor';
+
+  barHTML += `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:${durumRenk}">${durumMesaj}</div>
+      ${motorAdilFiyat ? `<div style="font-size:10px;color:var(--text2);margin-top:2px">⚡ Motor adil fiyat: <strong style="color:var(--gold)">€${motorAdilFiyat.toFixed(2)}</strong>${valuePct !== null ? ` · <span style="color:${durumRenk}">${valuePct > 0 ? '+' : ''}%${valuePct}</span>` : ''}</div>` : ''}
+      ${analistHedef ? `<div style="font-size:10px;color:var(--text2);margin-top:2px">📊 Analist hedef: <strong style="color:#6fa3ff">€${analistHedef.toFixed(2)}</strong> <span style="color:var(--text3);font-size:9px">(referans)</span></div>` : ''}
+    </div>
+    ${h.temettu ? '<div style="font-size:10px;color:var(--gold)">💰 Temettü veriyor</div>' : ''}
+  </div>`;
+
+  barEl.innerHTML = barHTML;
   sektorKarsilastir(h);
   document.getElementById('fetch-status').innerHTML = '✅ <strong>' + h.ticker + '</strong> — veriler yüklendi!';
   setTimeout(() => {
@@ -3086,7 +3533,13 @@ async function analiz(mod) {
   else if (seb === 'gercek-kazanc') pumps.push({ t: '✅ Gerçek Kazanç', c: 'safe' });
   if (pumpRisk >= 4) { score -= 8; }
 
+  // SOVEREIGN v15.0 HESABI
+  const sovereignSonuc = sovereignHesapla(seciliHisse || { rsi, ma20, ma200, degisim: change1m, fiyat: price, hedef: target, hedefMin: 0, hedefMax: 0, high12: 0, low12: 0, integrity: null }, amount || 500);
+  const sovereignUyari = sovereignUyariHtml(sovereignSonuc);
+
   score = Math.max(8, Math.min(93, Math.round(score)));
+  // Sovereign confidence skoru ile harmanlıyoruz
+  score = Math.round(score * 0.7 + sovereignSonuc.confidence_score * 0.3);
   const aksiyonSonuc = getActionFromScore(score, change1m, rsi);
 
   // KARAR GEÇMİŞİNE KAYDET (Sovereign v15.0 memory.decision_ledger)
@@ -3204,6 +3657,19 @@ async function analiz(mod) {
   adv.push('Stop loss her zaman koy!');
   if (score >= 68) adv.push('Giriş fiyatını sabırla bekle');
   document.getElementById('tavsiye').innerHTML = adv.map(a => sig(a, 'var(--blue)')).join('');
+  // FİYAT PUSULASI
+  const pusulaDom = document.getElementById('pusula-container');
+  if (pusulaDom) {
+    const h_pusula = seciliHisse || {};
+    pusulaDom.innerHTML = fiyatPusulasıHtml(
+      price,
+      sovereignSonuc.fair_price,
+      sovereignSonuc.analyst_fair_price,
+      h_pusula.low12 || 0,
+      h_pusula.high12 || 0
+    );
+  }
+
   // Integrity kartı göster
 const integrityEl = document.getElementById('integrity-blok');
 if (integrityEl && seciliHisse?.integrity) {
@@ -3232,6 +3698,39 @@ const wisdomHtml = wisdomUyariUret(
 if (wisdomHtml) {
   document.getElementById('guven-blok-container').innerHTML += wisdomHtml;
 }
+
+// Sovereign v15.0 uyarıları
+if (sovereignUyari) {
+  document.getElementById('guven-blok-container').innerHTML += sovereignUyari;
+}
+
+// Sovereign confidence bloğu
+document.getElementById('guven-blok-container').innerHTML += `
+  <div style="margin-top:10px;padding:10px 14px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:10px">
+    <div style="font-size:9px;letter-spacing:2px;color:var(--gold);font-weight:700;margin-bottom:8px">⚡ SOVEREIGN v15.0 MOTOR</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px">
+      <div style="text-align:center;padding:6px;background:rgba(255,255,255,0.03);border-radius:8px">
+        <div style="font-size:9px;color:var(--text3)">GÜVEN</div>
+        <div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:${sovereignSonuc.confidence_score>60?'var(--green)':'var(--yellow)'}">${sovereignSonuc.confidence_score}</div>
+      </div>
+      <div style="text-align:center;padding:6px;background:rgba(255,255,255,0.03);border-radius:8px">
+        <div style="font-size:9px;color:var(--text3)">VALUE GAP</div>
+        <div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:${sovereignSonuc.value_gap>0?'var(--green)':'var(--red)'}">%${Math.round(sovereignSonuc.value_gap*100)}</div>
+      </div>
+      <div style="text-align:center;padding:6px;background:rgba(255,255,255,0.03);border-radius:8px">
+        <div style="font-size:9px;color:var(--text3)">R/R</div>
+        <div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:${sovereignSonuc.risk_reward>1?'var(--green)':'var(--red)'}">${sovereignSonuc.risk_reward}</div>
+      </div>
+    </div>
+    <div style="font-size:10px;font-weight:700;color:${sovereignSonuc.execution_action==='BUY'?'var(--green)':'var(--yellow)'}">
+      ${sovereignSonuc.execution_action==='BUY'?'✅ SAFETY CHECK GEÇTİ — İşlem yapılabilir':'⚠️ WAIT — Safety check başarısız'}
+    </div>
+    ${sovereignSonuc.scaling.is_amount_insufficient?`<div style="font-size:10px;color:var(--text2);margin-top:4px">Min. verimli yatırım: <strong style="color:var(--gold)">€${sovereignSonuc.scaling.min_investment}</strong></div>`:''}
+    <div style="margin-top:8px;padding:8px 10px;background:rgba(255,255,255,0.02);border-radius:8px;font-size:10px;color:var(--text2)">
+      🧮 Motor Adil Fiyat: <strong style="color:var(--gold)">€${sovereignSonuc.fair_price}</strong>
+      ${sovereignSonuc.analyst_fair_price > 0 ? ` · Analist Ref: <span style="color:var(--text3);text-decoration:line-through">€${sovereignSonuc.analyst_fair_price}</span>` : ''}
+    </div>
+  </div>`;
   document.getElementById('result').classList.add('show');
   setTimeout(() => document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
 
@@ -3244,7 +3743,9 @@ function sifirla() {
   const aiKutu = document.getElementById('ai-yorum-kutu');
   if (aiKutu) aiKutu.style.display = 'none';
   const intEl = document.getElementById('integrity-blok');
-if (intEl) { intEl.innerHTML = ''; intEl.style.display = 'none'; }
+  if (intEl) { intEl.innerHTML = ''; intEl.style.display = 'none'; }
+  const pusulaDom = document.getElementById('pusula-container');
+  if (pusulaDom) pusulaDom.innerHTML = '';
   Object.keys(S).forEach(k => delete S[k]);
   document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('tg', 'tr', 'ty'));
   document.querySelectorAll('.hisse-btn').forEach(b => b.classList.remove('active'));
