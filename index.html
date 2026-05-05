@@ -457,7 +457,7 @@ select option { background: #181818; }
     <div id="fetch-status">Önce bir hisse seç</div>
   </div>
   <div class="veri-serit" id="veri-serit"></div>
-  <div id="analyst-bar" style="display:none;margin-top:12px;padding:14px 18px;background:var(--card2);border:1px solid rgba(201,168,76,0.2);border-radius:10px"></div>
+  <div id="motor-pusula" style="display:none;margin-top:12px"></div>
 </div>
 
 <div class="card" style="border-color:rgba(201,168,76,0.3);overflow:visible">
@@ -3407,7 +3407,7 @@ function veriCek() {
     { l: 'Direnç', v: h.direncKirildi ? 'KIRILDI' : '—', c: h.direncKirildi ? 'var(--green)' : 'var(--text3)' },
     { l: 'Destek', v: h.destekKirildi ? 'KIRILDI' : '—', c: h.destekKirildi ? 'var(--red)' : 'var(--text3)' }
   ].map(d => '<div class="veri-item"><div class="veri-label">' + d.l + '</div><div class="veri-val" style="color:' + d.c + '">' + d.v + '</div></div>').join('');
-  const barEl = document.getElementById('analyst-bar');
+  const barEl = document.getElementById('motor-pusula');
 
   // MOTOR ADİL FİYAT HESABI
   function motorAdilFiyatHesapla(h) {
@@ -3575,13 +3575,20 @@ function heatmapOlustur() {
 
     // MOTOR ADİL FİYAT — kartlarda analist yerine motor hesabı
     function kartMotorAdil(h) {
-      let fiyatlar = [], agirlik = 0;
-      if (h.ma200 > 0) { const rsiFak = h.rsi>70?0.95:h.rsi<30?1.05:1.0; fiyatlar.push(h.ma200*1.05*rsiFak*3); agirlik+=3; }
-      if (h.high12>0&&h.low12>0) { fiyatlar.push(((h.high12+h.low12)/2)*2); agirlik+=2; }
-      if (h.fk>0&&h.fk<60) { fiyatlar.push(h.fiyat*(18/h.fk)*1.5); agirlik+=1.5; }
-      if (h.ma20>0) { fiyatlar.push(h.ma20*1); agirlik+=1; }
-      if (agirlik===0) return h.hedef>0?h.hedef:null;
-      return Math.round((fiyatlar.reduce((a,b)=>a+b,0)/agirlik)*100)/100;
+      // Önce high12/low12 ortası — bunlar her zaman var
+      if (h.high12 > 0 && h.low12 > 0) {
+        const ort12H = (h.high12 + h.low12) / 2;
+        const rsiFak = h.rsi > 70 ? 0.93 : h.rsi < 30 ? 1.07 : 1.0;
+        // MA200 varsa ağırlıklı ortalama
+        if (h.ma200 > 0) {
+          return Math.round(((ort12H * 2 + h.ma200 * 1.05 * rsiFak) / 3) * 100) / 100;
+        }
+        return Math.round(ort12H * rsiFak * 100) / 100;
+      }
+      // Sadece MA200 varsa
+      if (h.ma200 > 0) return Math.round(h.ma200 * 1.05 * 100) / 100;
+      // Hiçbiri yoksa hedef fiyat
+      return h.hedef > 0 ? h.hedef : null;
     }
     const motorAdil = kartMotorAdil(h);
     const motorUpside = motorAdil && h.fiyat > 0 ? ((motorAdil - h.fiyat) / h.fiyat * 100) : null;
