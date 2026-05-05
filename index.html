@@ -3710,17 +3710,6 @@ function heatmapOlustur() {
       '<div class="el-tooltip"><div style="font-family:Bebas Neue,sans-serif;font-size:' + (buyuk ? '18px' : '14px') + ';color:var(--text)">€' + h.fiyat.toFixed(2) + '</div>' + (fiyatTooltip ? '<div class="el-tooltip-box">' + fiyatTooltip + '</div>' : '') + '</div>' +
       (h.rsi > 0 ? '<div class="el-tooltip"><div style="font-size:' + (buyuk ? '10px' : '9px') + ';color:' + rsiRenk + ';font-weight:700;cursor:help">RSI ' + h.rsi.toFixed(0) + (rsiEt ? ' · ' + rsiEt : '') + '</div><div class="el-tooltip-box">' + rsiTooltip + '</div></div>' : '') +
       miniPusulaHtml(h, motorAdil, motorUpside) +
-
-        // RENK = action + risk + integrity (UI ile sinyal çelişmesin!)
-        const integrityYuksek = h.integrity && h.integrity.risk === 'HIGH';
-        const rsiDip = h.rsi > 0 && h.rsi < 35;
-        const rsiZirve = h.rsi > 70;
-        const trendYukari = h.ma20 > 0 && h.ma200 > 0 && h.ma20 > h.ma200;
-        const trendAsagi = h.ma20 > 0 && h.ma200 > 0 && h.ma20 < h.ma200;
-
-        // NÖTR'Ü 4'E BOL
-        let bolge, bolgeRenk, bolgeLabel, kararEtkisi, tooltipMesaj, basariOrani;
-
       temettuBadge +
       (buyuk ? '<div style="margin-top:6px;padding:2px 8px;border-radius:100px;background:rgba(255,255,255,0.05);border:1px solid ' + borderColor + ';display:inline-block"><span style="font-size:8px;color:' + labelColor + ';font-weight:700">' + statusIcon + ' ' + statusLabel + '</span></div>' : '') +
       raporBilgi + sinyalHtml +
