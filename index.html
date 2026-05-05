@@ -1542,7 +1542,10 @@ function sovereignHesapla(h, yatirimMiktari) {
   const low = h.low12 > 0 ? h.low12 : h.fiyat * 0.9;
   const risk_reward = (h.fiyat - low) > 0 ? (high - h.fiyat) / (h.fiyat - low) : 1;
 
-  // MOMENTUM
+  // SAFETY CHECKS — önce tanımla
+  const integrity_ok = !h.integrity || h.integrity.risk !== 'HIGH';
+
+  // MOMENTUM — RSI yüksekse ceza ver
   const rsiNorm = Math.min(100, h.rsi || 50);
   const trendNorm = (h.ma20 > 0 && h.ma200 > 0)
     ? Math.min(100, Math.max(0, ((h.ma20 - h.ma200) / h.ma200) * 100 + 50)) : 50;
@@ -1550,39 +1553,66 @@ function sovereignHesapla(h, yatirimMiktari) {
   const momentum = 0.5 * rsiNorm + 0.3 * trendNorm + 0.2 * volumeNorm;
 
   // CONFIDENCE RAW — v15.0 formülü
-  const confidence_raw = (momentum / 100) * 0.35 +
-                         (1 - Math.abs(value_gap)) * 0.35 +
-                         0.5 * 0.2 +
-                         (risk_reward / 3) * 0.1;
-  const confidence_score = Math.max(5, Math.round(Math.min(100, Math.max(0, confidence_raw * 100))));
+  let confidence_raw = (momentum / 100) * 0.35 +
+                       (1 - Math.abs(value_gap)) * 0.35 +
+                       0.5 * 0.2 +
+                       (risk_reward / 3) * 0.1;
+  let confidence_score = Math.max(5, Math.round(Math.min(100, Math.max(0, confidence_raw * 100))));
+
+  // CONFIDENCE PENALTY — Copilot kuralları
+  if (risk_reward < 1) confidence_score = Math.max(5, confidence_score - 30);
+  if ((h.rsi || 0) > 80) confidence_score = Math.max(5, confidence_score - 20);
+  if ((h.rsi || 0) > 85) confidence_score = Math.max(5, confidence_score - 20); // çift ceza
+  if (!integrity_ok) confidence_score = Math.max(5, confidence_score - 25);
+
+  // HARD LOCK — Final override
+  let hard_filter = null;
+  if (!integrity_ok) hard_filter = 'MANIPULATION';
+  else if (risk_reward < 1) hard_filter = 'POOR_RR';
+  else if ((h.rsi || 0) > 85) hard_filter = 'RSI_EXTREME';
+
+  // SCALING — daha gerçekçi threshold
+  const scaling_warning = profit_erosion_index > 3.0 || is_amount_insufficient;
 
   // SAFETY CHECKS
-  const integrity_ok = !h.integrity || h.integrity.risk !== 'HIGH';
-  const erosion_ok = profit_erosion_index <= 1.5;
-  const ces_ok = ces >= 0.5;
-  const wallet_ok = yatirimMiktari >= min_investment * 0.5;
+  const erosion_ok = profit_erosion_index <= 3.0;
+  const ces_ok = ces >= 0.3; // daha gerçekçi
+  const wallet_ok = yatirimMiktari >= min_investment * 0.3; // daha gerçekçi
   const safety_checks = { integrity_ok, erosion_ok, ces_ok, wallet_ok };
-  const safety_passed = integrity_ok && erosion_ok && wallet_ok;
+  const safety_passed = integrity_ok && !hard_filter;
 
-  // DYNAMIC SCALING
-  const scale = confidence_score > 70 ? 1.0 : confidence_score > 55 ? 0.7 : 0.4;
-  const position_size = h.fiyat > 0 ? Math.floor((yatirimMiktari * scale) / h.fiyat) : 0;
+  // DYNAMIC SCALING — hard lock varsa %0
+  let scale, scale_label;
+  if (hard_filter) {
+    scale = 0; scale_label = '🚫 HARD LOCK — İşlem yapma';
+  } else if (confidence_score > 70 && risk_reward >= 1.5) {
+    scale = 1.0; scale_label = '🔥 TAM POZİSYON';
+  } else if (confidence_score > 55 && risk_reward >= 1.0) {
+    scale = 0.7; scale_label = '⚡ ORTA POZİSYON';
+  } else if (confidence_score > 40) {
+    scale = 0.2; scale_label = '🛡️ KÜÇÜK POZİSYON — Max %20';
+  } else {
+    scale = 0; scale_label = '⚠️ WAIT — Sinyal yetersiz';
+  }
 
-  const execution_action = safety_passed && confidence_score > 55 ? 'BUY' : 'WAIT';
+  const position_size = h.fiyat > 0 && scale > 0 ? Math.floor((yatirimMiktari * scale) / h.fiyat) : 0;
+  const execution_action = hard_filter ? 'AVOID' : scale > 0 ? 'BUY' : 'WAIT';
 
   return {
     scaling: {
       min_investment: Math.round(min_investment),
       profit_erosion_index: Math.round(profit_erosion_index * 100) / 100,
-      is_amount_insufficient,
+      is_amount_insufficient: scaling_warning,
       ces: Math.round(ces * 100) / 100
     },
     confidence_score,
+    hard_filter,
     value_gap: Math.round(value_gap * 100) / 100,
     fair_price: Math.round(fair_price * 100) / 100,
     analyst_fair_price: Math.round((analyst_fair_price || 0) * 100) / 100,
     risk_reward: Math.round(risk_reward * 100) / 100,
-    safety_checks, safety_passed, execution_action, position_size, scale
+    safety_checks, safety_passed, execution_action,
+    position_size, scale, scale_label
   };
 }
 
@@ -3863,13 +3893,13 @@ async function analiz(mod) {
     <div style="margin-top:10px;padding:10px 14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px">
       <div style="font-size:9px;letter-spacing:2px;color:var(--text2);font-weight:700;margin-bottom:6px">⚖️ DYNAMIC SCALING</div>
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:12px;font-weight:700;color:var(--text)">${dynScale.aciklama}</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold)">%${dynScale.scale_pct}</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text)">${sovereignSonuc.scale_label || dynScale.aciklama}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${sovereignSonuc.scale===0?'var(--red)':sovereignSonuc.scale>=0.7?'var(--green)':'var(--yellow)'}">%${Math.round((sovereignSonuc.scale||0)*100)}</div>
       </div>
-      ${amount > 0 ? `<div style="font-size:10px;color:var(--text2);margin-top:4px">
-        €${amount} × %${dynScale.scale_pct} = <strong style="color:var(--gold)">€${dynScale.scaled_miktar}</strong>
-        ${price > 0 ? `→ <strong style="color:var(--gold)">${dynScale.lot} lot</strong>` : ''}
-      </div>` : ''}
+      ${amount > 0 && sovereignSonuc.scale > 0 ? `<div style="font-size:10px;color:var(--text2);margin-top:4px">
+        €${amount} × %${Math.round(sovereignSonuc.scale*100)} = <strong style="color:var(--gold)">€${Math.round(amount*sovereignSonuc.scale)}</strong>
+        ${price > 0 ? `→ <strong style="color:var(--gold)">${Math.floor(amount*sovereignSonuc.scale/price)} lot</strong>` : ''}
+      </div>` : sovereignSonuc.scale === 0 ? `<div style="font-size:10px;color:var(--red);margin-top:4px">Hard lock aktif — sıfır pozisyon</div>` : ''}
     </div>`;
   const pusulaDom = document.getElementById('pusula-container');
   if (pusulaDom) {
@@ -3919,30 +3949,31 @@ if (sovereignUyari) {
 
 // Sovereign confidence bloğu
 document.getElementById('guven-blok-container').innerHTML += `
-  <div style="margin-top:10px;padding:10px 14px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:10px">
+  <div style="margin-top:10px;padding:10px 14px;background:rgba(201,168,76,0.06);border:1px solid ${sovereignSonuc.hard_filter?'rgba(255,61,61,0.4)':'rgba(201,168,76,0.2)'};border-radius:10px">
     <div style="font-size:9px;letter-spacing:2px;color:var(--gold);font-weight:700;margin-bottom:8px">⚡ SOVEREIGN v15.0 MOTOR</div>
+    ${sovereignSonuc.hard_filter ? `<div style="padding:8px 12px;background:rgba(255,61,61,0.1);border:1px solid rgba(255,61,61,0.4);border-radius:8px;margin-bottom:8px">
+      <div style="font-size:12px;font-weight:700;color:var(--red)">🚫 HARD LOCK — AVOID</div>
+      <div style="font-size:10px;color:var(--text2);margin-top:2px">${sovereignSonuc.hard_filter==='MANIPULATION'?'Manipülasyon riski tespit edildi':sovereignSonuc.hard_filter==='POOR_RR'?'R/R < 1 — Risk/ödül oranı yetersiz':'RSI > 85 — Aşırı ısınmış bölge'}</div>
+    </div>` : ''}
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px">
       <div style="text-align:center;padding:6px;background:rgba(255,255,255,0.03);border-radius:8px">
         <div style="font-size:9px;color:var(--text3)">GÜVEN</div>
-        <div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:${sovereignSonuc.confidence_score>60?'var(--green)':'var(--yellow)'}">${sovereignSonuc.confidence_score}</div>
+        <div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:${sovereignSonuc.confidence_score>60?'var(--green)':sovereignSonuc.confidence_score>40?'var(--yellow)':'var(--red)'}">${sovereignSonuc.confidence_score}</div>
       </div>
       <div style="text-align:center;padding:6px;background:rgba(255,255,255,0.03);border-radius:8px">
         <div style="font-size:9px;color:var(--text3)">VALUE GAP</div>
         <div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:${sovereignSonuc.value_gap>0?'var(--green)':'var(--red)'}">%${Math.round(sovereignSonuc.value_gap*100)}</div>
       </div>
-      <div style="text-align:center;padding:6px;background:rgba(255,255,255,0.03);border-radius:8px">
+      <div style="text-align:center;padding:6px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid ${sovereignSonuc.risk_reward>=1.5?'rgba(0,200,83,0.3)':sovereignSonuc.risk_reward>=1?'rgba(255,179,0,0.3)':'rgba(255,61,61,0.4)'}">
         <div style="font-size:9px;color:var(--text3)">R/R</div>
-        <div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:${sovereignSonuc.risk_reward>1?'var(--green)':'var(--red)'}">${sovereignSonuc.risk_reward}</div>
+        <div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:${sovereignSonuc.risk_reward>=1.5?'var(--green)':sovereignSonuc.risk_reward>=1?'var(--yellow)':'var(--red)'}">${sovereignSonuc.risk_reward}</div>
       </div>
     </div>
-    <div style="font-size:10px;font-weight:700;color:${sovereignSonuc.execution_action==='BUY'?'var(--green)':'var(--yellow)'}">
-      ${sovereignSonuc.execution_action==='BUY'?'✅ SAFETY CHECK GEÇTİ — İşlem yapılabilir':'⚠️ WAIT — Safety check başarısız'}
+    <div style="font-size:11px;font-weight:700;color:${sovereignSonuc.execution_action==='BUY'?'var(--green)':sovereignSonuc.execution_action==='AVOID'?'var(--red)':'var(--yellow)'}">
+      ${sovereignSonuc.execution_action==='BUY'?'✅ GEÇERLİ — İşlem yapılabilir':sovereignSonuc.execution_action==='AVOID'?'🚫 AVOID — Hard lock aktif':'⚠️ WAIT — Sinyal yetersiz'}
     </div>
-    ${sovereignSonuc.scaling.is_amount_insufficient?`<div style="font-size:10px;color:var(--text2);margin-top:4px">Min. verimli yatırım: <strong style="color:var(--gold)">€${sovereignSonuc.scaling.min_investment}</strong></div>`:''}
-    <div style="margin-top:8px;padding:8px 10px;background:rgba(255,255,255,0.02);border-radius:8px;font-size:10px;color:var(--text2)">
-      🧮 Motor Adil Fiyat: <strong style="color:var(--gold)">€${sovereignSonuc.fair_price}</strong>
-      ${sovereignSonuc.analyst_fair_price > 0 ? ` · Analist Ref: <span style="color:var(--text3);text-decoration:line-through">€${sovereignSonuc.analyst_fair_price}</span>` : ''}
-    </div>
+    ${sovereignSonuc.scaling.is_amount_insufficient?`<div style="font-size:10px;color:var(--yellow);margin-top:4px">⚠️ Min. verimli yatırım: €${sovereignSonuc.scaling.min_investment}</div>`:''}
+    <div style="font-size:10px;color:var(--text2);margin-top:6px">🧮 Motor Adil: <strong style="color:var(--gold)">€${sovereignSonuc.fair_price}</strong>${sovereignSonuc.analyst_fair_price>0?` · Analist: <span style="color:var(--text3);text-decoration:line-through">€${sovereignSonuc.analyst_fair_price}</span>`:''}</div>
   </div>`;
   document.getElementById('result').classList.add('show');
   setTimeout(() => document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
