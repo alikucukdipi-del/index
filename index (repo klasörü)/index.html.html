@@ -3597,7 +3597,7 @@ function miniPusulaHtml(h, motorAdil, motorUpside) {
   const adil = motorAdil || Math.round(((h.high12 + h.low12) / 2) * 100) / 100;
   const upside = motorUpside !== null ? motorUpside : Math.round(((adil - h.fiyat) / h.fiyat) * 100);
 
-  const pct = v => Math.min(94, Math.max(6, Math.round(((v - h.low12) / (h.high12 - h.low12)) * 100)));
+  const pct = v => Math.min(94, Math.max(6, Math.round(((v - min) / aralik) * 100)));
   const fPct = pct(h.fiyat), mPct = pct(adil);
   const oran = h.fiyat / adil;
 
