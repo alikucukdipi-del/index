@@ -3265,6 +3265,179 @@ function tarihParcala(t) { if (!t) return null; const p = t.split('/'); if (p.le
 function tickerKisa(t) { return t ? t.split(':').pop() : ''; }
 function bool(s) { return s && s.toString().trim().toUpperCase() === 'TRUE'; }
 
+// ═══════════════════════════════════════════════════════
+// FOMO MOTORU — v1.0
+// Kullanıcı davranışını izler, duygusal karar riskini ölçer
+// ═══════════════════════════════════════════════════════
+const fomoState = {
+  hisseGoruntuleme: {}, // ticker → [{zaman}]
+  sonHisseler: [],      // son 10 dakikada görüntülenen
+  kararHizi: [],        // karar süresi (saniye)
+};
+
+function fomoHisseGoruntule(ticker) {
+  const simdi = Date.now();
+  if (!fomoState.hisseGoruntuleme[ticker]) fomoState.hisseGoruntuleme[ticker] = [];
+  fomoState.hisseGoruntuleme[ticker].push(simdi);
+  // Son 15 dakikayı tut
+  fomoState.hisseGoruntuleme[ticker] = fomoState.hisseGoruntuleme[ticker].filter(t => simdi - t < 15 * 60 * 1000);
+  fomoState.sonHisseler.push({ ticker, zaman: simdi });
+  fomoState.sonHisseler = fomoState.sonHisseler.filter(t => simdi - t.zaman < 10 * 60 * 1000);
+}
+
+function fomoSkoru(ticker, rsi) {
+  const simdi = Date.now();
+  let skor = 0;
+
+  // Rapid rechecks — aynı hisseyi 15 dakikada 5+ kez
+  const tekrarlar = (fomoState.hisseGoruntuleme[ticker] || []).length;
+  if (tekrarlar >= 5) skor += 20;
+  else if (tekrarlar >= 3) skor += 10;
+
+  // RSI yüksek hissede vakit geçirme
+  if (rsi > 70 && tekrarlar >= 2) skor += 25;
+
+  // Multi stock jumping — 10 dakikada 8+ farklı hisse
+  const farkliHisseler = new Set(fomoState.sonHisseler.map(h => h.ticker)).size;
+  if (farkliHisseler >= 8) skor += 15;
+  else if (farkliHisseler >= 5) skor += 8;
+
+  // RSI zirve fixation
+  if (rsi > 80) skor += 10;
+
+  const seviye = skor >= 70 ? 'HIGH' : skor >= 40 ? 'MEDIUM' : 'LOW';
+  const konfidensCeza = seviye === 'HIGH' ? -15 : seviye === 'MEDIUM' ? -5 : 0;
+
+  return { skor, seviye, konfidensCeza,
+    badge: seviye === 'HIGH' ? '🔴 FOMO Riski' : seviye === 'MEDIUM' ? '🟡 Duygusal Baskı' : '🟢 Normal',
+    uyari: seviye === 'HIGH'
+      ? 'Bu hissede kısa sürede çok fazla kontrol yaptın. Acele karar verme!'
+      : seviye === 'MEDIUM'
+      ? 'Karar hızın normalden yüksek. Riskleri tekrar gözden geçir.'
+      : null
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+// NEWS INTELLIGENCE — elimizdeki veriyle
+// ═══════════════════════════════════════════════════════
+function narrativeIntelligence(hisseler) {
+  if (!hisseler || hisseler.length === 0) return null;
+
+  // Piyasa geneli sentiment — RSI + değişim + kırılımlar
+  const rsiOrta = hisseler.filter(h => h.rsi > 0).reduce((a, h) => a + h.rsi, 0) /
+                  (hisseler.filter(h => h.rsi > 0).length || 1);
+  const pozitifDegisim = hisseler.filter(h => h.degisim > 1).length;
+  const negatifDegisim = hisseler.filter(h => h.degisim < -1).length;
+  const direncKirilanlari = hisseler.filter(h => h.direncKirildi).length;
+  const destekKirilanlari = hisseler.filter(h => h.destekKirildi).length;
+  const asiriIsinan = hisseler.filter(h => h.rsi > 75).length;
+  const dipBolageleri = hisseler.filter(h => h.rsi > 0 && h.rsi < 35).length;
+  const apluslar = hisseler.filter(h => h.not && h.not.includes('A+')).length;
+
+  // Sentiment hesapla
+  const sentimentRaw = (pozitifDegisim - negatifDegisim + direncKirilanlari - destekKirilanlari) /
+                       (hisseler.length || 1);
+  const sentimentState = sentimentRaw >= 0.15 ? 'POSITIVE' : sentimentRaw <= -0.15 ? 'NEGATIVE' : 'NEUTRAL';
+
+  // Hype skoru
+  let hypeSkor = 0;
+  if (asiriIsinan > hisseler.length * 0.3) hypeSkor += 0.35;
+  if (direncKirilanlari > 5) hypeSkor += 0.25;
+  if (rsiOrta > 65) hypeSkor += 0.25;
+  const hypeState = hypeSkor >= 0.75 ? 'EXTREME' : hypeSkor >= 0.45 ? 'HIGH' : hypeSkor >= 0.20 ? 'ELEVATED' : 'NORMAL';
+
+  // Sicaklik
+  const sicaklik = rsiOrta > 70 ? 'SICAK' : rsiOrta > 55 ? 'ILIMLI' : rsiOrta > 40 ? 'NÖTR' : 'SOĞUK';
+  const sicaklikRenk = rsiOrta > 70 ? 'var(--red)' : rsiOrta > 55 ? 'var(--yellow)' : rsiOrta > 40 ? '#4fc3f7' : 'var(--green)';
+  const sicaklikEmoji = rsiOrta > 70 ? '🔥' : rsiOrta > 55 ? '🌤️' : rsiOrta > 40 ? '⚖️' : '❄️';
+
+  return {
+    sentimentState, hypeState, sicaklik, sicaklikRenk, sicaklikEmoji,
+    rsiOrta: Math.round(rsiOrta),
+    pozitifDegisim, negatifDegisim,
+    direncKirilanlari, destekKirilanlari,
+    asiriIsinan, dipBolageleri,
+    toplamHisse: hisseler.length
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+// GÜNÜN SICAKLIĞI POPUP
+// ═══════════════════════════════════════════════════════
+function gunununSicakligiGoster(hisseler) {
+  const bugun = new Date().toLocaleDateString('tr-TR');
+  const gosterildi = localStorage.getItem('gunun_sicakligi_' + bugun);
+  if (gosterildi) return;
+
+  const ni = narrativeIntelligence(hisseler);
+  if (!ni) return;
+
+  const sentimentBadge = ni.sentimentState === 'POSITIVE' ? '🟢 Pozitif Haber Akışı' :
+                         ni.sentimentState === 'NEGATIVE' ? '🔴 Negatif Haber Akışı' : '⚪ Dengeli';
+  const hypeBadge = ni.hypeState === 'EXTREME' ? '🔴 Aşırı Hype' :
+                    ni.hypeState === 'HIGH' ? '🟠 Hype Riski' :
+                    ni.hypeState === 'ELEVATED' ? '🟡 Yükselen Hype' : '🟢 Normal Hype';
+
+  const overlay = document.createElement('div');
+  overlay.id = 'gunun-sicakligi-overlay';
+  overlay.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);animation:fadeInUp .4s ease`;
+
+  overlay.innerHTML = `
+    <div style="background:var(--card);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px 32px;max-width:420px;width:90%;position:relative">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:40px;margin-bottom:8px">${ni.sicaklikEmoji}</div>
+        <div style="font-size:10px;letter-spacing:3px;color:var(--text3);margin-bottom:4px">GÜNÜN SICAKLIĞI</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:${ni.sicaklikRenk}">${ni.sicaklik}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:4px">Piyasa Nabzı Özeti • ${bugun}</div>
+      </div>
+
+      <!-- İstatistikler -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+        <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;text-align:center">
+          <div style="font-size:9px;color:var(--text3);margin-bottom:4px">ORTALAMA RSI</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${ni.sicaklikRenk}">${ni.rsiOrta}</div>
+        </div>
+        <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;text-align:center">
+          <div style="font-size:9px;color:var(--text3);margin-bottom:4px">TOPLAM HİSSE</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold)">${ni.toplamHisse}</div>
+        </div>
+        <div style="padding:10px;background:rgba(0,200,83,0.06);border-radius:10px;border:1px solid rgba(0,200,83,0.2);text-align:center">
+          <div style="font-size:9px;color:var(--text3);margin-bottom:4px">YÜKSELİYOR</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--green)">${ni.pozitifDegisim}</div>
+        </div>
+        <div style="padding:10px;background:rgba(255,61,61,0.06);border-radius:10px;border:1px solid rgba(255,61,61,0.2);text-align:center">
+          <div style="font-size:9px;color:var(--text3);margin-bottom:4px">DÜŞÜYOR</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--red)">${ni.negatifDegisim}</div>
+        </div>
+      </div>
+
+      <!-- Sinyaller -->
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+        ${ni.direncKirilanlari > 0 ? `<div style="font-size:11px;color:var(--green)">🟢 ${ni.direncKirilanlari} hissede direnç kırılımı</div>` : ''}
+        ${ni.destekKirilanlari > 0 ? `<div style="font-size:11px;color:var(--red)">🔴 ${ni.destekKirilanlari} hissede destek kırılımı</div>` : ''}
+        ${ni.asiriIsinan > 0 ? `<div style="font-size:11px;color:var(--yellow)">⚠️ ${ni.asiriIsinan} hisse aşırı ısınmış (RSI>75)</div>` : ''}
+        ${ni.dipBolageleri > 0 ? `<div style="font-size:11px;color:#4fc3f7">💎 ${ni.dipBolageleri} hisse dip bölgesinde</div>` : ''}
+      </div>
+
+      <!-- Narrative badges -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+        <span style="font-size:9px;padding:3px 10px;border-radius:100px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text2)">${sentimentBadge}</span>
+        <span style="font-size:9px;padding:3px 10px;border-radius:100px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text2)">${hypeBadge}</span>
+      </div>
+
+      <button onclick="document.getElementById('gunun-sicakligi-overlay').remove()" 
+        style="width:100%;padding:12px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px">
+        ANALİZE BAŞLA ⚡
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  localStorage.setItem('gunun_sicakligi_' + bugun, '1');
+}
+
 function aktifPuan(h) {
   let p = 0;
   if (h.rsi > 0 && h.rsi < 30) p += 40;
@@ -3383,6 +3556,8 @@ if (h.pozisyon12H !== null && h.rsi > 0) {
     if (hisseler.length > 0) {
       gridOlustur(); heatmapOlustur(); akimOzetGuncelle();
       karsilamaHisseleriDoldur(); karsilamaGoster();
+      // Günün sıcaklığı popup
+      setTimeout(() => gunununSicakligiGoster(hisseler), 1000);
       const alarmSonuc = portfolioAlarmKontrol();
       if (alarmSonuc && alarmSonuc.length > 0) document.getElementById('portfolio-btn').classList.add('alarm');
       window.scrollTo(0, 0);
