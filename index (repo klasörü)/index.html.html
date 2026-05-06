@@ -499,6 +499,40 @@ select option { background: #181818; }
 <div class="card">
   <span class="sec-label">📈 Teknik Analiz</span>
   <div class="sec-title">Göstergeler</div>
+
+  <!-- MA ÇİZGİ GRAFİĞİ -->
+  <div id="ma-grafik-container" style="display:none;margin-bottom:16px">
+    <div style="font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:8px">📊 MA20 / MA200 — GEÇMİŞ SERİ</div>
+    <div style="position:relative;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;padding:8px">
+      <svg id="ma-svg" width="100%" height="100" viewBox="0 0 400 100" preserveAspectRatio="none">
+        <!-- IZGARA -->
+        <defs>
+          <pattern id="grid" width="40" height="25" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 25" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="400" height="100" fill="url(#grid)"/>
+        <!-- MA200 çizgisi — altın -->
+        <polyline id="ma200-line" fill="none" stroke="#c9a84c" stroke-width="2" stroke-opacity="0.8" points=""/>
+        <!-- MA20 çizgisi — turkuaz -->
+        <polyline id="ma20-line" fill="none" stroke="#00f5ff" stroke-width="2" stroke-opacity="0.9" points=""/>
+        <!-- Golden/Death Cross noktası -->
+        <g id="cross-point" style="display:none">
+          <circle id="cross-circle" cx="0" cy="0" r="6" fill="none" stroke-width="2"/>
+          <text id="cross-icon" x="0" y="-12" text-anchor="middle" font-size="14">✨</text>
+        </g>
+      </svg>
+      <!-- Etiketler -->
+      <div style="display:flex;justify-content:space-between;margin-top:6px">
+        <div style="display:flex;gap:12px">
+          <span style="font-size:9px;color:#00f5ff">━ MA20</span>
+          <span style="font-size:9px;color:#c9a84c">━ MA200</span>
+        </div>
+        <div id="cross-label" style="font-size:9px;font-weight:700"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="g3" style="margin-bottom:16px">
     <div class="field"><label>MA200</label><input type="number" id="ma200" placeholder="Otomatik" step="0.01"></div>
     <div class="field"><label>MA20</label><input type="number" id="ma20" placeholder="Otomatik" step="0.01"></div>
@@ -3409,7 +3443,110 @@ function hisseAktif(idx, btn) {
   if (sabitTicker) sabitTicker.textContent = tickerKisa(seciliHisse.ticker);
 }
 
-function veriCek() {
+// MA GEÇMİŞ SERİSİ — localStorage
+function maGecmisBirikimKaydet(ticker, ma20, ma200) {
+  if (!ma20 || !ma200 || ma20 <= 0 || ma200 <= 0) return;
+  const key = 'ma_seri_' + ticker;
+  let seri = [];
+  try { seri = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+  const bugun = new Date().toISOString().split('T')[0];
+  // Aynı gün tekrar ekleme
+  if (seri.length > 0 && seri[seri.length-1].tarih === bugun) {
+    seri[seri.length-1] = { tarih: bugun, ma20, ma200 };
+  } else {
+    seri.push({ tarih: bugun, ma20, ma200 });
+  }
+  // Max 60 gün tut
+  if (seri.length > 60) seri = seri.slice(-60);
+  localStorage.setItem(key, JSON.stringify(seri));
+  return seri;
+}
+
+function maGrafikCiz(ticker, ma20Bugun, ma200Bugun) {
+  const container = document.getElementById('ma-grafik-container');
+  if (!container) return;
+
+  let seri = [];
+  try { seri = JSON.parse(localStorage.getItem('ma_seri_' + ticker) || '[]'); } catch(e) {}
+
+  // En az 2 nokta lazım
+  if (seri.length < 2) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+
+  const W = 400, H = 100;
+  const tumDegerler = seri.flatMap(d => [d.ma20, d.ma200]).filter(v => v > 0);
+  const minV = Math.min(...tumDegerler) * 0.98;
+  const maxV = Math.max(...tumDegerler) * 1.02;
+  const aralik = maxV - minV || 1;
+
+  const xPct = i => (i / (seri.length - 1)) * W;
+  const yPct = v => H - ((v - minV) / aralik) * H;
+
+  // Çizgi noktaları
+  const ma20Points = seri.map((d, i) => `${xPct(i).toFixed(1)},${yPct(d.ma20).toFixed(1)}`).join(' ');
+  const ma200Points = seri.map((d, i) => `${xPct(i).toFixed(1)},${yPct(d.ma200).toFixed(1)}`).join(' ');
+
+  document.getElementById('ma20-line').setAttribute('points', ma20Points);
+  document.getElementById('ma200-line').setAttribute('points', ma200Points);
+
+  // Golden / Death Cross tespiti
+  let crossX = null, crossY = null, crossTip = null;
+  for (let i = 1; i < seri.length; i++) {
+    const prev = seri[i-1], cur = seri[i];
+    if (prev.ma20 <= prev.ma200 && cur.ma20 > cur.ma200) {
+      crossTip = 'GOLDEN';
+      crossX = xPct(i);
+      crossY = yPct(cur.ma20);
+    } else if (prev.ma20 >= prev.ma200 && cur.ma20 < cur.ma200) {
+      crossTip = 'DEATH';
+      crossX = xPct(i);
+      crossY = yPct(cur.ma20);
+    }
+  }
+
+  const crossPoint = document.getElementById('cross-point');
+  const crossCircle = document.getElementById('cross-circle');
+  const crossIcon = document.getElementById('cross-icon');
+  const crossLabel = document.getElementById('cross-label');
+
+  if (crossX !== null) {
+    crossPoint.style.display = 'block';
+    crossCircle.setAttribute('cx', crossX);
+    crossCircle.setAttribute('cy', crossY);
+    crossCircle.setAttribute('r', '7');
+
+    if (crossTip === 'GOLDEN') {
+      crossCircle.setAttribute('stroke', '#c9a84c');
+      crossCircle.style.filter = 'drop-shadow(0 0 8px #c9a84c)';
+      crossIcon.textContent = '✨';
+      crossIcon.setAttribute('x', crossX);
+      crossIcon.setAttribute('y', crossY - 12);
+      crossIcon.setAttribute('fill', '#c9a84c');
+      crossLabel.innerHTML = '<span style="color:#c9a84c">✨ GOLDEN CROSS</span>';
+    } else {
+      crossCircle.setAttribute('stroke', 'var(--red)');
+      crossCircle.style.filter = 'drop-shadow(0 0 8px #ff3d3d)';
+      crossIcon.textContent = '💀';
+      crossIcon.setAttribute('x', crossX);
+      crossIcon.setAttribute('y', crossY - 12);
+      crossIcon.setAttribute('fill', '#ff3d3d');
+      crossLabel.innerHTML = '<span style="color:var(--red)">💀 DEATH CROSS</span>';
+    }
+  } else {
+    crossPoint.style.display = 'none';
+    // MA20 vs MA200 durumu
+    const son = seri[seri.length - 1];
+    if (son.ma20 > son.ma200) {
+      crossLabel.innerHTML = '<span style="color:#00f5ff">↑ MA20 > MA200</span>';
+    } else {
+      crossLabel.innerHTML = '<span style="color:#c9a84c">↓ MA20 < MA200</span>';
+    }
+  }
+}
   if (!seciliHisse) { document.getElementById('fetch-status').textContent = '⚠️ Önce bir hisse seç!'; return; }
   const h = seciliHisse;
   document.getElementById('company').value = h.sirket;
@@ -3418,6 +3555,11 @@ function veriCek() {
   document.getElementById('pe').value = h.fk > 0 ? h.fk.toFixed(1) : '';
   if (h.ma20 > 0) document.getElementById('ma20').value = h.ma20.toFixed(2);
   if (h.ma200 > 0) document.getElementById('ma200').value = h.ma200.toFixed(2);
+  // MA geçmiş kaydet ve grafiği çiz
+  if (h.ma20 > 0 && h.ma200 > 0) {
+    maGecmisBirikimKaydet(h.ticker, h.ma20, h.ma200);
+    maGrafikCiz(h.ticker, h.ma20, h.ma200);
+  }
   document.getElementById('change1m').value = h.degisim !== 0 ? h.degisim.toFixed(2) : '';
   document.getElementById('target').value = h.hedef > 0 ? h.hedef.toFixed(2) : '';
   document.getElementById('beta').value = h.beta > 0 ? h.beta.toFixed(2) : '';
