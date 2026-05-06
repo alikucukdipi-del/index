@@ -3252,8 +3252,8 @@ async function sheetsYukle() {
 
   // Arka planda güncelle
   const urls = [
+    'https://sheets-proxy.ali-kucukdipi.workers.dev',
     SHEETS_CSV + '&t=' + Date.now(),
-    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(SHEETS_CSV)}`,
     `https://corsproxy.io/?${encodeURIComponent(SHEETS_CSV)}`,
   ];
   let text = null;
