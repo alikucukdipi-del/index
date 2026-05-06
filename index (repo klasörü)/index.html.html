@@ -283,10 +283,10 @@ select option { background: #181818; }
 
 /* HEATMAP */
 .heatmap-grid { display: grid; gap: 10px; margin-top: 8px; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); overflow: visible; }
-.heatmap-card { border-radius: 14px; cursor: pointer; transition: transform .2s, opacity .2s; text-align: center; position: relative; overflow: visible; }
+.heatmap-card { border-radius: 14px; cursor: pointer; transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out !important; text-align: center; position: relative; overflow: visible; }
 .heatmap-card.buyuk { grid-column: span 2; grid-row: span 2; }
 .heatmap-card.kucuk { opacity: 0.78; }
-.heatmap-card:hover { transform: translateY(-3px) scale(1.02) !important; opacity: 1 !important; z-index: 10; }
+.heatmap-card:hover { transform: translateY(-3px) scale(1.02) !important; opacity: 1 !important; z-index: 10; box-shadow: 0 8px 32px rgba(201,168,76,0.15) !important; }
 .el-tooltip { position: relative; display: inline-block; cursor: help; }
 .el-tooltip-box { display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); width: 210px; background: #202020; border: 1px solid rgba(201,168,76,0.5); border-radius: 10px; padding: 10px 12px; font-size: 11px; color: #e0e0e0; line-height: 1.6; z-index: 300; text-align: left; box-shadow: 0 8px 32px rgba(0,0,0,0.8); pointer-events: none; }
 .el-tooltip:hover .el-tooltip-box { display: block; }
@@ -3597,7 +3597,7 @@ function miniPusulaHtml(h, motorAdil, motorUpside) {
   const adil = motorAdil || Math.round(((h.high12 + h.low12) / 2) * 100) / 100;
   const upside = motorUpside !== null ? motorUpside : Math.round(((adil - h.fiyat) / h.fiyat) * 100);
 
-  const pct = v => Math.min(94, Math.max(6, Math.round(((v-min)/aralik)*100)));
+  const pct = v => Math.min(94, Math.max(6, Math.round(((v - h.low12) / (h.high12 - h.low12)) * 100)));
   const fPct = pct(h.fiyat), mPct = pct(adil);
   const oran = h.fiyat / adil;
 
