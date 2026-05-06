@@ -3478,7 +3478,12 @@ function maGrafikCiz(ticker, ma20Bugun, ma200Bugun) {
 
   // En az 2 nokta lazım
   if (seri.length < 2) {
-    container.style.display = 'none';
+    container.style.display = 'block';
+    const son = seri[0];
+    document.getElementById('cross-point').style.display = 'none';
+    document.getElementById('cross-label').innerHTML = son.ma20 > son.ma200
+      ? `<span style="color:#00f5ff">↑ MA20 ${son.ma20.toFixed(2)} > MA200 ${son.ma200.toFixed(2)} — veri birikiyor...</span>`
+      : `<span style="color:#c9a84c">↓ MA20 ${son.ma20.toFixed(2)} < MA200 ${son.ma200.toFixed(2)} — veri birikiyor...</span>`;
     return;
   }
 
