@@ -315,7 +315,7 @@ select option { background: #181818; }
 @keyframes pulse-green { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 @keyframes pulse-aplus { 0%, 100% { box-shadow: 0 0 12px rgba(0,200,83,0.4), 0 0 4px rgba(0,200,83,0.6); transform: translateY(0px); } 50% { box-shadow: 0 0 35px rgba(0,200,83,0.8), 0 0 12px rgba(0,200,83,0.9); transform: translateY(-3px); } }
 @keyframes pulse-a { 0%, 100% { box-shadow: 0 0 12px rgba(255,179,71,0.4), 0 0 4px rgba(255,179,71,0.6); transform: translateY(0px); } 50% { box-shadow: 0 0 35px rgba(255,179,71,0.8), 0 0 12px rgba(255,179,71,0.9); transform: translateY(-3px); } }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse-skeleton { 0%,100%{opacity:.4} 50%{opacity:.8} } from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 /* KARAR GEÇMİŞİ & BACKTEST */
 .gecmis-ozet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
@@ -450,7 +450,14 @@ select option { background: #181818; }
 <div class="hisse-sec">
   <span class="sec-label">📡 Canlı Veri — Google Sheets</span>
   <div class="sec-title">Hisse Seç & Veri Çek</div>
-  <div class="hisse-grid" id="hisse-grid"><div style="color:var(--text2);font-size:12px;padding:10px">Yükleniyor...</div></div>
+  <div class="hisse-grid" id="hisse-grid">
+    ${[...Array(6)].map(() => `
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;animation:pulse-skeleton 1.5s ease-in-out infinite">
+      <div style="height:12px;background:rgba(255,255,255,0.06);border-radius:6px;margin-bottom:10px;width:60%;margin-left:auto;margin-right:auto"></div>
+      <div style="height:20px;background:rgba(255,255,255,0.06);border-radius:6px;margin-bottom:8px;width:80%;margin-left:auto;margin-right:auto"></div>
+      <div style="height:10px;background:rgba(255,255,255,0.04);border-radius:6px;width:50%;margin-left:auto;margin-right:auto"></div>
+    </div>`).join('')}
+  </div>
   <div class="fetch-row">
     <button class="btn-fetch" onclick="veriCek()">📡 VERİ ÇEK</button>
     <a id="btn-haber" class="btn-haber" href="#" target="_blank" style="display:none">📰 Haberler</a>
@@ -4304,8 +4311,9 @@ function sifirla() {
   if (sabitDiv) sabitDiv.style.display = 'none';
  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-levelGuncelle();
+// Worker'ı hemen başlat — bekletme
 sheetsYukle();
+levelGuncelle();
 countdownMotorBaslat();
 notificationIzniAl();
 setInterval(() => sheetsYukle(), 5 * 60 * 1000);
