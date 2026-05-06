@@ -3240,17 +3240,19 @@ function aktifPuan(h) {
 let hisseler = [], seciliHisse = null;
 
 async function sheetsYukle() {
-  // Önce localStorage cache'den göster
   const cachedText = localStorage.getItem('humeyra_sheets_cache');
   const cachedTime = parseInt(localStorage.getItem('humeyra_sheets_time') || '0');
   const cacheAge = Date.now() - cachedTime;
 
-  if (cachedText && cacheAge < 10 * 60 * 1000) {
-    // 10 dakikadan yeni cache var — hemen göster
+  // Cache varsa HER ZAMAN hemen göster (eski de olsa)
+  if (cachedText && cachedText.length > 100) {
     try { await sheetsIsle(cachedText); } catch(e) {}
   }
 
-  // Arka planda güncelle
+  // 30 dakikadan yeniyse arka planda güncelleme yapma
+  if (cachedText && cacheAge < 30 * 60 * 1000) return;
+
+  // Güncelle
   const urls = [
     'https://sheets-proxy.ali-kucukdipi.workers.dev',
     SHEETS_CSV + '&t=' + Date.now(),
@@ -3265,7 +3267,6 @@ async function sheetsYukle() {
   }
   try {
     if (!text || text.length < 100) throw new Error('Veri alınamadı');
-    // Cache'e kaydet
     localStorage.setItem('humeyra_sheets_cache', text);
     localStorage.setItem('humeyra_sheets_time', Date.now().toString());
     await sheetsIsle(text);
