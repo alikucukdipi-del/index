@@ -3244,36 +3244,52 @@ async function sheetsYukle() {
   const cachedTime = parseInt(localStorage.getItem('humeyra_sheets_time') || '0');
   const cacheAge = Date.now() - cachedTime;
 
-  // Cache varsa HER ZAMAN hemen göster (eski de olsa)
+  // Cache varsa HER ZAMAN hemen göster
   if (cachedText && cachedText.length > 100) {
     try { await sheetsIsle(cachedText); } catch(e) {}
+    // 30 dakikadan yeniyse güncelleme yapma
+    if (cacheAge < 30 * 60 * 1000) return;
+  } else {
+    // Cache yok — loading göster
+    const grid = document.getElementById('hisse-grid');
+    if (grid) grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text2)">
+      <div style="font-size:24px;margin-bottom:8px">⚡</div>
+      <div style="font-size:12px;letter-spacing:2px">VERİ YÜKLENİYOR...</div>
+    </div>`;
   }
 
-  // 30 dakikadan yeniyse arka planda güncelleme yapma
-  if (cachedText && cacheAge < 30 * 60 * 1000) return;
-
-  // Güncelle
-  const urls = [
-    'https://sheets-proxy.ali-kucukdipi.workers.dev',
-    SHEETS_CSV + '&t=' + Date.now(),
-    `https://corsproxy.io/?${encodeURIComponent(SHEETS_CSV)}`,
-  ];
-  let text = null;
-  for (const url of urls) {
-    try {
-      const res = await fetch(url, { mode: 'cors' });
-      if (res.ok) { text = await res.text(); if (text && text.length > 100) break; }
-    } catch(e) { continue; }
-  }
+  // Worker'dan çek
   try {
-    if (!text || text.length < 100) throw new Error('Veri alınamadı');
-    localStorage.setItem('humeyra_sheets_cache', text);
-    localStorage.setItem('humeyra_sheets_time', Date.now().toString());
-    await sheetsIsle(text);
-  } catch(e) {
-    if (!cachedText) {
-      document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Bağlantı hatası</div>';
+    const res = await fetch('https://sheets-proxy.ali-kucukdipi.workers.dev', { cache: 'no-store' });
+    if (res.ok) {
+      const text = await res.text();
+      if (text && text.length > 100) {
+        localStorage.setItem('humeyra_sheets_cache', text);
+        localStorage.setItem('humeyra_sheets_time', Date.now().toString());
+        await sheetsIsle(text);
+        return;
+      }
     }
+  } catch(e) {}
+
+  // Fallback
+  try {
+    const res = await fetch(SHEETS_CSV + '&t=' + Date.now());
+    if (res.ok) {
+      const text = await res.text();
+      if (text && text.length > 100) {
+        localStorage.setItem('humeyra_sheets_cache', text);
+        localStorage.setItem('humeyra_sheets_time', Date.now().toString());
+        await sheetsIsle(text);
+        return;
+      }
+    }
+  } catch(e) {}
+
+  // Hiçbiri çalışmadıysa
+  if (!cachedText) {
+    const grid = document.getElementById('hisse-grid');
+    if (grid) grid.innerHTML = '<div style="color:var(--red);font-size:12px;padding:20px;text-align:center">⚠️ Bağlantı hatası — sayfayı yenile</div>';
   }
 }
 
