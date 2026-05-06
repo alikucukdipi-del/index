@@ -3240,8 +3240,19 @@ function aktifPuan(h) {
 let hisseler = [], seciliHisse = null;
 
 async function sheetsYukle() {
+  // Önce localStorage cache'den göster
+  const cachedText = localStorage.getItem('humeyra_sheets_cache');
+  const cachedTime = parseInt(localStorage.getItem('humeyra_sheets_time') || '0');
+  const cacheAge = Date.now() - cachedTime;
+
+  if (cachedText && cacheAge < 10 * 60 * 1000) {
+    // 10 dakikadan yeni cache var — hemen göster
+    try { await sheetsIsle(cachedText); } catch(e) {}
+  }
+
+  // Arka planda güncelle
   const urls = [
-    '/.netlify/functions/sheets', // Netlify proxy — birincil
+    '/.netlify/functions/sheets',
     SHEETS_CSV + '&t=' + Date.now(),
     `https://corsproxy.io/?${encodeURIComponent(SHEETS_CSV)}`,
   ];
@@ -3254,6 +3265,18 @@ async function sheetsYukle() {
   }
   try {
     if (!text || text.length < 100) throw new Error('Veri alınamadı');
+    // Cache'e kaydet
+    localStorage.setItem('humeyra_sheets_cache', text);
+    localStorage.setItem('humeyra_sheets_time', Date.now().toString());
+    await sheetsIsle(text);
+  } catch(e) {
+    if (!cachedText) {
+      document.getElementById('hisse-grid').innerHTML = '<div style="color:var(--red);font-size:12px;padding:10px">⚠️ Bağlantı hatası</div>';
+    }
+  }
+}
+
+async function sheetsIsle(text) {
     const satirlar = text.trim().split('\n');
     hisseler = [];
     for (let i = VERI_BASLANGIC_SATIRI; i < satirlar.length; i++) {
