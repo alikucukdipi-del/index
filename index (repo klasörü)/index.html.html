@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8"> 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Humeyra — Borsa Analiz</title>
+<title>Pre-Trade Decision Engine</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -411,9 +411,9 @@ select option { background: #181818; }
 
 <div class="wrap">
 <div class="hdr">
-  <div class="hdr-eyebrow">Humeyra Pro Analiz · v10</div>
-  <h1>HİSSE <em>ANALİZ</em></h1>
-  <p>AEX · DAX · CAC40 · Mentor Terminal 🦷</p>
+  <div class="hdr-eyebrow">Pre-Trade Decision Engine · v16</div>
+  <h1>PRE-TRADE <em>ENGINE</em></h1>
+  <p>AEX · DAX · CAC40 · Mentor Terminal</p>
   <div id="level-badge" class="level-badge level-1" onclick="levelDegistir()">🌱 Başlangıç Seviyesi</div>
 </div>
 
@@ -638,7 +638,7 @@ select option { background: #181818; }
   <div class="analiz-blok" style="margin-bottom:14px;border-color:rgba(201,168,76,0.2)"><div class="analiz-blok-baslik" style="color:var(--gold)">⏱️ Zaman Tavsiyesi</div><div id="zaman-tavsiye" style="font-size:13px;color:var(--text2);line-height:1.8"></div></div>
   <div class="scard info" style="margin-bottom:14px"><div class="scard-title">💡 Tavsiye</div><div id="tavsiye"></div></div>
   <button class="rbtn" onclick="sifirla()">↩️ Yeni Analiz</button>
-  <div class="disc">⚠️ Eğitim amaçlıdır, yatırım tavsiyesi değildir. 🦷</div>
+  <div class="disc">⚠️ Eğitim amaçlıdır, yatırım tavsiyesi değildir.</div>
 </div>
 </div>
 <script>
@@ -651,19 +651,11 @@ async function yahooVeriCek(ticker, gun = 40) {
   const yahooTicker = tickerDonustur(ticker);
   if (!yahooTicker) return null;
   try {
-    // Netlify proxy — birincil
-    const res = await fetch(`/.netlify/functions/yahoo?ticker=${yahooTicker}&gun=${gun}`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data.veriler && data.veriler.length > 0) return data.veriler;
-    }
-  } catch(e) {}
-  // Fallback — corsproxy
-  try {
     const bitis = Math.floor(Date.now() / 1000);
     const baslangic = bitis - (gun * 24 * 60 * 60);
     const url = `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${yahooTicker}?period1=${baslangic}&period2=${bitis}&interval=1d`)}`;
     const res = await fetch(url);
+    if (!res.ok) return null;
     const data = await res.json();
     const chart = data?.chart?.result?.[0];
     if (!chart) return null;
@@ -674,7 +666,7 @@ async function yahooVeriCek(ticker, gun = 40) {
       tarih: new Date(timestamps[i] * 1000).toLocaleDateString('tr-TR'),
       kapanis: f, hacim: hacim[i]
     })).filter(d => d.kapanis !== null && d.kapanis > 0);
-  } catch(e) { console.warn('Yahoo hata:', ticker, e); return null; }
+  } catch (e) { return null; }
 }
 
 function tickerDonustur(ticker) {
@@ -1812,6 +1804,70 @@ function levelDegistir() {
 }
 
 // ─── KARŞILAMA ───
+function sifreKontrol() {
+  const SIFRE = 'BURAYA_YAZACAKSIN'; // Sen değiştir!
+  if (localStorage.getItem('pte_sifre_ok') === '1') return;
+  const overlay = document.createElement('div');
+  overlay.id = 'sifre-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:#080808;z-index:999999;display:flex;align-items:center;justify-content:center';
+  overlay.innerHTML = `
+    <div style="background:var(--card);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px;max-width:360px;width:90%;text-align:center">
+      <div style="font-family:Bebas Neue,sans-serif;font-size:28px;color:var(--gold);margin-bottom:8px">PRE-TRADE ENGINE</div>
+      <div style="font-size:11px;color:var(--text3);letter-spacing:2px;margin-bottom:24px">PRIVATE ACCESS</div>
+      <input id="sifre-input" type="password" placeholder="Wachtwoord" 
+        style="width:100%;padding:12px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:white;font-size:14px;margin-bottom:12px;box-sizing:border-box;outline:none"
+        onkeydown="if(event.key==='Enter')sifreGir()">
+      <div id="sifre-hata" style="font-size:11px;color:var(--red);margin-bottom:12px;display:none">Onjuist wachtwoord</div>
+      <button onclick="sifreGir()" style="width:100%;padding:12px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">
+        TOEGANG ⚡
+      </button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  setTimeout(() => document.getElementById('sifre-input').focus(), 100);
+
+  function sifreGir() {
+    const girilen = document.getElementById('sifre-input').value;
+    if (girilen === SIFRE) {
+      localStorage.setItem('pte_sifre_ok', '1');
+      overlay.remove();
+    } else {
+      document.getElementById('sifre-hata').style.display = 'block';
+      document.getElementById('sifre-input').value = '';
+    }
+  }
+  window.sifreGir = sifreGir;
+}
+  if (localStorage.getItem('pte_yasal_kabul')) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'yasal-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)';
+  overlay.innerHTML = `
+    <div style="background:var(--card);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px;max-width:460px;width:90%">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:10px;letter-spacing:3px;color:var(--text3);margin-bottom:8px">TOEGANG TOT</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold)">PRETRADEENGINE.COM</div>
+      </div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.8;margin-bottom:20px">
+        <p style="margin-bottom:10px">Voordat u de analyses bekijkt, dient u akkoord te gaan met de volgende voorwaarden:</p>
+        <p style="margin-bottom:8px"><strong style="color:var(--text)">Geen Financieel Advies:</strong> De berekeningen en signalen zijn puur algoritmisch en uitsluitend bedoeld voor informatieve en educatieve doeleinden.</p>
+        <p style="margin-bottom:8px"><strong style="color:var(--text)">Eigen Risico:</strong> Beleggen brengt aanzienlijke risico's met zich mee. U bent zelf verantwoordelijk voor uw handelsbeslissingen.</p>
+        <p style="margin-bottom:8px"><strong style="color:var(--text)">Geen Garantie:</strong> Gegevens kunnen vertraagd of onjuist zijn. Wij zijn niet aansprakelijk voor verliezen door softwarefouten of marktvolatiliteit.</p>
+        <p>Door verder te gaan, bevestigt u dat u geen beleggingsadvies verwacht en de risico's begrijpt.</p>
+      </div>
+      <button onclick="yasalKabul()" style="width:100%;padding:14px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px">
+        IK GA AKKOORD EN BEGRIJP HET ✓
+      </button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+function yasalKabul() {
+  localStorage.setItem('pte_yasal_kabul', '1');
+  document.getElementById('yasal-overlay').remove();
+}
+
 function karsilamaGoster() {
   const son = parseInt(localStorage.getItem('humeyra_karsilama_son') || '0');
   if (Date.now() - son < 6 * 60 * 60 * 1000) return;
@@ -3462,7 +3518,7 @@ async function sheetsYukle() {
   if (cachedText && cachedText.length > 100) {
     try { await sheetsIsle(cachedText); } catch(e) {}
     // 30 dakikadan yeniyse güncelleme yapma
-    if (cacheAge < 30 * 60 * 1000) return;
+    if (cacheAge < 15 * 60 * 1000) return;
   } else {
     // Cache yok — loading göster
     const grid = document.getElementById('hisse-grid');
@@ -3508,6 +3564,7 @@ async function sheetsYukle() {
 }
 
 async function sheetsIsle(text) {
+  try {
     const satirlar = text.trim().split('\n');
     hisseler = [];
     for (let i = VERI_BASLANGIC_SATIRI; i < satirlar.length; i++) {
@@ -3734,6 +3791,8 @@ function maGrafikCiz(ticker, ma20Bugun, ma200Bugun) {
     }
   }
 }
+
+function veriCek() {
   if (!seciliHisse) { document.getElementById('fetch-status').textContent = '⚠️ Önce bir hisse seç!'; return; }
   const h = seciliHisse;
   document.getElementById('company').value = h.sirket;
@@ -4489,15 +4548,32 @@ function sifirla() {
   document.getElementById('karsilastir').style.display = 'none';
   const sabitDiv = document.getElementById('sabit-veri-cek');
   if (sabitDiv) sabitDiv.style.display = 'none';
- window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Yasal uyarı — her analizin sonunda
+  document.getElementById('guven-blok-container').innerHTML += `
+    <div style="margin-top:16px;padding:10px 14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px">
+      <div style="font-size:9px;color:var(--text3);line-height:1.7">
+        ⚠️ <strong style="color:var(--text2)">Geen financieel advies.</strong> Deze analyse is puur algoritmisch en uitsluitend bedoeld voor informatieve doeleinden. Beleggen brengt risico's met zich mee. U bent zelf verantwoordelijk voor uw handelsbeslissingen.
+      </div>
+    </div>`;
 }
 // Worker'ı hemen başlat — bekletme
+sifreKontrol();
 sheetsYukle();
 levelGuncelle();
 countdownMotorBaslat();
 notificationIzniAl();
+yasalUyariGoster();
 setInterval(() => sheetsYukle(), 5 * 60 * 1000);
 setInterval(() => sovereignAlarmKontrol(), 5 * 60 * 1000);
+
+// Telefonda arka plandan gelince yenile
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    const cachedTime = parseInt(localStorage.getItem('humeyra_sheets_time') || '0');
+    if (Date.now() - cachedTime > 15 * 60 * 1000) sheetsYukle();
+  }
+});
 setInterval(() => {
   const alarmSonuc = portfolioAlarmKontrol();
   if (alarmSonuc && alarmSonuc.length > 0) document.getElementById('portfolio-btn').classList.add('alarm');
