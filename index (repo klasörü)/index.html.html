@@ -1805,7 +1805,7 @@ function levelDegistir() {
 
 // ─── KARŞILAMA ───
 function sifreKontrol() {
-  const SIFRE = 'BURAYA_YAZACAKSIN'; // Sen değiştir!
+  const SIFRE = 'humeyraneslihan'; // Sen değiştir!
   if (localStorage.getItem('pte_sifre_ok') === '1') return;
   const overlay = document.createElement('div');
   overlay.id = 'sifre-overlay';
@@ -1838,6 +1838,8 @@ function sifreKontrol() {
   }
   window.sifreGir = sifreGir;
 }
+
+function yasalUyariGoster() {
   if (localStorage.getItem('pte_yasal_kabul')) return;
   const overlay = document.createElement('div');
   overlay.id = 'yasal-overlay';
